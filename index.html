@@ -11,102 +11,114 @@ INPUT_FOLDER = "images"
 # مجلد الحفظ
 OUTPUT_FOLDER = "output"
 
-# البرواز الطولي
+# برواز الطولي
 PORTRAIT_FRAME = "frames/frame_portrait.png"
 
-# البرواز العرضي
+# برواز العرضي
 LANDSCAPE_FRAME = "frames/frame_landscape.png"
 
-# صيغة الحفظ
-# يفضل PNG لأنه يحافظ على الجودة
+# إذا أردت استخدام برواز واحد فقط بدل طولي/عرضي:
+# SINGLE_FRAME = "frames/frame.png"
+
+# صيغة الحفظ: "PNG" أو "JPEG"
 SAVE_FORMAT = "PNG"
 
-# جودة الحفظ إذا استخدمت JPG
+# جودة الحفظ إذا كانت JPEG
 JPEG_QUALITY = 95
 
 
 # =========================
-# إنشاء مجلد الحفظ إذا لم يكن موجوداً
+# دالة اختيار البرواز المناسب
 # =========================
-if not os.path.exists(OUTPUT_FOLDER):
-    os.makedirs(OUTPUT_FOLDER)
+def get_frame_path(img_width, img_height):
+    """
+    يختار البرواز حسب اتجاه الصورة:
+    - إذا كانت عرضية => landscape
+    - إذا كانت طولية أو مربعة => portrait
+    """
+    if img_width > img_height:
+        return LANDSCAPE_FRAME
+    else:
+        return PORTRAIT_FRAME
 
 
 # =========================
-# التأكد من وجود مجلد الصور
+# دالة تطبيق البرواز على صورة واحدة
 # =========================
-if not os.path.exists(INPUT_FOLDER):
-    print(f"خطأ: مجلد الصور غير موجود: {INPUT_FOLDER}")
-    exit()
-
-
-# =========================
-# امتدادات الصور المدعومة
-# =========================
-SUPPORTED_EXTENSIONS = (".jpg", ".jpeg", ".png", ".webp", ".bmp")
-
-
-# =========================
-# قراءة كل الصور من المجلد
-# =========================
-image_files = [
-    f for f in os.listdir(INPUT_FOLDER)
-    if f.lower().endswith(SUPPORTED_EXTENSIONS)
-]
-
-if not image_files:
-    print("لا توجد صور داخل مجلد images")
-    exit()
-
-
-# =========================
-# معالجة كل صورة
-# =========================
-for file_name in image_files:
+def apply_frame_to_image(image_path, output_folder):
     try:
-        image_path = os.path.join(INPUT_FOLDER, file_name)
-
-        # فتح الصورة الأصلية وإصلاح الاتجاه التلقائي
+        # فتح الصورة الأصلية مع إصلاح الاتجاه التلقائي من بيانات الكاميرا
         img = Image.open(image_path)
         img = ImageOps.exif_transpose(img).convert("RGBA")
 
         img_width, img_height = img.size
 
-        # اختيار البرواز المناسب حسب اتجاه الصورة
-        if img_width > img_height:
-            frame_path = LANDSCAPE_FRAME
-        else:
-            frame_path = PORTRAIT_FRAME
+        # اختيار البرواز المناسب حسب الاتجاه
+        frame_path = get_frame_path(img_width, img_height)
 
-        # التأكد من وجود البرواز
         if not os.path.exists(frame_path):
-            print(f"خطأ: ملف البرواز غير موجود: {frame_path}")
-            continue
+            print(f"لم يتم العثور على البرواز: {frame_path}")
+            return
 
         # فتح البرواز
         frame = Image.open(frame_path).convert("RGBA")
 
-        # تغيير حجم البرواز ليطابق الصورة تماماً
+        # تغيير حجم البرواز ليطابق الصورة بالضبط
         frame_resized = frame.resize((img_width, img_height), Image.LANCZOS)
 
         # دمج البرواز فوق الصورة
         result = Image.alpha_composite(img, frame_resized)
 
-        # تجهيز اسم الملف الناتج
-        base_name = os.path.splitext(file_name)[0]
+        # إنشاء مجلد الحفظ إذا لم يكن موجودًا
+        os.makedirs(output_folder, exist_ok=True)
 
-        # حفظ كصورة ثابتة
+        # اسم الملف الناتج
+        file_name = os.path.splitext(os.path.basename(image_path))[0]
+
+        # حفظ كصورة ثابتة وليس GIF
         if SAVE_FORMAT.upper() == "PNG":
-            output_path = os.path.join(OUTPUT_FOLDER, f"{base_name}_framed.png")
+            output_path = os.path.join(output_folder, f"{file_name}_framed.png")
             result.save(output_path, "PNG")
+        elif SAVE_FORMAT.upper() == "JPEG":
+            output_path = os.path.join(output_folder, f"{file_name}_framed.jpg")
+            result = result.convert("RGB")  # JPEG لا يدعم الشفافية
+            result.save(output_path, "JPEG", quality=JPEG_QUALITY)
         else:
-            output_path = os.path.join(OUTPUT_FOLDER, f"{base_name}_framed.jpg")
-            result_rgb = result.convert("RGB")
-            result_rgb.save(output_path, "JPEG", quality=JPEG_QUALITY)
+            print("صيغة الحفظ غير مدعومة. استخدم PNG أو JPEG فقط.")
+            return
 
         print(f"تم حفظ الصورة: {output_path}")
 
     except Exception as e:
-        print(f"حدث خطأ في الصورة {file_name}: {e}")
+        print(f"خطأ أثناء معالجة الصورة {image_path}: {e}")
 
-print("انتهى التنفيذ بنجاح.")
+
+# =========================
+# دالة معالجة جميع الصور داخل المجلد
+# =========================
+def process_all_images():
+    if not os.path.exists(INPUT_FOLDER):
+        print(f"مجلد الصور غير موجود: {INPUT_FOLDER}")
+        return
+
+    supported_extensions = (".jpg", ".jpeg", ".png", ".webp", ".bmp")
+
+    files = os.listdir(INPUT_FOLDER)
+    image_files = [f for f in files if f.lower().endswith(supported_extensions)]
+
+    if not image_files:
+        print("لا توجد صور داخل المجلد.")
+        return
+
+    for file_name in image_files:
+        image_path = os.path.join(INPUT_FOLDER, file_name)
+        apply_frame_to_image(image_path, OUTPUT_FOLDER)
+
+    print("انتهى تنفيذ جميع الصور.")
+
+
+# =========================
+# تشغيل البرنامج
+# =========================
+if __name__ == "__main__":
+    process_all_images()
