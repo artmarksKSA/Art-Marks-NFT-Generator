@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art Marks - Hologram NFT</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: #050505; 
+            color: #fff; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            text-align: center; 
+            padding: 20px; 
+        }
+        h1 { color: #4a7e6e; text-shadow: 0 0 20px #4a7e6e; font-size: 2.5em; margin-bottom: 5px; }
+        h2 { color: #d3cbab; font-size: 1em; letter-spacing: 3px; margin-bottom: 30px; }
+        .upload-box { 
+            border: 3px dashed #4a7e6e; 
+            padding: 40px; 
+            margin: 20px auto; 
+            max-width: 500px; 
+            cursor: pointer; 
+            border-radius: 15px; 
+            background: rgba(74, 126, 110, 0.05); 
+        }
+        .upload-box:hover { background: rgba(74, 126, 110, 0.15); }
+        .controls { 
+            background: rgba(255,255,255,0.05); 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin: 20px auto; 
+            max-width: 500px; 
+            border: 1px solid #333; 
+            display: none;
+        }
+        input[type="text"] { 
+            background: #111; 
+            border: 1px solid #4a7e6e; 
+            color: #d3cbab; 
+            padding: 10px; 
+            margin: 5px; 
+            width: 200px; 
+            border-radius: 5px; 
+        }
+        input[type="range"] { width: 80%; margin: 10px 0; accent-color: #4a7e6e; }
+        button { 
+            background: #4a7e6e; 
+            color: #fff; 
+            border: none; 
+            padding: 12px 30px; 
+            margin: 8px; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: bold; 
+        }
+        button.secondary { background: #d3cbab; color: #000; }
+        canvas { 
+            border: 2px solid #4a7e6e; 
+            box-shadow: 0 0 40px rgba(74, 126, 110, 0.6); 
+            max-width: 100%; 
+            margin-top: 20px; 
+            border-radius: 10px; 
+        }
+    </style>
+</head>
+<body>
+    <h1>ART MARKS // HOLOGRAM</h1>
+    <h2>3D AUTHENTICITY CARD GENERATOR</h2>
+    
+    <div class="upload-box" onclick="document.getElementById('f').click()">
+        <input type="file" id="f" accept="image/*" style="display:none" onchange="load(event)">
+        <div style="font-size: 3em; margin-bottom: 10px;">🎨</div>
+        <p>اضغط هنا لرفع لوحة الفنان</p>
+    </div>
+
+    <div id="ctrl" class="controls">
+        <div style="margin-bottom: 15px;">
+            <label>ارتفاع الهولوغرام: </label>
+            <span id="elv" style="color: #4a7e6e; font-weight: bold;">40</span><br>
+            <input type="range" id="el" min="0" max="80" value="40" oninput="document.getElementById('elv').innerText=this.value; draw()">
+        </div>
+        
+        <input type="text" id="t" placeholder="اسم العمل" value="ARABIAN LEOPARD">
+        <input type="text" id="a" placeholder="الفنان" value="F12DM"><br><br>
+        
+        <button onclick="draw()">✨ توليد البطاقة</button>
+        <button class="secondary" onclick="dl()">💾 تحميل PNG</button>
+    </div>
+
+    <canvas id="c" width="600" height="800" style="display:none;"></canvas>
+
+    <script>
+        let img = null;
+        
+        function load(e) {
+            let r = new FileReader();
+            r.onload = (ev) => {
+                let i = new Image();
+                i.onload = () => {
+                    img = i;
+                    document.getElementById('ctrl').style.display = 'block';
+                    document.getElementById('c').style.display = 'inline-block';
+                    draw();
+                };
+                i.src = ev.target.result;
+            };
+            r.readAsDataURL(e.target.files[0]);
+        }
+
+        function draw() {
+            if (!img) return;
+            let c = document.getElementById('c');
+            let x = c.getContext('2d');
+            let w = 600, h = 800;
+            let el = parseInt(document.getElementById('el').value);
+            let t = document.getElementById('t').value;
+            let ar = document.getElementById('a').value;
+            
+            x.fillStyle = '#000';
+            x.fillRect(0, 0, w, h);
+            
+            let cy = h - 180;
+            x.fillStyle = '#0f1f1a';
+            x.strokeStyle = '#4a7e6e';
+            x.lineWidth = 2;
+            x.beginPath();
+            x.moveTo(50, cy);
+            x.lineTo(550, cy);
+            x.lineTo(530, cy + 150);
+            x.lineTo(70, cy + 150);
+            x.closePath();
+            x.fill();
+            x.stroke();
+            
+            let iw = 400, ih = iw * 1.1;
+            let ix = (w - iw) / 2;
+            let iy = cy - ih + 40 - el;
+            
+            for (let i = 8; i >= 0; i--) {
+                x.fillStyle = `rgba(74,126,110,${0.08 - i * 0.01})`;
+                x.fillRect(ix - i * 2, iy + i * 5, iw + i * 4, ih + i * 5);
+            }
+            
+            x.drawImage(img, ix, iy, iw, ih);
+            
+            x.globalCompositeOperation = 'overlay';
+            let g = x.createLinearGradient(ix, iy, ix, iy + ih);
+            g.addColorStop(0, 'rgba(74,126,110,0.4)');
+            g.addColorStop(1, 'rgba(211,203,171,0.2)');
+            x.fillStyle = g;
+            x.fillRect(ix, iy, iw, ih);
+            x.globalCompositeOperation = 'source-over';
+            
+            x.shadowBlur = 30;
+            x.shadowColor = '#4a7e6e';
+            x.strokeStyle = '#4a7e6e';
+            x.lineWidth = 3;
+            x.strokeRect(ix, iy, iw, ih);
+            x.shadowBlur = 0;
+            
+            x.fillStyle = '#d3cbab';
+            x.textAlign = 'center';
+            x.font = 'bold 28px Arial';
+            x.fillText(t, w / 2, cy + 60);
+            x.fillStyle = '#4a7e6e';
+            x.font = '20px Arial';
+            x.fillText(ar, w / 2, cy + 90);
+            x.font = '14px Arial';
+            x.fillText('◉ AUTHENTICATED // 1/1', w / 2, cy + 120);
+        }
+
+        function dl() {
+            let l = document.createElement('a');
+            l.download = 'ArtMarks_Card.png';
+            l.href = document.getElementById('c').toDataURL();
+            l.click();
+        }
+    </script>
+</body>
+</html>
