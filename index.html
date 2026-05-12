@@ -55,21 +55,13 @@ body {
   background: linear-gradient(180deg, rgba(5,5,16,0.9), transparent);
   pointer-events: none;
 }
-.brand-block {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
+.brand-block { display: flex; align-items: center; gap: 15px; }
 .brand-mark {
   width: 38px; height: 38px;
   border: 2px solid var(--neon-cyan);
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: bold;
-  color: var(--neon-cyan);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: bold; color: var(--neon-cyan);
   box-shadow: 0 0 15px rgba(0,240,255,0.5);
   animation: brandPulse 3s ease-in-out infinite;
 }
@@ -184,14 +176,15 @@ input[type=range]::-webkit-slider-thumb {
 .trait-toggle.active .toggle-switch::after { left: 20px; }
 
 .export-btn {
-  width: 100%; margin-top: 20px;
+  width: 100%; margin-top: 10px;
   padding: 15px;
   background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan));
   border: none; color: #fff;
-  font-size: 14px; letter-spacing: 3px;
+  font-size: 13px; letter-spacing: 2px;
   cursor: pointer; border-radius: 8px;
   font-weight: bold; box-shadow: 0 0 25px rgba(0,240,255,0.5);
 }
+.export-btn.video { background: linear-gradient(90deg, #ff00ea, #b829ff); box-shadow: 0 0 25px rgba(255,0,234,0.5); }
 
 /* ====== الإطار يتأقلم مع الصورة ====== */
 .luxury-card {
@@ -261,7 +254,6 @@ input[type=range]::-webkit-slider-thumb {
 .data-cell-label { color: rgba(0,240,255,0.7); margin-bottom: 4px; }
 .data-cell-value { color: #fff; font-size: 10px; font-weight: bold; letter-spacing: 0.5px; }
 
-/* ====== منطقة الرفع - تم تعديلها ====== */
 .upload-area {
   position: fixed;
   top: 50%; left: 60%;
@@ -393,7 +385,8 @@ input[type=range]::-webkit-slider-thumb {
     <button class="mini-btn active" data-rarity="legendary">LEGEND</button>
   </div>
   
-  <button class="export-btn" onclick="exportNFT()">⬇ EXPORT NFT</button>
+  <button class="export-btn" onclick="exportNFT()">🖼 EXPORT IMAGE</button>
+  <button class="export-btn video" onclick="exportVideo()">🎬 EXPORT VIDEO</button>
 </div>
 
 <div class="luxury-card" id="luxuryCard">
@@ -808,6 +801,7 @@ function setupControls() {
   });
 }
 
+// ====== حفظ صورة PNG ثابتة ======
 function exportNFT() {
   if (!baseArtwork) { alert('Upload an artwork first'); return; }
   document.getElementById('loading').classList.add('active');
@@ -854,7 +848,101 @@ function exportNFT() {
   });
 }
 
-// ====== ربط زر الرفع بشكل صحيح ======
+// ====== حفظ فيديو WebM متحرك ======
+function exportVideo() {
+  if (!baseArtwork) { alert('Upload an artwork first'); return; }
+
+  const card = document.getElementById('luxuryCard');
+  const cardRect = card.getBoundingClientRect();
+  const duration = 5000; // مدة الفيديو 5 ثواني
+  const fps = 30;
+
+  document.getElementById('loading').classList.add('active');
+  document.getElementById('loadingText').textContent = 'RECORDING 0%';
+
+  const recCanvas = document.createElement('canvas');
+  const scale = 1.5;
+  recCanvas.width = Math.floor(cardRect.width * scale);
+  recCanvas.height = Math.floor(cardRect.height * scale);
+  const recCtx = recCanvas.getContext('2d');
+
+  html2canvas(card, {
+    backgroundColor: null,
+    scale: scale,
+    logging: false,
+    useCORS: true
+  }).then(frameImage => {
+    let mimeType = 'video/webm;codecs=vp9';
+    if (!MediaRecorder.isTypeSupported(mimeType)) {
+      mimeType = 'video/webm;codecs=vp8';
+    }
+    if (!MediaRecorder.isTypeSupported(mimeType)) {
+      mimeType = 'video/webm';
+    }
+
+    const stream = recCanvas.captureStream(fps);
+    const recorder = new MediaRecorder(stream, {
+      mimeType: mimeType,
+      videoBitsPerSecond: 8000000
+    });
+
+    const chunks = [];
+    recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+    recorder.onstop = () => {
+      const blob = new Blob(chunks, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.download = 'artmarks-video-' + Date.now() + '.webm';
+      link.href = url;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      document.getElementById('loading').classList.remove('active');
+    };
+
+    recorder.start();
+    const startTime = performance.now();
+
+    function recordFrame() {
+      const elapsed = performance.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      document.getElementById('loadingText').textContent = 'RECORDING ' + Math.round(progress * 100) + '%';
+
+      recCtx.fillStyle = '#050510';
+      recCtx.fillRect(0, 0, recCanvas.width, recCanvas.height);
+
+      const sceneCanvas = renderer.domElement;
+      const dpr = window.devicePixelRatio || 1;
+      const sx = cardRect.left * dpr;
+      const sy = cardRect.top * dpr;
+      const sw = cardRect.width * dpr;
+      const sh = cardRect.height * dpr;
+
+      try {
+        recCtx.drawImage(sceneCanvas, sx, sy, sw, sh, 0, 0, recCanvas.width, recCanvas.height);
+      } catch (err) {}
+
+      if (frameImage) {
+        recCtx.drawImage(frameImage, 0, 0, recCanvas.width, recCanvas.height);
+      }
+
+      if (elapsed < duration) {
+        requestAnimationFrame(recordFrame);
+      } else {
+        recorder.stop();
+      }
+    }
+
+    recordFrame();
+  }).catch(err => {
+    document.getElementById('loading').classList.remove('active');
+    alert('Video error: ' + err.message);
+  });
+}
+
+// ====== ربط زر الرفع ======
 const uploadArea = document.getElementById('uploadArea');
 const fileInput = document.getElementById('fileInput');
 
