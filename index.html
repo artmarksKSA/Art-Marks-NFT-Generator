@@ -44,7 +44,6 @@ body {
 
 #scene { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; }
 
-/* ====== الشريط العلوي الاحترافي ====== */
 .top-bar {
   position: fixed; top: 0; left: 0; right: 0;
   z-index: 100;
@@ -54,20 +53,13 @@ body {
   align-items: center;
   background: linear-gradient(180deg, rgba(5,5,16,0.9), transparent);
 }
-.brand-block {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
+.brand-block { display: flex; align-items: center; gap: 15px; }
 .brand-mark {
   width: 38px; height: 38px;
   border: 2px solid var(--neon-cyan);
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: bold;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: bold;
   color: var(--neon-cyan);
   box-shadow: 0 0 15px rgba(0,240,255,0.5);
   animation: brandPulse 3s ease-in-out infinite;
@@ -76,35 +68,11 @@ body {
   0%, 100% { box-shadow: 0 0 15px rgba(0,240,255,0.5); }
   50% { box-shadow: 0 0 25px rgba(255,0,234,0.6); }
 }
-.brand-text {
-  display: flex;
-  flex-direction: column;
-}
-.brand-name {
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 4px;
-  color: #fff;
-}
-.brand-sub {
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: var(--neon-cyan);
-  margin-top: 2px;
-}
-.top-status {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  font-size: 10px;
-  letter-spacing: 1.5px;
-}
-.status-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: rgba(255,255,255,0.7);
-}
+.brand-text { display: flex; flex-direction: column; }
+.brand-name { font-size: 16px; font-weight: 600; letter-spacing: 4px; color: #fff; }
+.brand-sub { font-size: 9px; letter-spacing: 2px; color: var(--neon-cyan); margin-top: 2px; }
+.top-status { display: flex; align-items: center; gap: 20px; font-size: 10px; letter-spacing: 1.5px; }
+.status-item { display: flex; align-items: center; gap: 6px; color: rgba(255,255,255,0.7); }
 .status-dot {
   width: 6px; height: 6px;
   background: var(--neon-cyan);
@@ -133,28 +101,20 @@ body {
 .left-panel::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 2px; }
 
 .panel-title {
-  font-size: 14px;
-  letter-spacing: 3px;
+  font-size: 14px; letter-spacing: 3px;
   color: var(--neon-cyan);
   margin-bottom: 20px;
   text-shadow: 0 0 10px var(--neon-cyan);
 }
 
-.section-title {
-  font-size: 11px;
-  letter-spacing: 2px;
-  color: var(--neon-cyan);
-  margin: 15px 0 10px;
-}
+.section-title { font-size: 11px; letter-spacing: 2px; color: var(--neon-cyan); margin: 15px 0 10px; }
 
 .slider-group { margin-bottom: 18px; }
 .slider-label {
-  font-size: 10px;
-  letter-spacing: 2px;
+  font-size: 10px; letter-spacing: 2px;
   color: rgba(255,255,255,0.7);
   margin-bottom: 6px;
-  display: flex;
-  justify-content: space-between;
+  display: flex; justify-content: space-between;
 }
 .slider-value { color: var(--neon-cyan); }
 input[type=range] {
@@ -180,8 +140,7 @@ input[type=range]::-webkit-slider-thumb {
   background: rgba(0,240,255,0.05);
   border: 1px solid rgba(0,240,255,0.3);
   color: #fff;
-  font-size: 10px;
-  letter-spacing: 1.5px;
+  font-size: 10px; letter-spacing: 1.5px;
   cursor: pointer;
   border-radius: 6px;
   transition: all 0.3s;
@@ -199,8 +158,7 @@ input[type=range]::-webkit-slider-thumb {
   background: rgba(0,240,255,0.05);
   border: 1px solid rgba(0,240,255,0.3);
   color: #fff;
-  font-size: 11px;
-  letter-spacing: 1px;
+  font-size: 11px; letter-spacing: 1px;
   border-radius: 6px;
   outline: none;
   margin-bottom: 8px;
@@ -208,9 +166,7 @@ input[type=range]::-webkit-slider-thumb {
 .input-field:focus { border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0,240,255,0.3); }
 
 .trait-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: flex; align-items: center; justify-content: space-between;
   padding: 12px 15px;
   background: linear-gradient(90deg, rgba(192,192,192,0.1), rgba(0,240,255,0.1), rgba(255,0,234,0.1));
   border: 1px solid rgba(192,192,192,0.4);
@@ -256,15 +212,14 @@ input[type=range]::-webkit-slider-thumb {
   background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan));
   border: none;
   color: #fff;
-  font-size: 14px;
-  letter-spacing: 3px;
+  font-size: 14px; letter-spacing: 3px;
   cursor: pointer;
   border-radius: 8px;
   font-weight: bold;
   box-shadow: 0 0 25px rgba(0,240,255,0.5);
 }
 
-/* ====== الاطار الفاخر السايبر (يتأقلم مع الصورة) ====== */
+/* الإطار - يتأقلم تلقائياً */
 .luxury-card {
   position: fixed;
   top: 50%; left: 50%;
@@ -274,7 +229,6 @@ input[type=range]::-webkit-slider-thumb {
   z-index: 5;
   pointer-events: none;
   display: none;
-  transition: width 0.4s ease, height 0.4s ease;
 }
 .luxury-card.active { display: block; }
 
@@ -314,45 +268,25 @@ input[type=range]::-webkit-slider-thumb {
 
 .frame-corner {
   position: absolute;
-  width: 35px;
-  height: 35px;
+  width: 35px; height: 35px;
   border: 3px solid var(--neon-cyan);
   filter: drop-shadow(0 0 10px var(--neon-cyan));
 }
-.frame-corner.tl {
-  top: -3px; left: -3px;
-  border-right: none; border-bottom: none;
-  border-radius: 25px 0 0 0;
-}
-.frame-corner.tr {
-  top: -3px; right: -3px;
-  border-left: none; border-bottom: none;
-  border-radius: 0 25px 0 0;
-}
-.frame-corner.bl {
-  bottom: -3px; left: -3px;
-  border-right: none; border-top: none;
-  border-radius: 0 0 0 25px;
-}
-.frame-corner.br {
-  bottom: -3px; right: -3px;
-  border-left: none; border-top: none;
-  border-radius: 0 0 25px 0;
-}
+.frame-corner.tl { top: -3px; left: -3px; border-right: none; border-bottom: none; border-radius: 25px 0 0 0; }
+.frame-corner.tr { top: -3px; right: -3px; border-left: none; border-bottom: none; border-radius: 0 25px 0 0; }
+.frame-corner.bl { bottom: -3px; left: -3px; border-right: none; border-top: none; border-radius: 0 0 0 25px; }
+.frame-corner.br { bottom: -3px; right: -3px; border-left: none; border-top: none; border-radius: 0 0 25px 0; }
 
 .tech-marks {
-  position: absolute;
-  top: 50%;
+  position: absolute; top: 50%;
   transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
+  display: flex; flex-direction: column;
   gap: 4px;
 }
 .tech-marks.left { left: -8px; }
 .tech-marks.right { right: -8px; }
 .tech-mark {
-  width: 16px;
-  height: 2px;
+  width: 16px; height: 2px;
   background: var(--neon-cyan);
   box-shadow: 0 0 5px var(--neon-cyan);
 }
@@ -360,8 +294,7 @@ input[type=range]::-webkit-slider-thumb {
 
 .artist-handle {
   position: absolute;
-  bottom: 175px;
-  left: 25px;
+  bottom: 175px; left: 25px;
   font-size: 10px;
   color: var(--neon-cyan);
   letter-spacing: 1px;
@@ -370,14 +303,11 @@ input[type=range]::-webkit-slider-thumb {
 
 .verify-handle {
   position: absolute;
-  bottom: 175px;
-  right: 25px;
+  bottom: 175px; right: 25px;
   font-size: 10px;
   color: var(--neon-cyan);
   letter-spacing: 1px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  display: flex; align-items: center; gap: 6px;
   text-shadow: 0 0 8px var(--neon-cyan);
 }
 .verify-icon {
@@ -400,9 +330,7 @@ input[type=range]::-webkit-slider-thumb {
 
 .card-info {
   position: absolute;
-  bottom: 20px;
-  left: 20px;
-  right: 20px;
+  bottom: 20px; left: 20px; right: 20px;
   padding: 15px 18px;
   background: linear-gradient(135deg, rgba(0,240,255,0.15), rgba(5,5,16,0.85));
   border: 1px solid rgba(0,240,255,0.5);
@@ -412,17 +340,13 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 .card-title-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  padding-bottom: 10px;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px; padding-bottom: 10px;
   border-bottom: 1px solid rgba(0,240,255,0.2);
 }
 
 .card-title {
-  font-size: 19px;
-  font-weight: bold;
+  font-size: 19px; font-weight: bold;
   letter-spacing: 2px;
   color: #fff;
   text-shadow: 0 0 10px var(--neon-cyan);
@@ -448,8 +372,7 @@ input[type=range]::-webkit-slider-thumb {
 .data-cell-label { color: rgba(0,240,255,0.7); margin-bottom: 4px; }
 .data-cell-value {
   color: #fff;
-  font-size: 10px;
-  font-weight: bold;
+  font-size: 10px; font-weight: bold;
   letter-spacing: 0.5px;
 }
 
@@ -499,8 +422,7 @@ input[type=range]::-webkit-slider-thumb {
   background: var(--panel);
   border: 1px solid rgba(0,240,255,0.3);
   border-radius: 10px;
-  font-size: 10px;
-  letter-spacing: 2px;
+  font-size: 10px; letter-spacing: 2px;
 }
 .fps-value { color: var(--neon-cyan); font-weight: bold; }
 </style>
@@ -510,7 +432,6 @@ input[type=range]::-webkit-slider-thumb {
 <div class="space-bg"></div>
 <div id="scene"></div>
 
-<!-- ====== الشريط العلوي الاحترافي ====== -->
 <div class="top-bar">
   <div class="brand-block">
     <div class="brand-mark">A</div>
@@ -598,18 +519,10 @@ input[type=range]::-webkit-slider-thumb {
   <div class="frame-corner br"></div>
   
   <div class="tech-marks left">
-    <div class="tech-mark"></div>
-    <div class="tech-mark"></div>
-    <div class="tech-mark"></div>
-    <div class="tech-mark"></div>
-    <div class="tech-mark"></div>
+    <div class="tech-mark"></div><div class="tech-mark"></div><div class="tech-mark"></div><div class="tech-mark"></div><div class="tech-mark"></div>
   </div>
   <div class="tech-marks right">
-    <div class="tech-mark"></div>
-    <div class="tech-mark"></div>
-    <div class="tech-mark"></div>
-    <div class="tech-mark"></div>
-    <div class="tech-mark"></div>
+    <div class="tech-mark"></div><div class="tech-mark"></div><div class="tech-mark"></div><div class="tech-mark"></div><div class="tech-mark"></div>
   </div>
   
   <div class="artist-handle" id="displayArtist">@ArtMarksKSA</div>
@@ -665,7 +578,8 @@ let time = 0;
 let chromeEnabled = true;
 let nftSeed = Math.random() * 1000;
 let rotationY = 0;
-let currentAspect = 1;
+let currentPlaneW = 3.2;
+let currentPlaneH = 3.2;
 
 const settings = {
   metallic: 1.0,
@@ -721,9 +635,7 @@ float noise(vec2 st) {
 
 void main() {
   vec4 baseTex = texture2D(uTexture, vUv);
-  
   float lum = dot(baseTex.rgb, vec3(0.299, 0.587, 0.114));
-  
   vec3 chromeBase = vec3(0.78, 0.82, 0.86);
   chromeBase = mix(chromeBase * 0.4, chromeBase * 1.2, lum);
   
@@ -735,4 +647,23 @@ void main() {
   float sweep2 = sin(sweepCoord * 12.0 - uTime * uShimmer * 1.5 + 1.5);
   
   float lightBand = smoothstep(0.7, 0.95, sweep1) * 0.7;
-  lightBand += 
+  lightBand += smoothstep(0.85, 1.0, sweep2) * 0.5;
+  
+  float iriHue = sweepCoord * 2.0 + uTime * 0.15 + lum * 0.3 + uMouse.x * 0.5;
+  vec3 iriColor = hsv2rgb(vec3(iriHue, 0.7, 1.0));
+  
+  vec3 highlightColor;
+  if (uHighlightMode == 0) {
+    highlightColor = vec3(0.95, 0.97, 1.0);
+    highlightColor = mix(highlightColor, iriColor, 0.3 * uIridescent);
+  } else if (uHighlightMode == 1) {
+    highlightColor = vec3(1.0, 0.85, 0.4);
+    highlightColor = mix(highlightColor, iriColor, 0.2 * uIridescent);
+  } else if (uHighlightMode == 2) {
+    highlightColor = iriColor;
+  } else {
+    highlightColor = vec3(0.4, 0.9, 1.0);
+    highlightColor = mix(highlightColor, iriColor, 0.4 * uIridescent);
+  }
+  
+  vec3 metallic = 
