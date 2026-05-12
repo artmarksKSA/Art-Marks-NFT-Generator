@@ -3,183 +3,384 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Art Marks - Hologram NFT</title>
+    <title>Art Marks - Cyberpunk Hologram Transformer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { 
-            background: #000; 
+            margin: 0; 
+            background: #050505; 
             color: #fff; 
-            font-family: Arial, sans-serif; 
-            text-align: center; 
-            padding: 20px; 
+            font-family: 'Tajawal', sans-serif;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
         }
-        h1 { color: #4a7e6e; text-shadow: 0 0 10px #4a7e6e; }
-        .box { 
-            border: 2px dashed #4a7e6e; 
-            padding: 40px; 
-            margin: 20px auto; 
-            max-width: 400px; 
-            cursor: pointer; 
-            background: rgba(74, 126, 110, 0.1);
+        header {
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(74,126,110,0.2) 0%, transparent 100%);
+            border-bottom: 1px solid #4a7e6e;
         }
-        .box:hover { background: rgba(74, 126, 110, 0.2); }
-        #controls { 
-            background: #111; 
-            padding: 20px; 
-            border-radius: 10px; 
-            margin: 20px auto; 
-            max-width: 400px; 
-            display: none;
+        h1 { 
+            font-family: 'Orbitron', sans-serif; 
+            color: #4a7e6e; 
+            text-shadow: 0 0 20px #4a7e6e;
+            margin: 0;
+            font-size: 2em;
+        }
+        .upload-area {
+            margin: 20px;
+            padding: 20px 40px;
+            border: 2px dashed #4a7e6e;
+            border-radius: 10px;
+            cursor: pointer;
+            background: rgba(74,126,110,0.1);
+            transition: 0.3s;
+            color: #d3cbab;
+        }
+        .upload-area:hover { 
+            background: rgba(74,126,110,0.2); 
+            box-shadow: 0 0 20px rgba(74,126,110,0.3);
+        }
+        #canvas-container {
+            position: relative;
+            margin: 20px;
+            box-shadow: 0 0 50px rgba(74, 126, 110, 0.5);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            background: #000;
+        }
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 10px;
             border: 1px solid #333;
         }
-        input[type="text"], input[type="range"] { 
-            width: 90%; 
-            padding: 10px; 
-            margin: 5px; 
-            background: #222; 
-            border: 1px solid #4a7e6e; 
-            color: #fff; 
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
         }
-        button { 
-            background: #4a7e6e; 
-            color: #fff; 
-            border: none; 
-            padding: 10px 20px; 
-            margin: 5px; 
-            cursor: pointer; 
+        label { color: #d3cbab; font-size: 0.9em; }
+        input[type="range"] {
+            width: 150px;
+            accent-color: #4a7e6e;
         }
-        canvas { 
-            border: 2px solid #4a7e6e; 
-            max-width: 100%; 
-            margin-top: 20px; 
-            display: none;
+        button {
+            background: #4a7e6e;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(74,126,110,0.4);
+            transition: 0.3s;
+            margin: 5px;
         }
-        #status { color: #4a7e6e; margin-top: 10px; }
+        button:hover {
+            background: #5a9e8e;
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(74,126,110,0.6);
+        }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
-    <h1>ART MARKS // HOLOGRAM</h1>
+
+<header>
+    <h1>ART MARKS // CYBER HOLOGRAM</h1>
+    <p style="color: #666; margin: 5px 0 0 0; font-size: 0.9em;">حوّل أي لوحة إلى هولوغرام ثلاثي الأبعاد متحرك</p>
+</header>
+
+<div class="upload-area" onclick="document.getElementById('file').click()">
+    <input type="file" id="file" accept="image/*" style="display:none" onchange="loadImage(event)">
+    <h3>📤 اضغط هنا لرفع الصورة</h3>
+    <p style="font-size: 0.8em; margin: 5px 0 0 0;">سيتم تحويلها تلقائياً إلى أسلوب النيون الفسفوري</p>
+</div>
+
+<div id="controls" class="controls hidden">
+    <div class="control-group">
+        <label>شدة التوهج (Glow)</label>
+        <input type="range" id="glow" min="10" max="100" value="50">
+    </div>
+    <div class="control-group">
+        <label>سرعة الحركة (Float)</label>
+        <input type="range" id="speed" min="1" max="10" value="3">
+    </div>
+    <div class="control-group">
+        <label>التشويش الرقمي (Glitch)</label>
+        <input type="range" id="glitch" min="0" max="10" value="3">
+    </div>
+    <button onclick="saveImage()">💾 حفظ الصورة الحالية</button>
+</div>
+
+<div id="canvas-container" class="hidden">
+    <canvas id="canvas" width="600" height="800"></canvas>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let originalImage = null;
+let processedImage = null;
+let animationId = null;
+let time = 0;
+
+// Load and process image
+function loadImage(e) {
+    const file = e.target.files[0];
+    if (!file) return;
     
-    <div class="box" onclick="document.getElementById('file').click()">
-        <input type="file" id="file" accept="image/*" style="display:none" onchange="loadImage(event)">
-        <p>📤 اضغط هنا لرفع الصورة</p>
-    </div>
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+            originalImage = img;
+            processImage(); // Convert to neon style immediately
+            document.getElementById('controls').classList.remove('hidden');
+            document.getElementById('canvas-container').classList.remove('hidden');
+            startAnimation();
+        };
+        img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+}
 
-    <div id="controls">
-        <p>ارتفاع الهولوغرام: <span id="val">40</span></p>
-        <input type="range" id="el" min="0" max="80" value="40" oninput="document.getElementById('val').innerText=this.value">
+// Convert image colors to neon spectrum (Green/Cyan/Beige)
+function processImage() {
+    const w = originalImage.width;
+    const h = originalImage.height;
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = w;
+    tempCanvas.height = h;
+    const tCtx = tempCanvas.getContext('2d');
+    
+    tCtx.drawImage(originalImage, 0, 0);
+    const imgData = tCtx.getImageData(0, 0, w, h);
+    const data = imgData.data;
+    
+    for (let i = 0; i < data.length; i += 4) {
+        const r = data[i], g = data[i+1], b = data[i+2];
+        const brightness = (r + g + b) / 3;
         
-        <input type="text" id="t" value="ARTWORK" placeholder="اسم العمل"><br>
-        <input type="text" id="a" value="ARTIST" placeholder="الفنان"><br><br>
+        // Map to neon spectrum (Green -> Cyan -> Beige/Pink)
+        if (brightness < 60) {
+            // Shadows: Deep Art Green
+            data[i] = 20; data[i+1] = 60; data[i+2] = 50;
+        } else if (brightness < 120) {
+            // Mid-tones: Art Green
+            data[i] = 74; data[i+1] = 126; data[i+2] = 110;
+        } else if (brightness < 180) {
+            // Highlights: Cyan/Beige mix
+            data[i] = 150; data[i+1] = 211; data[i+2] = 203;
+        } else {
+            // Brightest: White with cyan tint
+            data[i] = 200; data[i+1] = 255; data[i+2] = 255;
+        }
+    }
+    
+    tCtx.putImageData(imgData, 0, 0);
+    processedImage = tempCanvas;
+}
+
+// Main animation loop
+function animate() {
+    if (!processedImage) return;
+    
+    time += parseInt(document.getElementById('speed').value) * 0.02;
+    const glow = parseInt(document.getElementById('glow').value);
+    const glitchIntensity = parseInt(document.getElementById('glitch').value);
+    
+    const w = canvas.width;
+    const h = canvas.height;
+    const cx = w/2, cy = h/2;
+    
+    // Clear with fade effect for motion blur
+    ctx.fillStyle = 'rgba(5, 5, 5, 0.3)';
+    ctx.fillRect(0, 0, w, h);
+    
+    // Background grid
+    ctx.strokeStyle = 'rgba(74, 126, 110, 0.1)';
+    ctx.lineWidth = 1;
+    const gridSize = 40;
+    const offset = (time * 20) % gridSize;
+    for(let x=0; x<w; x+=gridSize) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+    }
+    for(let y=offset; y<h; y+=gridSize) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+    }
+    
+    // Floating animation parameters
+    const floatY = Math.sin(time) * 15; // Up/down
+    const rotate = Math.sin(time * 0.5) * 0.02; // Slight rotation
+    const scale = 1 + Math.sin(time * 0.3) * 0.02; // Pulse size
+    
+    ctx.save();
+    ctx.translate(cx, cy + floatY);
+    ctx.rotate(rotate);
+    ctx.scale(scale, scale);
+    
+    // Draw shadow/glow layers (3D depth)
+    for(let i=5; i>0; i--) {
+        ctx.globalAlpha = 0.1;
+        ctx.shadowBlur = glow * (i/2);
+        ctx.shadowColor = '#4a7e6e';
+        ctx.drawImage(processedImage, -processedImage.width/2 - i, -processedImage.height/2 + i*2, processedImage.width, processedImage.height);
+    }
+    
+    // Glitch effect (random slices)
+    if (glitchIntensity > 0 && Math.random() < glitchIntensity * 0.1) {
+        const sliceHeight = 20 + Math.random() * 50;
+        const sliceY = Math.random() * processedImage.height;
+        const offsetX = (Math.random() - 0.5) * 20;
         
-        <button onclick="generate()">✨ إنشاء البطاقة</button>
-        <button onclick="save()">💾 تحميل</button>
-    </div>
+        ctx.drawImage(processedImage, 0, sliceY, processedImage.width, sliceHeight, 
+                     offsetX - processedImage.width/2, sliceY - processedImage.height/2, 
+                     processedImage.width, sliceHeight);
+        
+        // RGB Shift (draw red and cyan channels offset)
+        ctx.globalCompositeOperation = 'screen';
+        ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
+        ctx.fillRect(-processedImage.width/2 - 2, -processedImage.height/2, processedImage.width, processedImage.height);
+        ctx.fillStyle = 'rgba(0, 255, 255, 0.3)';
+        ctx.fillRect(-processedImage.width/2 + 2, -processedImage.height/2, processedImage.width, processedImage.height);
+        ctx.globalCompositeOperation = 'source-over';
+    } else {
+        // Normal draw with neon glow
+        ctx.globalAlpha = 1;
+        ctx.shadowBlur = glow;
+        ctx.shadowColor = '#4a7e6e';
+        ctx.drawImage(processedImage, -processedImage.width/2, -processedImage.height/2);
+    }
+    
+    // Scanlines on image
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    for(let i=0; i<processedImage.height; i+=4) {
+        ctx.fillRect(-processedImage.width/2, -processedImage.height/2 + i, processedImage.width, 1);
+    }
+    
+    ctx.restore();
+    
+    // Draw Cyber Frame (HUD)
+    drawFrame(w, h, glow, time);
+    
+    // Draw Text Info
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 24px "Orbitron"';
+    ctx.fillStyle = '#d3cbab';
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = '#4a7e6e';
+    ctx.fillText('ART MARKS AUTHENTIC', cx, h - 80);
+    
+    ctx.font = '16px "Tajawal"';
+    ctx.fillStyle = '#4a7e6e';
+    ctx.fillText('EDITION 1/1 // PHOSPHOR HOLOGRAM', cx, h - 50);
+    
+    // Random circuit lines
+    if (Math.random() > 0.9) {
+        ctx.strokeStyle = 'rgba(74, 126, 110, 0.5)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        const lx = Math.random() * w;
+        ctx.moveTo(lx, 0);
+        ctx.lineTo(lx, Math.random() * 100);
+        ctx.stroke();
+    }
+    
+    animationId = requestAnimationFrame(animate);
+}
 
-    <canvas id="c" width="600" height="800"></canvas>
-    <p id="status"></p>
+function drawFrame(w, h, glow, time) {
+    const padding = 20;
+    const pulse = 1 + Math.sin(time * 2) * 0.1;
+    
+    ctx.save();
+    ctx.strokeStyle = '#4a7e6e';
+    ctx.lineWidth = 3;
+    ctx.shadowBlur = glow * pulse;
+    ctx.shadowColor = '#4a7e6e';
+    
+    // Draw corner brackets only (cyber style)
+    const cornerSize = 40;
+    
+    // Top Left
+    ctx.beginPath();
+    ctx.moveTo(padding, padding + cornerSize);
+    ctx.lineTo(padding, padding);
+    ctx.lineTo(padding + cornerSize, padding);
+    ctx.stroke();
+    
+    // Top Right
+    ctx.beginPath();
+    ctx.moveTo(w - padding - cornerSize, padding);
+    ctx.lineTo(w - padding, padding);
+    ctx.lineTo(w - padding, padding + cornerSize);
+    ctx.stroke();
+    
+    // Bottom Left
+    ctx.beginPath();
+    ctx.moveTo(padding, h - padding - cornerSize);
+    ctx.lineTo(padding, h - padding);
+    ctx.lineTo(padding + cornerSize, h - padding);
+    ctx.stroke();
+    
+    // Bottom Right
+    ctx.beginPath();
+    ctx.moveTo(w - padding - cornerSize, h - padding);
+    ctx.lineTo(w - padding, h - padding);
+    ctx.lineTo(w - padding, h - padding - cornerSize);
+    ctx.stroke();
+    
+    // Animated lines on sides
+    const lineY = (time * 50) % h;
+    ctx.strokeStyle = 'rgba(211, 203, 171, 0.8)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(padding, lineY);
+    ctx.lineTo(padding + 20, lineY);
+    ctx.moveTo(w - padding, lineY);
+    ctx.lineTo(w - padding - 20, lineY);
+    ctx.stroke();
+    
+    ctx.restore();
+}
 
-    <script>
-        let img = null;
-        const canvas = document.getElementById('c');
-        const ctx = canvas.getContext('2d');
+function startAnimation() {
+    if (animationId) cancelAnimationFrame(animationId);
+    animate();
+}
 
-        function loadImage(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            document.getElementById('status').innerText = 'جاري التحميل...';
-            
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                img = new Image();
-                img.onload = function() {
-                    document.getElementById('controls').style.display = 'block';
-                    canvas.style.display = 'inline-block';
-                    document.getElementById('status').innerText = 'تم التحميل! اضغط إنشاء';
-                    generate(); // توليد تلقائي عند التحميل
-                };
-                img.src = event.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
+function saveImage() {
+    const link = document.createElement('a');
+    link.download = 'ArtMarks_Cyber_Hologram_' + Date.now() + '.png';
+    link.href = canvas.toDataURL();
+    link.click();
+}
 
-        function generate() {
-            if (!img) {
-                alert('يرجى رفع صورة أولاً');
-                return;
-            }
-            
-            const w = 600, h = 800;
-            const el = parseInt(document.getElementById('el').value);
-            const title = document.getElementById('t').value;
-            const artist = document.getElementById('a').value;
-            
-            // خلفية سوداء
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, w, h);
-            
-            // قاعدة البطاقة
-            const cy = h - 200;
-            ctx.fillStyle = '#0f1f1a';
-            ctx.strokeStyle = '#4a7e6e';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(50, cy);
-            ctx.lineTo(550, cy);
-            ctx.lineTo(530, cy+150);
-            ctx.lineTo(70, cy+150);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-            
-            // الصورة الطافرة
-            const iw = 350, ih = iw * 1.2;
-            const ix = (w - iw) / 2;
-            const iy = cy - ih + 50 - el;
-            
-            // ظلال الارتفاع (3D effect)
-            for(let i=10; i>=0; i--) {
-                ctx.fillStyle = `rgba(74,126,110,${0.1-i*0.008})`;
-                ctx.fillRect(ix-i, iy+i*3, iw+i*2, ih+i*2);
-            }
-            
-            // الصورة الأساسية
-            ctx.drawImage(img, ix, iy, iw, ih);
-            
-            // طبقة فسفورية خضراء
-            ctx.globalCompositeOperation = 'overlay';
-            ctx.fillStyle = 'rgba(74, 126, 110, 0.3)';
-            ctx.fillRect(ix, iy, iw, ih);
-            ctx.globalCompositeOperation = 'source-over';
-            
-            // إطار مضيء
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = '#4a7e6e';
-            ctx.strokeStyle = '#4a7e6e';
-            ctx.lineWidth = 3;
-            ctx.strokeRect(ix, iy, iw, ih);
-            ctx.shadowBlur = 0;
-            
-            // النص
-            ctx.fillStyle = '#d3cbab';
-            ctx.textAlign = 'center';
-            ctx.font = 'bold 28px Arial';
-            ctx.fillText(title, w/2, cy+60);
-            ctx.fillStyle = '#4a7e6e';
-            ctx.font = '20px Arial';
-            ctx.fillText(artist, w/2, cy+90);
-            ctx.font = '14px Arial';
-            ctx.fillText('◉ AUTHENTICATED // 1/1', w/2, cy+120);
-            
-            document.getElementById('status').innerText = 'تم الإنشاء!';
-        }
+// Stop animation when tab hidden to save resources
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden && animationId) {
+        cancelAnimationFrame(animationId);
+    } else if (!document.hidden && processedImage) {
+        animate();
+    }
+});
+</script>
 
-        function save() {
-            const link = document.createElement('a');
-            link.download = 'ArtMarks_Hologram.png';
-            link.href = canvas.toDataURL();
-            link.click();
-        }
-    </script>
 </body>
 </html>
