@@ -1,6 +1,6 @@
-ممتاز! دعنا نصلح **خطأ الحفظ** بشكل نهائي.
+ممتاز، فهمت تماماً. ننتقل من **"VHS Glitch"** إلى **"Luxury Gallery"**.
 
-الكود أدناه يحتوي على **معالجة أخطاء شاملة** و**بدائل متعددة** إذا فشل أحد الأنظمة:
+الكود الجديد يحافظ على لوحتك كما هي (بدون تدمير الألوان الأصلية)، ويضيف حولها أجواء سينمائية فاخرة: إضاءة ناعمة، ظلال متحركة، جسيمات تطفو بهدوء، ومؤثرات عدسة احترافية.
 
 ```html
 <!DOCTYPE html>
@@ -8,422 +8,412 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Art Marks - Cinematic Export Fixed</title>
+    <title>Art Marks | Luxury Gallery Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- GIF Library with fallback -->
     <script src="https://cdn.jsdelivr.net/npm/gifshot@0.4.5/dist/gifshot.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@300;500;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
         
         body { 
-            background: #020202; 
-            color: #fff; 
+            background: radial-gradient(circle at 50% 50%, #0a1518 0%, #000000 100%);
+            color: #fff;
             font-family: 'Orbitron', sans-serif;
             margin: 0;
-            min-height: 100vh;
+            overflow: hidden;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
         }
         
+        /* Luxury Vignette - Softer */
         .vignette {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.9) 100%);
+            background: radial-gradient(circle at 50% 40%, transparent 20%, rgba(0,0,0,0.6) 80%);
             pointer-events: none;
-            z-index: 10;
+            z-index: 5;
         }
         
-        .cyber-btn {
-            background: linear-gradient(90deg, #00d4ff, #0066ff);
-            border: none;
-            color: #000;
-            padding: 12px 24px;
-            font-weight: 900;
-            font-family: 'Orbitron', sans-serif;
-            cursor: pointer;
-            clip-path: polygon(8px 0, 100% 0, 92% 100%, 0% 100%);
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
-            transition: all 0.3s;
-            font-size: 11px;
-            letter-spacing: 1px;
-        }
-        .cyber-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
-        }
-        .cyber-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .upload-box {
-            border: 2px dashed rgba(0, 212, 255, 0.4);
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-        .upload-box:hover {
-            border-color: #00d4ff;
-            box-shadow: 0 0 25px rgba(0, 212, 255, 0.3);
+        /* Ambient Dust Particles */
+        .ambient-light {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(0, 212, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(212, 0, 255, 0.05) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: 1;
         }
         
         canvas {
-            box-shadow: 0 0 40px rgba(0, 212, 255, 0.2);
-            max-width: 90vw;
-            max-height: 60vh;
+            border-radius: 2px;
+            filter: drop-shadow(0 20px 50px rgba(0,0,0,0.8));
         }
         
-        .status-bar {
-            background: rgba(0, 0, 0, 0.9);
-            border: 1px solid #00d4ff;
-            color: #00d4ff;
-            padding: 10px 20px;
-            font-family: monospace;
-            font-size: 12px;
-            margin-top: 10px;
-            display: none;
+        .luxury-btn {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 14px 32px;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 14px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
         }
         
-        .error-msg {
-            color: #ff0044;
-            font-size: 11px;
-            margin-top: 5px;
+        .luxury-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(0, 212, 255, 0.5);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .luxury-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        
+        .upload-area {
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            transition: all 0.5s ease;
+        }
+        .upload-area:hover {
+            border-color: rgba(0, 212, 255, 0.4);
+            background: rgba(0, 212, 255, 0.05);
+            transform: scale(1.02);
+        }
+        
+        .status-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
 
+    <div class="ambient-light"></div>
     <div class="vignette"></div>
 
-    <div class="absolute top-6 text-center z-30">
-        <h1 class="text-3xl font-black text-[#00d4ff]" style="text-shadow: 0 0 20px #00d4ff;">ART MARKS // EXPORT FIXED</h1>
+    <!-- Header -->
+    <div class="absolute top-8 text-center z-30 w-full pointer-events-none">
+        <p class="text-[10px] tracking-[0.5em] text-gray-500 mb-2 uppercase">Art Authentication System</p>
+        <h1 class="text-4xl font-light text-white" style="font-family: 'Playfair Display', serif; letter-spacing: 4px;">
+            ART MARKS <span class="text-cyan-400 font-normal">//</span> GALLERY
+        </h1>
     </div>
 
     <!-- Upload -->
-    <div id="upload-section" class="z-30 upload-box p-8 rounded-lg text-center m-4" onclick="document.getElementById('file').click()">
-        <input type="file" id="file" accept="image/*" style="display:none" onchange="loadImage(event)">
-        <div class="text-5xl mb-3">📡</div>
-        <h3 class="text-[#00d4ff] font-bold text-lg">رفع الصورة</h3>
+    <div id="upload-section" class="upload-area z-30 p-12 rounded-sm text-center cursor-pointer" onclick="document.getElementById('file').click()">
+        <input type="file" id="file" accept="image/*" style="display:none" onchange="loadArtwork(event)">
+        <div class="text-4xl mb-4 opacity-60">✦</div>
+        <h3 class="text-white font-light text-lg tracking-widest mb-2" style="font-family: 'Playfair Display', serif;">رفع العمل الفني</h3>
+        <p class="text-gray-500 text-xs tracking-wider">سيتم عرضه في معرض افتراضي فاخر</p>
     </div>
 
     <!-- Controls -->
-    <div id="controls" class="hidden z-30 flex flex-wrap justify-center gap-3 mb-4 px-4">
-        <button onclick="exportGIF()" class="cyber-btn">🎞️ حفظ GIF</button>
-        <button onclick="exportWebM()" class="cyber-btn" style="background: linear-gradient(90deg, #ff00aa, #aa00ff);">🎥 حفظ فيديو (WebM)</button>
-        <button onclick="exportPNG()" class="cyber-btn" style="background: linear-gradient(90deg, #00aa44, #00ff88);">🖼️ حفظ صورة (PNG)</button>
+    <div id="controls" class="hidden z-30 mt-8 flex gap-4 mb-6">
+        <button onclick="exportMP4()" class="luxury-btn">حفظ فيديو (WebM)</button>
+        <button onclick="exportGIF()" class="luxury-btn">حفظ GIF</button>
+        <button onclick="saveFrame()" class="luxury-btn">حفظ صورة ثابتة</button>
     </div>
 
-    <div id="status-bar" class="status-bar z-40 rounded">
-        <span id="status-text">جاري المعالجة...</span>
-        <div class="w-full bg-gray-800 h-1 mt-2">
-            <div id="progress-bar" class="bg-[#00d4ff] h-1 transition-all duration-300" style="width: 0%"></div>
-        </div>
-        <div id="error-container" class="error-msg"></div>
-    </div>
+    <div id="status" class="status-text z-30 mb-4 hidden">جاري المعالجة...</div>
 
+    <!-- Canvas -->
     <div id="canvas-container" class="hidden relative z-20">
-        <canvas id="c" width="800" height="500" class="bg-black rounded"></canvas>
+        <canvas id="c" width="900" height="600" class="bg-black"></canvas>
     </div>
 
     <script>
         const canvas = document.getElementById('c');
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
-        let img = null;
-        let processedCanvas = null;
-        let frame = 0;
-        let animationId = null;
-        let isRecording = false;
+        const ctx = canvas.getContext('2d');
+        let artwork = null;
+        let particles = [];
+        let time = 0;
+        
+        // Particle Class for Floating Dust (Luxury feel)
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            
+            reset() {
+                this.x = Math.random() * 900;
+                this.y = Math.random() * 600;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.speedY = (Math.random() - 0.5) * 0.3;
+                this.opacity = Math.random() * 0.5 + 0.1;
+            }
+            
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                
+                if(this.x < 0 || this.x > 900 || this.y < 0 || this.y > 600) {
+                    this.reset();
+                }
+            }
+            
+            draw() {
+                ctx.fillStyle = `rgba(200, 230, 255, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        // Initialize particles
+        for(let i = 0; i < 50; i++) {
+            particles.push(new Particle());
+        }
 
-        function loadImage(e) {
+        function loadArtwork(e) {
             const f = e.target.files[0];
             if(!f) return;
             
             const r = new FileReader();
             r.onload = (ev) => {
-                const i = new Image();
-                i.onload = () => {
-                    img = i;
-                    processImage();
+                const img = new Image();
+                img.onload = () => {
+                    artwork = img;
                     document.getElementById('upload-section').classList.add('hidden');
                     document.getElementById('controls').classList.remove('hidden');
                     document.getElementById('canvas-container').classList.remove('hidden');
                     animate();
                 };
-                i.src = ev.target.result;
+                img.src = ev.target.result;
             };
             r.readAsDataURL(f);
         }
 
-        function processImage() {
-            processedCanvas = document.createElement('canvas');
-            processedCanvas.width = 800;
-            processedCanvas.height = 500;
-            const pCtx = processedCanvas.getContext('2d');
+        function drawLuxuryFrame(x, y, w, h) {
+            // Acrylic/Glass frame effect
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x - 20, y - 20, w + 40, h + 40);
             
-            const aspect = img.width / img.height;
-            let w = 800, h = 500;
-            if(aspect > w/h) h = w/aspect; else w = h*aspect;
-            pCtx.drawImage(img, (800-w)/2, (500-h)/2, w, h);
+            // Inner glow line (soft)
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = 'rgba(0, 212, 255, 0.15)';
+            ctx.strokeStyle = 'rgba(0, 212, 255, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x - 10, y - 10, w + 20, h + 20);
+            ctx.shadowBlur = 0;
             
-            // Cinematic grading
-            const d = pCtx.getImageData(0, 0, 800, 500);
-            for(let i=0; i<d.data.length; i+=4) {
-                const bright = (d.data[i] + d.data[i+1] + d.data[i+2]) / 3;
-                if(bright < 30) { d.data[i]=0; d.data[i+1]=10; d.data[i+2]=20; }
-                else if(bright < 180) {
-                    d.data[i]=0;
-                    d.data[i+1]=100 + (bright/255)*155;
-                    d.data[i+2]=150 + (bright/255)*105;
-                } else {
-                    d.data[i]=100 + ((bright-180)/75)*155;
-                    d.data[i+1]=200 + ((bright-180)/75)*55;
-                    d.data[i+2]=255;
-                }
-            }
-            pCtx.putImageData(d, 0, 0);
+            // Corner accents (elegant)
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+            const cornerSize = 15;
+            // Top left
+            ctx.fillRect(x - 20, y - 20, cornerSize, 1);
+            ctx.fillRect(x - 20, y - 20, 1, cornerSize);
+            // Top right
+            ctx.fillRect(x + w + 20 - cornerSize, y - 20, cornerSize, 1);
+            ctx.fillRect(x + w + 20 - 1, y - 20, 1, cornerSize);
+            // Bottom left
+            ctx.fillRect(x - 20, y + h + 20 - 1, cornerSize, 1);
+            ctx.fillRect(x - 20, y + h + 20 - cornerSize, 1, cornerSize);
+            // Bottom right
+            ctx.fillRect(x + w + 20 - cornerSize, y + h + 20 - 1, cornerSize, 1);
+            ctx.fillRect(x + w + 20 - 1, y + h + 20 - cornerSize, 1, cornerSize);
         }
 
         function animate() {
-            frame++;
-            ctx.fillStyle = '#050505';
-            ctx.fillRect(0, 0, 800, 500);
+            if(!artwork) return;
+            time += 0.016; // ~60fps
             
-            // Grid
-            ctx.strokeStyle = 'rgba(0, 212, 255, 0.1)';
-            for(let x=0; x<800; x+=40) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,500); ctx.stroke(); }
+            // Clear with fade for smooth trails
+            ctx.fillStyle = 'rgba(5, 8, 10, 0.3)';
+            ctx.fillRect(0, 0, 900, 600);
             
-            if(processedCanvas) {
-                ctx.save();
-                ctx.translate(400, 250);
-                ctx.scale(1 + Math.sin(frame*0.02)*0.05, 1 + Math.sin(frame*0.02)*0.05);
-                ctx.translate(-400, -250);
-                
-                // Chromatic
-                ctx.globalCompositeOperation = 'screen';
-                ctx.drawImage(processedCanvas, -8, 0);
-                ctx.drawImage(processedCanvas, 8, 0);
-                ctx.globalCompositeOperation = 'source-over';
-                
-                // Bloom
-                ctx.shadowBlur = 40;
-                ctx.shadowColor = '#00d4ff';
-                ctx.drawImage(processedCanvas, 0, 0);
-                ctx.shadowBlur = 0;
-                
-                ctx.restore();
-                
-                // Frame
-                drawFrame();
-            }
+            // Center calculations
+            const centerX = 450;
+            const centerY = 300;
             
-            animationId = requestAnimationFrame(animate);
+            // === CINEMATIC CAMERA MOVEMENT ===
+            
+            // 1. Slow Cinematic Zoom (breathing effect)
+            const zoomBase = 1 + Math.sin(time * 0.3) * 0.015; // Very subtle, 1.5% zoom
+            
+            // 2. Subtle Parallax (floating in space)
+            const parallaxX = Math.sin(time * 0.4) * 8; // 8px max movement
+            const parallaxY = Math.cos(time * 0.35) * 5;
+            
+            // 3. Depth Tilt (3D rotation simulation)
+            const tiltX = Math.sin(time * 0.2) * 0.02; // Slight rotation Y
+            const tiltY = Math.cos(time * 0.25) * 0.01; // Slight rotation X
+            
+            // Calculate image size maintaining aspect ratio
+            const aspect = artwork.width / artwork.height;
+            let imgW = 700, imgH = 700 / aspect;
+            if(imgH > 500) { imgH = 500; imgW = 500 * aspect; }
+            
+            const x = centerX - imgW/2 + parallaxX;
+            const y = centerY - imgH/2 + parallaxY;
+            
+            // === SHADOW (Animated depth) ===
+            const shadowOffsetX = 10 + Math.sin(time * 0.3) * 5;
+            const shadowOffsetY = 20 + Math.cos(time * 0.3) * 5;
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+            ctx.filter = 'blur(30px)';
+            ctx.fillRect(x + shadowOffsetX, y + shadowOffsetY, imgW, imgH);
+            ctx.filter = 'none';
+            
+            // === DRAW ARTWORK ===
+            ctx.save();
+            
+            // Apply zoom from center
+            ctx.translate(centerX, centerY);
+            ctx.scale(zoomBase, zoomBase);
+            ctx.translate(-centerX, -centerY);
+            
+            // Apply subtle tilt (skew simulation)
+            ctx.translate(centerX, centerY);
+            ctx.transform(1, tiltY, tiltX, 1, 0, 0); // Subtle 3D skew
+            ctx.translate(-centerX, -centerY);
+            
+            // Soft Glow around artwork (not on it)
+            ctx.shadowBlur = 40;
+            ctx.shadowColor = 'rgba(0, 212, 255, 0.1)';
+            
+            // Draw the original artwork (PRESERVED - no pixel manipulation)
+            ctx.drawImage(artwork, x, y, imgW, imgH);
+            
+            ctx.restore();
+            
+            // === SOFT LIGHT SWEEP (The "Sheen" effect) ===
+            const sweepX = (time * 100) % 1200 - 150; // Move across screen
+            const gradient = ctx.createLinearGradient(sweepX, 0, sweepX + 200, 600);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+            gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.03)'); // Very subtle sheen
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            
+            ctx.globalCompositeOperation = 'overlay';
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 900, 600);
+            ctx.globalCompositeOperation = 'source-over';
+            
+            // === FLOATING PARTICLES (Around the artwork) ===
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            
+            // === LUXURY FRAME ===
+            drawLuxuryFrame(x, y, imgW, imgH);
+            
+            // === ADAPTIVE LIGHTING ===
+            // Analyze average brightness (simplified)
+            // In a real app, we'd analyze the image once. Here we simulate with time.
+            const ambientGlow = Math.abs(Math.sin(time * 0.5)) * 0.05;
+            ctx.fillStyle = `rgba(0, 212, 255, ${ambientGlow})`;
+            ctx.globalCompositeOperation = 'screen';
+            ctx.fillRect(0, 0, 900, 600);
+            ctx.globalCompositeOperation = 'source-over';
+            
+            requestAnimationFrame(animate);
         }
 
-        function drawFrame() {
-            ctx.strokeStyle = '#00d4ff';
-            ctx.lineWidth = 3;
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = '#00d4ff';
-            ctx.strokeRect(20, 20, 760, 460);
-            ctx.fillStyle = 'rgba(0, 20, 40, 0.8)';
-            ctx.fillRect(50, 420, 700, 50);
-            ctx.fillStyle = '#fff';
-            ctx.font = 'bold 20px Orbitron';
-            ctx.textAlign = 'center';
-            ctx.fillText('ART MARKS // AUTHENTIC', 400, 455);
+        // === EXPORT FUNCTIONS ===
+        
+        function showStatus(text) {
+            const s = document.getElementById('status');
+            s.innerText = text;
+            s.classList.remove('hidden');
+            setTimeout(() => s.classList.add('hidden'), 3000);
         }
 
-        // ========== EXPORT FUNCTIONS (FIXED) ==========
-
-        function showStatus(text, progress=0, error='') {
-            const bar = document.getElementById('status-bar');
-            const txt = document.getElementById('status-text');
-            const prg = document.getElementById('progress-bar');
-            const err = document.getElementById('error-container');
+        function exportMP4() {
+            showStatus('جاري تسجيل الفيديو (5 ثوانٍ)...');
+            const stream = canvas.captureStream(30);
+            const options = { mimeType: 'video/webm;codecs=vp9', videoBitsPerSecond: 20000000 };
             
-            bar.style.display = 'block';
-            txt.innerText = text;
-            prg.style.width = progress + '%';
-            err.innerText = error;
-            
-            if(progress >= 100 || error) {
-                setTimeout(() => {
-                    if(!error) bar.style.display = 'none';
-                }, 3000);
-            }
-        }
-
-        // 1. Export GIF (Using gifshot with error handling)
-        function exportGIF() {
-            if(isRecording) return;
-            isRecording = true;
-            showStatus('جاري تسجيل الإطارات...', 0);
-            
-            const frames = [];
-            let count = 0;
-            const maxFrames = 60; // 3 seconds
-            
-            // Pause animation and capture frames
-            const originalAnimate = animate;
-            
-            const captureInterval = setInterval(() => {
-                if(count < maxFrames) {
-                    frames.push(canvas.toDataURL('image/png'));
-                    count++;
-                    showStatus('تسجيل الإطارات...', (count/maxFrames)*50);
-                } else {
-                    clearInterval(captureInterval);
-                    showStatus('جاري إنشاء GIF...', 60);
-                    
-                    // Check if gifshot loaded
-                    if(typeof gifshot === 'undefined') {
-                        showStatus('خطأ: لم تحمل المكتبة', 0, 'جاري تحميل المكتبة... أعد المحاولة');
-                        isRecording = false;
-                        return;
-                    }
-                    
-                    gifshot.createGIF({
-                        images: frames,
-                        gifWidth: 800,
-                        gifHeight: 500,
-                        interval: 0.05, // 20fps
-                        numFrames: frames.length,
-                        frameDuration: 1,
-                        sampleInterval: 10,
-                        numWorkers: 2
-                    }, function(obj) {
-                        isRecording = false;
-                        if(!obj.error) {
-                            showStatus('تم بنجاح!', 100);
-                            const a = document.createElement('a');
-                            a.href = obj.image;
-                            a.download = `ArtMarks_${Date.now()}.gif`;
-                            document.body.appendChild(a);
-                            a.click();
-                            document.body.removeChild(a);
-                        } else {
-                            showStatus('فشل إنشاء GIF', 0, 'استخدم خيار PNG أو WebM');
-                            console.error(obj.error);
-                        }
-                    });
-                }
-            }, 50);
-        }
-
-        // 2. Export WebM (Video) - Most reliable method
-        function exportWebM() {
-            if(isRecording) return;
-            
-            // Check browser support
-            if(!window.MediaRecorder) {
-                showStatus('المتصفح لا يدعم التسجيل', 0, 'استخدم Chrome أو Firefox');
-                return;
-            }
-            
-            isRecording = true;
-            showStatus('جاري تسجيل الفيديو...', 10);
-            
-            const stream = canvas.captureStream(30); // 30fps
-            
-            // Try VP9 first, fallback to VP8
-            let options = { mimeType: 'video/webm;codecs=vp9', videoBitsPerSecond: 20000000 };
-            if(!MediaRecorder.isTypeSupported(options.mimeType)) {
-                options = { mimeType: 'video/webm;codecs=vp8', videoBitsPerSecond: 20000000 };
-                if(!MediaRecorder.isTypeSupported(options.mimeType)) {
-                    options = { mimeType: 'video/webm', videoBitsPerSecond: 20000000 };
-                }
-            }
-            
-            let mediaRecorder;
+            let recorder;
             try {
-                mediaRecorder = new MediaRecorder(stream, options);
+                recorder = new MediaRecorder(stream, options);
             } catch(e) {
-                showStatus('خطأ في إعداد التسجيل', 0, 'جرب خيار PNG');
-                isRecording = false;
-                return;
+                try {
+                    recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+                } catch(e2) {
+                    alert('المتصفح لا يدعم تسجيل الفيديو');
+                    return;
+                }
             }
             
             const chunks = [];
-            
-            mediaRecorder.ondataavailable = (e) => {
-                if(e.data && e.data.size > 0) {
-                    chunks.push(e.data);
-                }
-            };
-            
-            mediaRecorder.onstop = () => {
-                isRecording = false;
-                if(chunks.length === 0) {
-                    showStatus('فشل التسجيل', 0, 'لم يتم التقاط بيانات');
-                    return;
-                }
-                
+            recorder.ondataavailable = e => { if(e.data.size) chunks.push(e.data); };
+            recorder.onstop = () => {
                 const blob = new Blob(chunks, { type: 'video/webm' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `ArtMarks_Cinematic_${Date.now()}.webm`;
-                document.body.appendChild(a);
+                a.download = `ArtMark_Gallery_${Date.now()}.webm`;
                 a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                showStatus('تم حفظ الفيديو!', 100);
             };
             
-            mediaRecorder.onerror = (e) => {
-                isRecording = false;
-                showStatus('خطأ في التسجيل', 0, 'جرب مرة أخرى');
-                console.error(e);
-            };
+            recorder.start();
+            setTimeout(() => recorder.stop(), 5000);
+        }
+
+        function exportGIF() {
+            showStatus('جاري إنشاء GIF (يرجى الانتظار)...');
+            const frames = [];
+            let count = 0;
             
-            // Record for 4 seconds
-            mediaRecorder.start(100); // Collect every 100ms
-            
-            let timeLeft = 4;
-            const timer = setInterval(() => {
-                timeLeft--;
-                showStatus(`تسجيل... ${timeLeft} ثواني متبقية`, 30 + ((4-timeLeft)/4)*40);
-                if(timeLeft <= 0) {
-                    clearInterval(timer);
-                    mediaRecorder.stop();
+            const capture = setInterval(() => {
+                if(count < 40) {
+                    frames.push(canvas.toDataURL('image/png'));
+                    count++;
+                } else {
+                    clearInterval(capture);
+                    gifshot.createGIF({
+                        images: frames,
+                        gifWidth: 900,
+                        gifHeight: 600,
+                        interval: 0.08
+                    }, obj => {
+                        if(!obj.error) {
+                            const a = document.createElement('a');
+                            a.href = obj.image;
+                            a.download = `ArtMark_Gallery_${Date.now()}.gif`;
+                            a.click();
+                        }
+                    });
                 }
-            }, 1000);
+            }, 80);
         }
 
-        // 3. Export PNG (Most reliable fallback)
-        function exportPNG() {
-            showStatus('جاري الحفظ...', 50);
-            try {
-                const a = document.createElement('a');
-                a.href = canvas.toDataURL('image/png', 1.0); // Max quality
-                a.download = `ArtMarks_Frame_${Date.now()}.png`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                showStatus('تم حفظ الصورة!', 100);
-            } catch(e) {
-                showStatus('خطأ في الحفظ', 0, 'حاول مرة أخرى');
-            }
+        function saveFrame() {
+            const a = document.createElement('a');
+            a.href = canvas.toDataURL('image/png', 1.0);
+            a.download = `ArtMark_Gallery_${Date.now()}.png`;
+            a.click();
+            showStatus('تم حفظ الإطار');
         }
-
-        // Error handling for libraries
-        window.onerror = function(msg, url, line) {
-            console.error('Error: ' + msg);
-            return false;
-        };
     </script>
 </body>
 </html>
 ```
 
-**التعديلات الجديدة لإصلاح الحفظ:**
-1. ✅ **معالجة أخطاء محسّنة**: إذا فشل GIF، يظهر خطأ واضح وي suggesting استخدام WebM أو PNG
-2. ✅ **WebM أكثر موثوقية**: محاولة VP9 أولاً، ثم VP8، ثم webm عادي
-3. ✅ **PNG كبديل**: زر ثالث يحفظ صورة ثابتة عالية الجودة (مضمونة 100%)
-4. ✅ **شريط تقدم واضح**: لمعرفة مرحلة الحفظ
-5. ✅ **تحقق من تحميل المكتبات**: قبل استخدام gifshot
-
-**جرب الآن، إذا فشل GIF استخدم WebM أو PNG مباشرة.** 🎬
+**التغييرات الجوهرية:**
+1.  **إزالة Glitch:** تم حذف كل تأثيرات التقطيع والـ RGB Split.
+2.  **إضاءة ناعمة:** استخدام `overlay` و `screen` بشكل خفيف جداً (3% شفافية) لإضاءة اللوحة لا تغييرها.
+3.  **حركة سينمائية:** 
+    *   `zoom` بنبض بطيء (breathing).
+    *   `parallax` بحركة موجية ناعمة (8 بكسل فقط).
+    *   `tilt` ثلاثي الأبعاد خفيف (محاكاة بالـ transform).
+4.  **جسيمات فاخرة:** نقاط ضوئية صغيرة تتحرك ببطء شديد (speed 0.3) حول اللوحة.
+5.  **ظل متحرك:** ظل ناعم يتحرك خلف اللوحة لإعطاء إحساس بالعمق والطفو.
+6.  **Light Sweep:** شعاع ضوء يمر على اللوحة بشكل ناعم (sheen) مثل إضاءة المعارض الفاخرة.
+7.  **حفظ اللوحة:** يُعرض العمل الفني بالألوان الأصلية بدون فلتر نيون قاسٍ.
