@@ -1,309 +1,321 @@
-هناك خطأ في الـ ID أو الدالة. دعني أعطيك نسخة **مضمونة 100%** وتم اختبارها - انسخها كاملة:
+الآن فهمت تماماً. إليك النسخة النهائية التي تحتوي على كل شيء طلبته:
+
+**المميزات:**
+1.  **ألوان طيف فسفورية تلقائية (Rainbow Cycle)**: الألوان تتغير باستمرار عبر الطيف الكامل (أخضر → أزرق → بنفسجي → وردي → أصفر).
+2.  **Glitch كثيف وواضح**: يظهر بشكل عشوائي قوي مع انزياح ألوان (RGB Split).
+3.  **حفظ كـ GIF حقيقي**: يستخدم مكتبة `gif.js` لتصدير الرسوم المتحركة كملف GIF.
+4.  **دوران 180 درجة (Y-Axis Rotation)**: الصورة تدور حول محورها الأفقي كأنها بطاقة تقلب.
+5.  **إضاءة هولوغرام خارجة (Volumetric Light)**: أشعة ضوئية تخرج من البطاقة نحو المشاهد.
+
+انسخ هذا الكود كاملاً:
 
 ```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Art Marks - Professional Hologram</title>
+    <title>Art Marks - Rainbow Hologram Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- GIF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap');
         
         body { 
-            background: #000; 
+            background: radial-gradient(circle at center, #0a1515 0%, #000 100%);
             color: #fff; 
             font-family: 'Orbitron', sans-serif;
-            overflow-x: hidden;
             margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
         }
         
-        .cyber-btn {
-            background: linear-gradient(45deg, #4a7e6e, #00d4ff);
-            border: none;
-            color: #000;
-            padding: 15px 40px;
-            font-weight: bold;
+        .upload-box {
+            border: 2px dashed #00d4ff;
+            background: rgba(0, 212, 255, 0.05);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
             cursor: pointer;
-            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
-            transition: 0.3s;
-            text-transform: uppercase;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
         }
-        .cyber-btn:hover {
-            filter: brightness(1.2);
-            transform: translateY(-2px);
-            box-shadow: 0 0 40px rgba(0, 212, 255, 0.8);
+        .upload-box:hover {
+            background: rgba(0, 212, 255, 0.15);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
+            transform: scale(1.02);
         }
         
         #canvas-container {
+            perspective: 1000px;
             position: relative;
-            display: inline-block;
-            box-shadow: 0 0 50px rgba(0, 212, 255, 0.3);
+        }
+        
+        #holo-card {
+            width: 600px;
+            height: 400px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.1s;
         }
         
         canvas {
             display: block;
-            background: radial-gradient(circle at center, #0a1f1f 0%, #000 100%);
+            border-radius: 8px;
+            box-shadow: 0 0 50px rgba(0, 212, 255, 0.3);
         }
         
-        .upload-zone {
-            border: 3px dashed #4a7e6e;
-            background: rgba(74, 126, 110, 0.1);
-            transition: all 0.3s;
+        /* Volumetric Light Effect */
+        .light-beam {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            width: 200px;
+            height: 400px;
+            background: linear-gradient(to top, rgba(0, 212, 255, 0.4), transparent);
+            transform: translateX(-50%) rotateX(60deg);
+            transform-origin: bottom;
+            filter: blur(20px);
+            pointer-events: none;
+            opacity: 0.6;
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; height: 300px; }
+            50% { opacity: 0.8; height: 500px; }
+        }
+        
+        .cyber-btn {
+            background: linear-gradient(90deg, #00d4ff, #4a7e6e);
+            border: none;
+            color: #000;
+            padding: 12px 30px;
+            font-weight: bold;
             cursor: pointer;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+            transition: 0.3s;
         }
-        .upload-zone:hover {
-            background: rgba(74, 126, 110, 0.2);
-            border-color: #00d4ff;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        .cyber-btn:hover {
+            filter: brightness(1.3);
+            box-shadow: 0 0 30px #00d4ff;
         }
+        
+        .loading {
+            border: 3px solid rgba(0, 212, 255, 0.3);
+            border-top: 3px solid #00d4ff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-4">
+<body class="p-4">
 
-    <!-- Header -->
-    <h1 class="text-4xl font-bold text-[#00d4ff] mb-2 text-center" style="text-shadow: 0 0 20px #00d4ff;">
-        ART MARKS <span class="text-white text-xl">// HOLOGRAM</span>
+    <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00d4ff] to-[#ff00aa] mb-2 mt-4" style="filter: drop-shadow(0 0 10px rgba(0,212,255,0.5));">
+        ART MARKS <span class="text-white text-lg">// RAINBOW HOLOGRAM</span>
     </h1>
-    <p class="text-[#4a7e6e] mb-8 font-mono text-sm">CYBERNETIC AUTHENTICITY SYSTEM</p>
+    <p class="text-[#4a7e6e] mb-6 font-mono text-sm">PRISMATIC AUTHENTICITY SYSTEM</p>
 
-    <!-- Upload Section -->
-    <div id="upload-box" class="upload-zone p-12 rounded-lg text-center mb-8" onclick="triggerUpload()">
-        <div class="text-6xl mb-4">📡</div>
-        <h3 class="text-[#00d4ff] font-bold text-xl mb-2">اضغط هنا لرفع الصورة</h3>
-        <p class="text-gray-500 text-sm">سيتم تحويلها تلقائياً إلى هولوغرام</p>
-        <!-- Hidden Input -->
-        <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="processImage(this)">
+    <!-- Upload -->
+    <div id="upload-section" class="upload-box p-10 rounded-lg text-center mb-6" onclick="document.getElementById('file').click()">
+        <input type="file" id="file" accept="image/*" style="display:none" onchange="init(event)">
+        <div class="text-5xl mb-3">🌈</div>
+        <h3 class="text-[#00d4ff] font-bold">اضغط لرفع الصورة</h3>
+        <p class="text-gray-500 text-xs mt-2">ستتحول تلقائياً لألوان الطيف الفسفورية</p>
     </div>
 
-    <!-- Controls (Hidden initially) -->
-    <div id="controls" class="hidden flex gap-6 mb-6 flex-wrap justify-center bg-gray-900/50 p-4 rounded border border-[#4a7e6e]">
+    <!-- Controls -->
+    <div id="controls" class="hidden flex gap-6 mb-6 items-center bg-black/50 p-4 rounded border border-[#4a7e6e] backdrop-blur">
         <div class="text-center">
-            <label class="block text-[#00d4ff] text-xs mb-1">GLITCH</label>
-            <input type="range" id="glitch" min="0" max="10" value="3" class="w-32 accent-[#00d4ff]" oninput="render()">
+            <label class="block text-[#00d4ff] text-xs mb-1">GLITCH INTENSITY</label>
+            <input type="range" id="glitch" min="0" max="20" value="8" class="w-32 accent-[#00d4ff]">
         </div>
         <div class="text-center">
-            <label class="block text-[#00d4ff] text-xs mb-1">GLOW</label>
-            <input type="range" id="glow" min="10" max="100" value="40" class="w-32 accent-[#00d4ff]" oninput="render()">
+            <label class="block text-[#00d4ff] text-xs mb-1">ROTATION SPEED</label>
+            <input type="range" id="rotSpeed" min="1" max="10" value="5" class="w-32 accent-[#00d4ff]">
         </div>
-        <div class="text-center">
-            <label class="block text-[#00d4ff] text-xs mb-1">HUE</label>
-            <input type="range" id="hue" min="0" max="360" value="170" class="w-32 accent-[#00d4ff]" oninput="render()">
-        </div>
-        <button onclick="downloadImage()" class="cyber-btn">💾 حفظ الصورة</button>
+        <button onclick="saveGIF()" class="cyber-btn flex items-center gap-2">
+            <span>💾</span> حفظ كـ GIF
+        </button>
+        <div id="loading" class="loading hidden"></div>
     </div>
 
-    <!-- Canvas -->
-    <div id="canvas-container" class="hidden">
-        <canvas id="mainCanvas" width="600" height="800" class="rounded border-2 border-[#4a7e6e]"></canvas>
-        <div class="absolute -bottom-8 left-0 w-full text-center text-[#4a7e6e] text-xs font-mono">
-            AUTHENTICATED // 1/1 // ART MARKS
+    <!-- Hologram Display -->
+    <div id="display" class="hidden relative">
+        <div class="light-beam"></div>
+        <div id="canvas-container">
+            <canvas id="c" width="600" height="400" class="border-2 border-[#00d4ff]/50"></canvas>
+        </div>
+        <div class="text-center mt-4 text-[#00d4ff] font-mono text-xs">
+            <span id="status">RENDERING HOLOGRAM...</span>
         </div>
     </div>
 
     <script>
-        // Global variables
-        let originalImage = null;
-        let processedImageData = null;
-        let animationId = null;
-        const canvas = document.getElementById('mainCanvas');
+        let img = null;
+        let hue = 0;
+        let rotation = 0;
+        let animId = null;
+        const canvas = document.getElementById('c');
         const ctx = canvas.getContext('2d');
 
-        // Trigger file input
-        function triggerUpload() {
-            document.getElementById('fileInput').click();
-        }
-
-        // Process uploaded image
-        function processImage(input) {
-            if (!input.files || input.files.length === 0) {
-                alert('لم يتم اختيار ملف');
-                return;
-            }
+        function init(e) {
+            const f = e.target.files[0];
+            if(!f) return;
             
-            const file = input.files[0];
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    // Store original
-                    originalImage = img;
-                    
-                    // Setup canvas
-                    canvas.width = 600;
-                    canvas.height = 800;
-                    
-                    // Initial draw and color processing
-                    convertToCyberpunk(img);
-                    
-                    // Show controls and canvas
-                    document.getElementById('upload-box').classList.add('hidden');
+            const r = new FileReader();
+            r.onload = (ev) => {
+                const i = new Image();
+                i.onload = () => {
+                    img = i;
+                    document.getElementById('upload-section').classList.add('hidden');
                     document.getElementById('controls').classList.remove('hidden');
-                    document.getElementById('canvas-container').classList.remove('hidden');
-                    
-                    // Start animation
-                    startAnimation();
+                    document.getElementById('display').classList.remove('hidden');
+                    animate();
                 };
-                img.src = e.target.result;
+                i.src = ev.target.result;
             };
-            
-            reader.readAsDataURL(file);
-        }
-
-        // Convert to cyberpunk colors (Cyan/Neon)
-        function convertToCyberpunk(img) {
-            // Draw original sized
-            const aspect = img.width / img.height;
-            let drawW = 600;
-            let drawH = 800;
-            
-            if (aspect > 0.75) {
-                drawH = drawW / aspect;
-            } else {
-                drawW = drawH * aspect;
-            }
-            
-            const x = (600 - drawW) / 2;
-            const y = (800 - drawH) / 2;
-            
-            // Create temp canvas for pixel manipulation
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = 600;
-            tempCanvas.height = 800;
-            const tCtx = tempCanvas.getContext('2d');
-            
-            tCtx.drawImage(img, x, y, drawW, drawH);
-            
-            // Get pixels
-            const imageData = tCtx.getImageData(0, 0, 600, 800);
-            const data = imageData.data;
-            
-            // Process each pixel
-            for (let i = 0; i < data.length; i += 4) {
-                const brightness = (data[i] + data[i+1] + data[i+2]) / 3;
-                
-                // Cyberpunk neon mapping
-                if (brightness < 60) {
-                    // Shadows: Deep Blue-Green
-                    data[i] = 0;
-                    data[i+1] = 40 + brightness;
-                    data[i+2] = 60 + brightness;
-                } else if (brightness < 150) {
-                    // Mids: Electric Cyan
-                    data[i] = 0;
-                    data[i+1] = 150 + (brightness - 60);
-                    data[i+2] = 255;
-                } else {
-                    // Highs: Hot Pink/White
-                    data[i] = 100 + (brightness - 150) * 3;
-                    data[i+1] = 200 + (brightness - 150);
-                    data[i+2] = 255;
-                }
-            }
-            
-            tCtx.putImageData(imageData, 0, 0);
-            processedImageData = tempCanvas;
-        }
-
-        // Animation Loop
-        let frame = 0;
-        function startAnimation() {
-            if (animationId) cancelAnimationFrame(animationId);
-            animate();
+            r.readAsDataURL(f);
         }
 
         function animate() {
-            frame++;
             const glitch = parseInt(document.getElementById('glitch').value);
-            const glow = parseInt(document.getElementById('glow').value);
-            const hue = parseInt(document.getElementById('hue').value);
+            const rotSpeed = parseInt(document.getElementById('rotSpeed').value);
             
-            // Clear
+            hue = (hue + 2) % 360; // Automatic rainbow cycle
+            rotation += rotSpeed * 0.5;
+            
             ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, 600, 800);
+            ctx.fillRect(0, 0, 600, 400);
             
-            // Background grid effect
-            ctx.strokeStyle = 'rgba(0, 212, 255, 0.1)';
-            ctx.lineWidth = 1;
-            const gridOffset = (frame * 2) % 40;
-            for (let y = gridOffset; y < 800; y += 40) {
-                ctx.beginPath();
-                ctx.moveTo(0, y);
-                ctx.lineTo(600, y);
-                ctx.stroke();
+            // Background grid with rainbow tint
+            ctx.strokeStyle = `hsla(${hue}, 70%, 50%, 0.2)`;
+            for(let i=0; i<600; i+=40) {
+                ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,400); ctx.stroke();
             }
             
-            if (processedImageData) {
-                const x = 0;
-                const y = 0;
+            if(img) {
+                ctx.save();
                 
-                // Floating effect
-                const floatY = Math.sin(frame * 0.05) * 10;
+                // Center and rotate 180 (flip)
+                ctx.translate(300, 200);
+                ctx.scale(Math.cos(rotation * 0.01), 1); // Horizontal flip rotation
+                ctx.translate(-300, -200);
                 
-                // Glitch effect - RGB Split
-                if (glitch > 0 && Math.random() < glitch * 0.02) {
-                    // Red channel offset
-                    ctx.globalCompositeOperation = 'screen';
-                    ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
-                    ctx.drawImage(processedImageData, x - 5, y + floatY);
-                    
-                    // Cyan channel offset
-                    ctx.fillStyle = 'rgba(0, 255, 255, 0.3)';
-                    ctx.drawImage(processedImageData, x + 5, y + floatY);
-                    ctx.globalCompositeOperation = 'source-over';
+                // Rainbow color processing
+                const temp = document.createElement('canvas');
+                temp.width = 600; temp.height = 400;
+                const tCtx = temp.getContext('2d');
+                
+                // Draw image
+                const aspect = img.width/img.height;
+                let w=600, h=400;
+                if(aspect>1.5){h=w/aspect;}else{w=h*aspect;}
+                tCtx.drawImage(img, (600-w)/2, (400-h)/2, w, h);
+                
+                // Get and color pixels
+                const d = tCtx.getImageData(0,0,600,400);
+                for(let i=0; i<d.data.length; i+=4) {
+                    const bright = (d.data[i]+d.data[i+1]+d.data[i+2])/3;
+                    if(bright>30) {
+                        const pixelHue = (hue + bright/2) % 360;
+                        const rgb = hslToRgb(pixelHue/360, 1, bright/255);
+                        d.data[i]=rgb[0]; d.data[i+1]=rgb[1]; d.data[i+2]=rgb[2];
+                    }
                 }
+                tCtx.putImageData(d,0,0);
                 
-                // Main image with glow
-                ctx.shadowBlur = glow;
-                ctx.shadowColor = '#00d4ff';
-                ctx.drawImage(processedImageData, x, y + floatY);
-                ctx.shadowBlur = 0;
-                
-                // Scanlines
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
-                for (let i = 0; i < 800; i += 4) {
-                    if ((i + frame) % 8 < 4) {
-                        ctx.fillRect(0, i + floatY, 600, 2);
+                // Glitch Effect (Heavy)
+                if(glitch>0 && Math.random()<0.1) {
+                    for(let g=0; g<glitch; g++) {
+                        const gy = Math.random()*400;
+                        const gh = Math.random()*30+5;
+                        const shift = (Math.random()-0.5)*glitch*3;
+                        ctx.drawImage(temp, 0, gy, 600, gh, shift, gy, 600, gh);
                     }
                 }
                 
-                // Frame border
-                ctx.strokeStyle = '#4a7e6e';
-                ctx.lineWidth = 3;
-                ctx.strokeRect(20, 20, 560, 760);
+                // Main draw with glow
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+                ctx.drawImage(temp, 0, 0);
+                ctx.shadowBlur = 0;
                 
-                // Corner accents
-                ctx.fillStyle = '#00d4ff';
-                ctx.fillRect(20, 20, 30, 3);
-                ctx.fillRect(20, 20, 3, 30);
-                ctx.fillRect(550, 20, 30, 3);
-                ctx.fillRect(577, 20, 3, 30);
+                // RGB Split Glitch lines
+                if(Math.random()<0.05) {
+                    ctx.globalCompositeOperation = 'screen';
+                    ctx.fillStyle = 'rgba(255,0,0,0.3)';
+                    ctx.fillRect(Math.random()*50, 0, 600, 400);
+                    ctx.globalCompositeOperation = 'source-over';
+                }
+                
+                // Scanlines
+                ctx.fillStyle = `rgba(0,0,0,${0.3+Math.random()*0.2})`;
+                for(let y=0; y<400; y+=4) ctx.fillRect(0,y,600,2);
+                
+                ctx.restore();
             }
             
-            animationId = requestAnimationFrame(animate);
+            animId = requestAnimationFrame(animate);
         }
 
-        function render() {
-            // Just trigger repaint, animation loop handles it
+        function saveGIF() {
+            document.getElementById('loading').classList.remove('hidden');
+            
+            const gif = new GIF({
+                workers: 2,
+                quality: 10,
+                width: 600,
+                height: 400,
+                workerScript: 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js'
+            });
+            
+            // Capture 60 frames (2 seconds at 30fps)
+            let frames = 0;
+            const capture = () => {
+                if(frames<60) {
+                    gif.addFrame(canvas, {delay: 33, copy: true});
+                    frames++;
+                    setTimeout(capture, 33);
+                } else {
+                    gif.render();
+                }
+            };
+            
+            gif.on('finished', (blob) => {
+                document.getElementById('loading').classList.add('hidden');
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `ArtMarks_Rainbow_${Date.now()}.gif`;
+                a.click();
+            });
+            
+            capture();
         }
 
-        function downloadImage() {
-            const link = document.createElement('a');
-            link.download = 'ArtMarks_Hologram_' + Date.now() + '.png';
-            link.href = canvas.toDataURL();
-            link.click();
+        function hslToRgb(h,s,l) {
+            let r,g,b;
+            if(s==0){r=g=b=l;}else{
+                const hue2rgb=(p,q,t)=>{
+                    if(t<0)t+=1;if(t>1)t-=1;
+                    if(t<1/6)return p+(q-p)*6*t;
+                    if(t<1/2)return q;
+                    if(t<2/3)return p+(q-p)*(2/3-t)*6;
+                    return p;
+                };
+                const q=l<0.5?l*(1+s):l+s-l*s;
+                const p=2*l-q;
+                r=hue2rgb(p,q,h+1/3);
+                g=hue2rgb(p,q,h);
+                b=hue2rgb(p,q,h-1/3);
+            }
+            return [Math.round(r*255),Math.round(g*255),Math.round(b*255)];
         }
     </script>
 </body>
 </html>
 ```
-
-**التغييرات الجديدة:**
-1. **دالة `triggerUpload()`**: الآن تعمل بشكل منفصل وواضح.
-2. **دالة `processImage(input)`**: تستلم العنصر مباشرة وتتأكد من وجود الملف.
-3. **فحص الأخطاء**: إذا لم يُختر ملف، تظهر رسالة تنبيه.
-4. **أزرار مبسطة**: لا يوجد تعقيد في الـ CSS قد يمنع النقر.
-
-**انسخ هذا الكود بالكامل والصقه في `index.html` على GitHub.**
