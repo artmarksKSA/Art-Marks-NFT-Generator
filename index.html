@@ -3,509 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Art Marks - 3D Hologram Generator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <title>Art Marks - Hologram NFT</title>
     <style>
         body { 
             background: #000; 
             color: #fff; 
-            font-family: 'Tajawal', sans-serif;
-            overflow-x: hidden;
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            padding: 20px; 
         }
-        .neon-text { 
-            text-shadow: 0 0 10px #4a7e6e, 0 0 20px #4a7e6e, 0 0 40px #4a7e6e; 
+        h1 { color: #4a7e6e; text-shadow: 0 0 10px #4a7e6e; }
+        .box { 
+            border: 2px dashed #4a7e6e; 
+            padding: 40px; 
+            margin: 20px auto; 
+            max-width: 400px; 
+            cursor: pointer; 
+            background: rgba(74, 126, 110, 0.1);
         }
-        .cyber-card {
-            background: linear-gradient(135deg, rgba(10,31,26,0.9) 0%, rgba(0,0,0,0.95) 100%);
-            border: 1px solid #4a7e6e;
-            box-shadow: 0 0 30px rgba(74, 126, 110, 0.3);
-            position: relative;
-            overflow: hidden;
+        .box:hover { background: rgba(74, 126, 110, 0.2); }
+        #controls { 
+            background: #111; 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin: 20px auto; 
+            max-width: 400px; 
+            display: none;
+            border: 1px solid #333;
         }
-        /* Animated border effect */
-        .cyber-card::before {
-            content: '';
-            position: absolute;
-            top: -2px; left: -2px; right: -2px; bottom: -2px;
-            background: linear-gradient(45deg, #4a7e6e, #d3cbab, #4a7e6e, #d3cbab);
-            background-size: 400% 400%;
-            z-index: -1;
-            animation: glowRotate 3s ease infinite;
-            opacity: 0.5;
+        input[type="text"], input[type="range"] { 
+            width: 90%; 
+            padding: 10px; 
+            margin: 5px; 
+            background: #222; 
+            border: 1px solid #4a7e6e; 
+            color: #fff; 
         }
-        @keyframes glowRotate {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        button { 
+            background: #4a7e6e; 
+            color: #fff; 
+            border: none; 
+            padding: 10px 20px; 
+            margin: 5px; 
+            cursor: pointer; 
         }
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 6px;
-            background: #1a1a1a;
-            border-radius: 3px;
-            outline: none;
+        canvas { 
+            border: 2px solid #4a7e6e; 
+            max-width: 100%; 
+            margin-top: 20px; 
+            display: none;
         }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 22px;
-            height: 22px;
-            background: #4a7e6e;
-            border: 3px solid #d3cbab;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 0 15px #4a7e6e;
-        }
-        .loading {
-            border: 3px solid rgba(74, 126, 110, 0.3);
-            border-top: 3px solid #4a7e6e;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        
-        /* Scanlines effect */
-        .scanlines {
-            background: linear-gradient(
-                to bottom,
-                rgba(255,255,255,0),
-                rgba(255,255,255,0) 50%,
-                rgba(74, 126, 110, 0.1) 50%,
-                rgba(74, 126, 110, 0.1)
-            );
-            background-size: 100% 4px;
-        }
+        #status { color: #4a7e6e; margin-top: 10px; }
     </style>
 </head>
-<body class="min-h-screen p-4">
-
-    <div class="max-w-6xl mx-auto">
-        <!-- Header -->
-        <header class="text-center py-8 border-b border-[#4a7e6e]/30 mb-8">
-            <h1 class="text-5xl font-black text-[#4a7e6e] mb-2" style="font-family: 'Orbitron', sans-serif;">
-                ART MARKS <span class="text-[#d3cbab] text-2xl">// HOLOGRAM</span>
-            </h1>
-            <p class="text-gray-400 tracking-widest text-sm">3D PHOSPHORESCENT CARD GENERATOR</p>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Controls Panel -->
-            <div class="space-y-6">
-                
-                <!-- Upload Area -->
-                <div class="cyber-card rounded-xl p-8 text-center cursor-pointer transition hover:scale-[1.02]" onclick="document.getElementById('fileInput').click()">
-                    <input type="file" id="fileInput" class="hidden" accept="image/*" onchange="handleUpload(event)">
-                    <div class="text-6xl mb-4 animate-pulse">🎨</div>
-                    <h3 class="text-[#d3cbab] text-xl font-bold mb-2">رفع اللوحة الفنية</h3>
-                    <p class="text-gray-500 text-sm">JPEG, PNG (خلفية شفافة تعطي نتيجة أفضل)</p>
-                    <p id="fileName" class="mt-3 text-[#4a7e6e] hidden"></p>
-                </div>
-
-                <!-- Settings -->
-                <div class="cyber-card rounded-xl p-6 space-y-5" id="controls" style="opacity: 0.3; pointer-events: none;">
-                    
-                    <!-- Elevation Slider -->
-                    <div>
-                        <div class="flex justify-between mb-2">
-                            <span class="text-[#d3cbab] font-bold">ارتفاع الهولوغرام (3D Float)</span>
-                            <span id="elevationValue" class="text-[#4a7e6e] font-bold text-xl">40</span>
-                        </div>
-                        <input type="range" id="elevation" min="0" max="100" value="40" oninput="updateValue('elevation', 'elevationValue'); render()">
-                    </div>
-
-                    <!-- Glow Slider -->
-                    <div>
-                        <div class="flex justify-between mb-2">
-                            <span class="text-[#d3cbab] font-bold">شدة التوهج الفسفوري (Glow)</span>
-                            <span id="glowValue" class="text-[#4a7e6e] font-bold text-xl">50</span>
-                        </div>
-                        <input type="range" id="glow" min="10" max="100" value="50" oninput="updateValue('glow', 'glowValue'); render()">
-                    </div>
-
-                    <!-- Info Inputs -->
-                    <div class="grid grid-cols-2 gap-3 pt-2">
-                        <div>
-                            <label class="text-gray-400 text-xs block mb-1">اسم العمل</label>
-                            <input type="text" id="artTitle" value="ARABIAN LEOPARD" class="w-full bg-black/50 border border-[#4a7e6e] rounded p-3 text-[#d3cbab] focus:outline-none focus:shadow-[0_0_10px_#4a7e6e]" oninput="render()">
-                        </div>
-                        <div>
-                            <label class="text-gray-400 text-xs block mb-1">اسم الفنان</label>
-                            <input type="text" id="artistName" value="F12DM" class="w-full bg-black/50 border border-[#4a7e6e] rounded p-3 text-[#d3cbab] focus:outline-none focus:shadow-[0_0_10px_#4a7e6e]" oninput="render()">
-                        </div>
-                    </div>
-
-                    <!-- Toggles -->
-                    <div class="flex gap-4 text-sm">
-                        <label class="flex items-center gap-2 cursor-pointer text-gray-300">
-                            <input type="checkbox" id="scanlines" checked onchange="render()" class="accent-[#4a7e6e] w-4 h-4">
-                            خطوط المسح (Scanlines)
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer text-gray-300">
-                            <input type="checkbox" id="reflection" checked onchange="render()" class="accent-[#4a7e6e] w-4 h-4">
-                            انعكاس (Reflection)
-                        </label>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="pt-4 space-y-3">
-                        <button onclick="render()" class="w-full bg-[#4a7e6e] hover:bg-[#5a9e8e] text-white py-4 rounded-lg font-bold text-lg transition shadow-[0_0_20px_rgba(74,126,110,0.5)] border border-[#d3cbab]/30">
-                            ⚡ توليد / تحديث البطاقة
-                        </button>
-                        
-                        <div class="grid grid-cols-2 gap-3">
-                            <button onclick="downloadPNG()" class="bg-[#d3cbab] hover:bg-[#c4bc9c] text-black py-3 rounded-lg font-bold transition">
-                                💾 حفظ صورة
-                            </button>
-                            <button onclick="generateGIF()" class="bg-[#4a7e6e] hover:bg-[#3d6b5d] text-white py-3 rounded-lg font-bold transition relative border border-[#d3cbab]" id="gifBtn">
-                                <span class="animate-pulse mr-2">✨</span> GIF متحرك (طفو)
-                                <span id="loading" class="hidden absolute left-3 top-1/2 -translate-y-1/2">
-                                    <div class="loading"></div>
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Preview Area -->
-            <div class="flex flex-col items-center justify-center relative">
-                <div class="cyber-card p-1 rounded-lg relative">
-                    <canvas id="previewCanvas" width="600" height="900" class="hidden rounded bg-black"></canvas>
-                    <div id="scanOverlay" class="absolute inset-0 scanlines pointer-events-none opacity-0 rounded"></div>
-                    
-                    <div id="placeholder" class="w-[350px] h-[500px] flex items-center justify-center text-[#4a7e6e] bg-black/50 rounded">
-                        <div class="text-center">
-                            <div class="text-7xl mb-4 opacity-50 animate-bounce">🃏</div>
-                            <p class="text-lg">ستظهر البطاقة الهولوغرامية هنا</p>
-                            <p class="text-xs text-gray-600 mt-2">ارفع صورة للبدء</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div id="status" class="mt-4 p-3 rounded-lg hidden text-center font-bold"></div>
-            </div>
-        </div>
+<body>
+    <h1>ART MARKS // HOLOGRAM</h1>
+    
+    <div class="box" onclick="document.getElementById('file').click()">
+        <input type="file" id="file" accept="image/*" style="display:none" onchange="loadImage(event)">
+        <p>📤 اضغط هنا لرفع الصورة</p>
     </div>
 
-    <script>
-        let originalImage = null;
-        const canvas = document.getElementById('previewCanvas');
-        const ctx = canvas.getContext('2d');
+    <div id="controls">
+        <p>ارتفاع الهولوغرام: <span id="val">40</span></p>
+        <input type="range" id="el" min="0" max="80" value="40" oninput="document.getElementById('val').innerText=this.value">
         
-        // Art Marks Logo (Base64 SVG)
-        const logoImg = new Image();
-        logoImg.crossOrigin = "anonymous";
-        logoImg.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48ZmlsdGVyIGlkPSJibG93Ij48ZmVHYXVzc2lhbkJsdXIgc3RhbmRhcmREZXZpYXRpb249IjE1Ii8+PC9maWx0ZXI+PC9kZWZzPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjNGE3ZTZlIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI0MCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNkM2NiYWIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIiBmaWx0ZXI9InVybCgjYmxvdykiPkFSVCBNQVJLUzwvdGV4dD48L3N2Zz4=';
+        <input type="text" id="t" value="ARTWORK" placeholder="اسم العمل"><br>
+        <input type="text" id="a" value="ARTIST" placeholder="الفنان"><br><br>
+        
+        <button onclick="generate()">✨ إنشاء البطاقة</button>
+        <button onclick="save()">💾 تحميل</button>
+    </div>
 
-        function handleUpload(e) {
+    <canvas id="c" width="600" height="800"></canvas>
+    <p id="status"></p>
+
+    <script>
+        let img = null;
+        const canvas = document.getElementById('c');
+        const ctx = canvas.getContext('2d');
+
+        function loadImage(e) {
             const file = e.target.files[0];
             if (!file) return;
             
-            document.getElementById('fileName').textContent = '✓ ' + file.name;
-            document.getElementById('fileName').classList.remove('hidden');
+            document.getElementById('status').innerText = 'جاري التحميل...';
             
             const reader = new FileReader();
-            reader.onload = (event) => {
-                const img = new Image();
-                img.onload = () => {
-                    originalImage = img;
-                    // Enable controls
-                    document.getElementById('controls').style.opacity = '1';
-                    document.getElementById('controls').style.pointerEvents = 'auto';
-                    document.getElementById('placeholder').classList.add('hidden');
-                    canvas.classList.remove('hidden');
-                    render();
+            reader.onload = function(event) {
+                img = new Image();
+                img.onload = function() {
+                    document.getElementById('controls').style.display = 'block';
+                    canvas.style.display = 'inline-block';
+                    document.getElementById('status').innerText = 'تم التحميل! اضغط إنشاء';
+                    generate(); // توليد تلقائي عند التحميل
                 };
                 img.src = event.target.result;
             };
             reader.readAsDataURL(file);
         }
 
-        function updateValue(inputId, displayId) {
-            document.getElementById(displayId).textContent = document.getElementById(inputId).value;
-        }
-
-        function render() {
-            if (!originalImage) return;
+        function generate() {
+            if (!img) {
+                alert('يرجى رفع صورة أولاً');
+                return;
+            }
             
-            const w = 600;
-            const h = 900;
-            canvas.width = w;
-            canvas.height = h;
+            const w = 600, h = 800;
+            const el = parseInt(document.getElementById('el').value);
+            const title = document.getElementById('t').value;
+            const artist = document.getElementById('a').value;
             
-            const elevation = parseInt(document.getElementById('elevation').value);
-            const glowSize = parseInt(document.getElementById('glow').value);
-            const showScanlines = document.getElementById('scanlines').checked;
-            const showReflection = document.getElementById('reflection').checked;
-            const title = document.getElementById('artTitle').value || 'UNTITLED';
-            const artist = document.getElementById('artistName').value || 'ARTIST';
-            
-            // Clear
-            ctx.fillStyle = '#050505';
+            // خلفية سوداء
+            ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, w, h);
             
-            // Card Base (Perspective platform)
-            const cardY = h - 250;
-            const cardWidth = 520;
-            const cardHeight = 180;
-            const cardX = (w - cardWidth) / 2;
-            
-            // Draw reflection first (if enabled)
-            if (showReflection) {
-                ctx.save();
-                ctx.globalAlpha = 0.15;
-                ctx.translate(0, cardY + cardHeight);
-                ctx.scale(1, -0.4);
-                ctx.filter = 'blur(8px)';
-                
-                // Reflected image
-                const imgW = 400;
-                const imgH = imgW * 1.1;
-                ctx.drawImage(originalImage, (w-imgW)/2, cardY - imgH + 50 - elevation, imgW, imgH);
-                ctx.restore();
-            }
-            
-            // Draw Card Base (Trapezoid for 3D feel)
-            ctx.save();
-            ctx.beginPath();
-            ctx.moveTo(cardX, cardY); // Top left
-            ctx.lineTo(cardX + cardWidth, cardY); // Top right
-            ctx.lineTo(cardX + cardWidth - 40, cardY + cardHeight); // Bottom right (angled)
-            ctx.lineTo(cardX + 40, cardY + cardHeight); // Bottom left (angled)
-            ctx.closePath();
-            
-            // Gradient fill for card
-            const cardGrad = ctx.createLinearGradient(0, cardY, 0, cardY + cardHeight);
-            cardGrad.addColorStop(0, '#1a2f28');
-            cardGrad.addColorStop(0.5, '#0f1f1a');
-            cardGrad.addColorStop(1, '#050a08');
-            ctx.fillStyle = cardGrad;
-            ctx.fill();
-            
-            // Card neon border
-            ctx.shadowBlur = glowSize;
-            ctx.shadowColor = '#4a7e6e';
+            // قاعدة البطاقة
+            const cy = h - 200;
+            ctx.fillStyle = '#0f1f1a';
             ctx.strokeStyle = '#4a7e6e';
             ctx.lineWidth = 2;
-            ctx.stroke();
-            ctx.restore();
-            
-            // Grid/Scanlines on card
-            if (showScanlines) {
-                ctx.strokeStyle = 'rgba(74, 126, 110, 0.2)';
-                ctx.lineWidth = 1;
-                for (let i = 0; i < cardHeight; i += 15) {
-                    ctx.beginPath();
-                    ctx.moveTo(cardX + 20, cardY + i);
-                    ctx.lineTo(cardX + cardWidth - 20, cardY + i);
-                    ctx.stroke();
-                }
-            }
-            
-            // === 3D FLOATING IMAGE ===
-            const imgSize = 400;
-            const imgX = (w - imgSize) / 2;
-            const imgY = cardY - imgSize + 80 - elevation; // Subtract elevation to float UP
-            
-            // 1. Shadow Stack (Creates 3D depth illusion)
-            for (let i = 8; i >= 0; i--) {
-                const shadowOffset = i * 3;
-                const shadowAlpha = 0.08 - (i * 0.008);
-                
-                ctx.save();
-                ctx.globalAlpha = shadowAlpha;
-                ctx.fillStyle = '#4a7e6e';
-                ctx.shadowBlur = glowSize * (i/5);
-                ctx.shadowColor = '#4a7e6e';
-                ctx.fillRect(
-                    imgX - shadowOffset/2, 
-                    imgY + shadowOffset, 
-                    imgSize + shadowOffset, 
-                    imgSize * 1.1 + shadowOffset
-                );
-                ctx.restore();
-            }
-            
-            // 2. Main Image with Hologram Tint
-            ctx.save();
-            // Clip to rounded rect
             ctx.beginPath();
-            ctx.roundRect(imgX, imgY, imgSize, imgSize * 1.1, 10);
-            ctx.clip();
+            ctx.moveTo(50, cy);
+            ctx.lineTo(550, cy);
+            ctx.lineTo(530, cy+150);
+            ctx.lineTo(70, cy+150);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
             
-            // Draw image
-            ctx.drawImage(originalImage, imgX, imgY, imgSize, imgSize * 1.1);
+            // الصورة الطافرة
+            const iw = 350, ih = iw * 1.2;
+            const ix = (w - iw) / 2;
+            const iy = cy - ih + 50 - el;
             
-            // Phosphorescent color overlay (Green/Beige)
-            ctx.globalCompositeOperation = 'overlay';
-            const holoGrad = ctx.createLinearGradient(imgX, imgY, imgX, imgY + imgSize * 1.1);
-            holoGrad.addColorStop(0, 'rgba(74, 126, 110, 0.5)'); // Green tint
-            holoGrad.addColorStop(0.5, 'rgba(211, 203, 171, 0.3)'); // Beige tint
-            holoGrad.addColorStop(1, 'rgba(74, 126, 110, 0.4)');
-            ctx.fillStyle = holoGrad;
-            ctx.fillRect(imgX, imgY, imgSize, imgSize * 1.1);
-            
-            // Scanlines on image
-            if (showScanlines) {
-                ctx.globalCompositeOperation = 'multiply';
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
-                for (let i = 0; i < imgSize * 1.1; i += 4) {
-                    ctx.fillRect(imgX, imgY + i, imgSize, 2);
-                }
+            // ظلال الارتفاع (3D effect)
+            for(let i=10; i>=0; i--) {
+                ctx.fillStyle = `rgba(74,126,110,${0.1-i*0.008})`;
+                ctx.fillRect(ix-i, iy+i*3, iw+i*2, ih+i*2);
             }
-            ctx.restore();
             
-            // 3. Neon Border around floating image
-            ctx.save();
-            ctx.shadowBlur = glowSize * 1.5;
+            // الصورة الأساسية
+            ctx.drawImage(img, ix, iy, iw, ih);
+            
+            // طبقة فسفورية خضراء
+            ctx.globalCompositeOperation = 'overlay';
+            ctx.fillStyle = 'rgba(74, 126, 110, 0.3)';
+            ctx.fillRect(ix, iy, iw, ih);
+            ctx.globalCompositeOperation = 'source-over';
+            
+            // إطار مضيء
+            ctx.shadowBlur = 20;
             ctx.shadowColor = '#4a7e6e';
             ctx.strokeStyle = '#4a7e6e';
             ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.roundRect(imgX, imgY, imgSize, imgSize * 1.1, 10);
-            ctx.stroke();
-            
-            // Inner glow line
-            ctx.strokeStyle = '#d3cbab';
-            ctx.lineWidth = 1;
-            ctx.shadowBlur = glowSize / 2;
-            ctx.beginPath();
-            ctx.roundRect(imgX + 5, imgY + 5, imgSize - 10, imgSize * 1.1 - 10, 8);
-            ctx.stroke();
-            ctx.restore();
-            
-            // 4. Art Marks Logo (Floating above image)
-            const logoSize = 100;
-            const logoX = w/2 - logoSize/2;
-            const logoY = imgY + (imgSize * 1.1) - logoSize - 20;
-            
-            ctx.save();
-            ctx.globalAlpha = 0.85;
-            ctx.shadowBlur = glowSize * 2;
-            ctx.shadowColor = '#4a7e6e';
-            ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
-            ctx.restore();
-            
-            // === TEXT INFO ===
-            ctx.textAlign = 'center';
-            
-            // Title
-            ctx.font = '900 32px "Orbitron", sans-serif';
-            ctx.fillStyle = '#d3cbab';
-            ctx.shadowBlur = 15;
-            ctx.shadowColor = '#4a7e6e';
-            ctx.fillText(title.toUpperCase(), w/2, cardY + 60);
-            
-            // Artist
-            ctx.font = '24px "Tajawal", sans-serif';
-            ctx.fillStyle = '#4a7e6e';
-            ctx.shadowBlur = 10;
-            ctx.fillText(artist, w/2, cardY + 95);
-            
-            // Authentic Badge
-            ctx.font = 'bold 16px monospace';
-            ctx.fillStyle = '#4a7e6e';
-            ctx.shadowBlur = 5;
-            ctx.fillText('◉ AUTHENTICATED // 1/1 // ERC-721', w/2, cardY + 130);
-            
-            // ID
-            ctx.font = '12px monospace';
-            ctx.fillStyle = '#333';
+            ctx.strokeRect(ix, iy, iw, ih);
             ctx.shadowBlur = 0;
-            ctx.fillText('ID: AM-' + Math.floor(Math.random()*999999) + '-PH', w/2, cardY + 155);
             
-            // Update scan overlay visibility
-            document.getElementById('scanOverlay').style.opacity = showScanlines ? '0.3' : '0';
+            // النص
+            ctx.fillStyle = '#d3cbab';
+            ctx.textAlign = 'center';
+            ctx.font = 'bold 28px Arial';
+            ctx.fillText(title, w/2, cy+60);
+            ctx.fillStyle = '#4a7e6e';
+            ctx.font = '20px Arial';
+            ctx.fillText(artist, w/2, cy+90);
+            ctx.font = '14px Arial';
+            ctx.fillText('◉ AUTHENTICATED // 1/1', w/2, cy+120);
+            
+            document.getElementById('status').innerText = 'تم الإنشاء!';
         }
 
-        function downloadPNG() {
+        function save() {
             const link = document.createElement('a');
-            link.download = `ArtMarks_Hologram_${document.getElementById('artTitle').value || 'NFT'}_${Date.now()}.png`;
+            link.download = 'ArtMarks_Hologram.png';
             link.href = canvas.toDataURL();
             link.click();
-            showStatus('تم حفظ الصورة!', 'success');
-        }
-
-        async function generateGIF() {
-            if (!originalImage) return;
-            const btn = document.getElementById('gifBtn');
-            const loader = document.getElementById('loading');
-            loader.classList.remove('hidden');
-            btn.disabled = true;
-            
-            const elevationBase = parseInt(document.getElementById('elevation').value);
-            const glowBase = parseInt(document.getElementById('glow').value);
-            
-            const gif = new GIF({
-                workers: 2,
-                quality: 10,
-                width: 600,
-                height: 900,
-                workerScript: 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js'
-            });
-            
-            // Generate 40 frames (smooth animation)
-            for (let i = 0; i < 40; i++) {
-                const frame = document.createElement('canvas');
-                frame.width = 600;
-                frame.height = 900;
-                const fCtx = frame.getContext('2d');
-                
-                // Calculate floating animation (sine wave)
-                const progress = i / 40;
-                const floatOffset = Math.sin(progress * Math.PI * 2) * 20; // Float up/down 20px
-                
-                // Temporarily adjust elevation for this frame
-                const originalEl = document.getElementById('elevation').value;
-                document.getElementById('elevation').value = elevationBase + floatOffset;
-                
-                // Render frame
-                render();
-                
-                // Copy to frame
-                fCtx.drawImage(canvas, 0, 0);
-                
-                // Add pulsing logo effect on frame
-                const pulse = (Math.sin(progress * Math.PI * 4) + 1) / 2; // Faster pulse
-                fCtx.globalAlpha = 0.5 + (pulse * 0.5);
-                fCtx.fillStyle = '#4a7e6e';
-                fCtx.shadowBlur = pulse * glowBase;
-                fCtx.shadowColor = '#4a7e6e';
-                
-                // Restore elevation
-                document.getElementById('elevation').value = originalEl;
-                
-                gif.addFrame(frame, {delay: 60}); // 60ms = ~16fps
-            }
-            
-            gif.on('finished', (blob) => {
-                loader.classList.add('hidden');
-                btn.disabled = false;
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `ArtMarks_${document.getElementById('artTitle').value || 'NFT'}_Hologram.gif`;
-                a.click();
-                showStatus('تم إنشاء GIF المتحرك بنجاح!', 'success');
-                
-                // Restore original render
-                render();
-            });
-            
-            gif.render();
-        }
-
-        function showStatus(msg, type) {
-            const el = document.getElementById('status');
-            el.textContent = msg;
-            el.className = 'mt-4 p-3 rounded-lg text-center font-bold ' + 
-                (type === 'success' ? 'bg-green-900/50 text-green-400 border border-green-600' : 'bg-red-900/50 text-red-400');
-            el.classList.remove('hidden');
-            setTimeout(() => el.classList.add('hidden'), 4000);
         }
     </script>
 </body>
