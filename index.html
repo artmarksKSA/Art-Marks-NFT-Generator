@@ -36,13 +36,14 @@ body {
   background-size: 400px 400px;
   z-index: 1;
   animation: starsTwinkle 20s linear infinite;
+  pointer-events: none;
 }
 @keyframes starsTwinkle {
   0% { background-position: 0 0; }
   100% { background-position: 400px 400px; }
 }
 
-#scene { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; }
+#scene { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
 
 .top-bar {
   position: fixed; top: 0; left: 0; right: 0;
@@ -52,14 +53,22 @@ body {
   justify-content: space-between;
   align-items: center;
   background: linear-gradient(180deg, rgba(5,5,16,0.9), transparent);
+  pointer-events: none;
 }
-.brand-block { display: flex; align-items: center; gap: 15px; }
+.brand-block {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
 .brand-mark {
   width: 38px; height: 38px;
   border: 2px solid var(--neon-cyan);
   border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px; font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
   color: var(--neon-cyan);
   box-shadow: 0 0 15px rgba(0,240,255,0.5);
   animation: brandPulse 3s ease-in-out infinite;
@@ -100,38 +109,22 @@ body {
 .left-panel::-webkit-scrollbar { width: 4px; }
 .left-panel::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 2px; }
 
-.panel-title {
-  font-size: 14px; letter-spacing: 3px;
-  color: var(--neon-cyan);
-  margin-bottom: 20px;
-  text-shadow: 0 0 10px var(--neon-cyan);
-}
-
+.panel-title { font-size: 14px; letter-spacing: 3px; color: var(--neon-cyan); margin-bottom: 20px; text-shadow: 0 0 10px var(--neon-cyan); }
 .section-title { font-size: 11px; letter-spacing: 2px; color: var(--neon-cyan); margin: 15px 0 10px; }
-
 .slider-group { margin-bottom: 18px; }
-.slider-label {
-  font-size: 10px; letter-spacing: 2px;
-  color: rgba(255,255,255,0.7);
-  margin-bottom: 6px;
-  display: flex; justify-content: space-between;
-}
+.slider-label { font-size: 10px; letter-spacing: 2px; color: rgba(255,255,255,0.7); margin-bottom: 6px; display: flex; justify-content: space-between; }
 .slider-value { color: var(--neon-cyan); }
 input[type=range] {
-  width: 100%;
-  -webkit-appearance: none;
+  width: 100%; -webkit-appearance: none;
   height: 4px;
   background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan), var(--neon-pink));
-  border-radius: 2px;
-  outline: none;
+  border-radius: 2px; outline: none;
 }
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 16px; height: 16px;
-  background: #fff;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 0 10px var(--neon-cyan);
+  background: #fff; border-radius: 50%;
+  cursor: pointer; box-shadow: 0 0 10px var(--neon-cyan);
 }
 
 .btn-row { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -139,10 +132,8 @@ input[type=range]::-webkit-slider-thumb {
   padding: 8px 14px;
   background: rgba(0,240,255,0.05);
   border: 1px solid rgba(0,240,255,0.3);
-  color: #fff;
-  font-size: 10px; letter-spacing: 1.5px;
-  cursor: pointer;
-  border-radius: 6px;
+  color: #fff; font-size: 10px; letter-spacing: 1.5px;
+  cursor: pointer; border-radius: 6px;
   transition: all 0.3s;
 }
 .mini-btn:hover { background: rgba(0,240,255,0.2); }
@@ -153,15 +144,11 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 .input-field {
-  width: 100%;
-  padding: 10px 12px;
+  width: 100%; padding: 10px 12px;
   background: rgba(0,240,255,0.05);
   border: 1px solid rgba(0,240,255,0.3);
-  color: #fff;
-  font-size: 11px; letter-spacing: 1px;
-  border-radius: 6px;
-  outline: none;
-  margin-bottom: 8px;
+  color: #fff; font-size: 11px; letter-spacing: 1px;
+  border-radius: 6px; outline: none; margin-bottom: 8px;
 }
 .input-field:focus { border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0,240,255,0.3); }
 
@@ -170,15 +157,12 @@ input[type=range]::-webkit-slider-thumb {
   padding: 12px 15px;
   background: linear-gradient(90deg, rgba(192,192,192,0.1), rgba(0,240,255,0.1), rgba(255,0,234,0.1));
   border: 1px solid rgba(192,192,192,0.4);
-  border-radius: 8px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  transition: all 0.3s;
+  border-radius: 8px; margin-bottom: 10px;
+  cursor: pointer; transition: all 0.3s;
 }
 .trait-toggle.active {
   background: linear-gradient(90deg, rgba(192,192,192,0.3), rgba(0,240,255,0.3), rgba(255,0,234,0.3));
-  border-color: #fff;
-  box-shadow: 0 0 25px rgba(255,255,255,0.5);
+  border-color: #fff; box-shadow: 0 0 25px rgba(255,255,255,0.5);
 }
 .trait-info { font-size: 11px; letter-spacing: 1px; }
 .trait-name { font-weight: bold; color: #fff; }
@@ -187,54 +171,43 @@ input[type=range]::-webkit-slider-thumb {
 .toggle-switch {
   width: 36px; height: 18px;
   background: rgba(0,240,255,0.2);
-  border-radius: 9px;
-  position: relative;
+  border-radius: 9px; position: relative;
   transition: all 0.3s;
 }
 .toggle-switch::after {
-  content: '';
-  position: absolute;
+  content: ''; position: absolute;
   width: 14px; height: 14px;
-  background: #fff;
-  border-radius: 50%;
-  top: 2px; left: 2px;
-  transition: all 0.3s;
+  background: #fff; border-radius: 50%;
+  top: 2px; left: 2px; transition: all 0.3s;
 }
-.trait-toggle.active .toggle-switch {
-  background: linear-gradient(90deg, #c0c0c0, var(--neon-cyan));
-}
+.trait-toggle.active .toggle-switch { background: linear-gradient(90deg, #c0c0c0, var(--neon-cyan)); }
 .trait-toggle.active .toggle-switch::after { left: 20px; }
 
 .export-btn {
-  width: 100%;
-  margin-top: 20px;
+  width: 100%; margin-top: 20px;
   padding: 15px;
   background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan));
-  border: none;
-  color: #fff;
+  border: none; color: #fff;
   font-size: 14px; letter-spacing: 3px;
-  cursor: pointer;
-  border-radius: 8px;
-  font-weight: bold;
-  box-shadow: 0 0 25px rgba(0,240,255,0.5);
+  cursor: pointer; border-radius: 8px;
+  font-weight: bold; box-shadow: 0 0 25px rgba(0,240,255,0.5);
 }
 
-/* الإطار - يتأقلم تلقائياً */
+/* ====== الإطار يتأقلم مع الصورة ====== */
 .luxury-card {
   position: fixed;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 480px;
-  height: 680px;
+  width: 480px; height: 680px;
   z-index: 5;
   pointer-events: none;
   display: none;
+  transition: width 0.4s ease, height 0.4s ease;
 }
 .luxury-card.active { display: block; }
 
 .card-frame {
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   border: 3px solid;
   border-image: linear-gradient(135deg, #00f0ff, #b829ff, #ff00ea, #00f0ff) 1;
   border-radius: 25px;
@@ -245,92 +218,33 @@ input[type=range]::-webkit-slider-thumb {
   animation: framePulse 4s ease-in-out infinite;
 }
 @keyframes framePulse {
-  0%, 100% {
-    box-shadow: 
-      0 0 30px rgba(0,240,255,0.6),
-      0 0 60px rgba(184,41,255,0.4),
-      inset 0 0 30px rgba(0,240,255,0.15);
-  }
-  50% {
-    box-shadow: 
-      0 0 50px rgba(255,0,234,0.7),
-      0 0 90px rgba(0,240,255,0.5),
-      inset 0 0 40px rgba(255,0,234,0.2);
-  }
+  0%, 100% { box-shadow: 0 0 30px rgba(0,240,255,0.6), 0 0 60px rgba(184,41,255,0.4), inset 0 0 30px rgba(0,240,255,0.15); }
+  50% { box-shadow: 0 0 50px rgba(255,0,234,0.7), 0 0 90px rgba(0,240,255,0.5), inset 0 0 40px rgba(255,0,234,0.2); }
 }
 
-.card-inner-frame {
-  position: absolute;
-  inset: 12px;
-  border: 1px solid rgba(0,240,255,0.4);
-  border-radius: 18px;
-}
+.card-inner-frame { position: absolute; inset: 12px; border: 1px solid rgba(0,240,255,0.4); border-radius: 18px; }
 
-.frame-corner {
-  position: absolute;
-  width: 35px; height: 35px;
-  border: 3px solid var(--neon-cyan);
-  filter: drop-shadow(0 0 10px var(--neon-cyan));
-}
+.frame-corner { position: absolute; width: 35px; height: 35px; border: 3px solid var(--neon-cyan); filter: drop-shadow(0 0 10px var(--neon-cyan)); }
 .frame-corner.tl { top: -3px; left: -3px; border-right: none; border-bottom: none; border-radius: 25px 0 0 0; }
 .frame-corner.tr { top: -3px; right: -3px; border-left: none; border-bottom: none; border-radius: 0 25px 0 0; }
 .frame-corner.bl { bottom: -3px; left: -3px; border-right: none; border-top: none; border-radius: 0 0 0 25px; }
 .frame-corner.br { bottom: -3px; right: -3px; border-left: none; border-top: none; border-radius: 0 0 25px 0; }
 
-.tech-marks {
-  position: absolute; top: 50%;
-  transform: translateY(-50%);
-  display: flex; flex-direction: column;
-  gap: 4px;
-}
+.tech-marks { position: absolute; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 4px; }
 .tech-marks.left { left: -8px; }
 .tech-marks.right { right: -8px; }
-.tech-mark {
-  width: 16px; height: 2px;
-  background: var(--neon-cyan);
-  box-shadow: 0 0 5px var(--neon-cyan);
-}
+.tech-mark { width: 16px; height: 2px; background: var(--neon-cyan); box-shadow: 0 0 5px var(--neon-cyan); }
 .tech-mark:nth-child(odd) { width: 12px; }
 
-.artist-handle {
-  position: absolute;
-  bottom: 175px; left: 25px;
-  font-size: 10px;
-  color: var(--neon-cyan);
-  letter-spacing: 1px;
-  text-shadow: 0 0 8px var(--neon-cyan);
-}
+.artist-handle { position: absolute; bottom: 175px; left: 25px; font-size: 10px; color: var(--neon-cyan); letter-spacing: 1px; text-shadow: 0 0 8px var(--neon-cyan); }
 
-.verify-handle {
-  position: absolute;
-  bottom: 175px; right: 25px;
-  font-size: 10px;
-  color: var(--neon-cyan);
-  letter-spacing: 1px;
-  display: flex; align-items: center; gap: 6px;
-  text-shadow: 0 0 8px var(--neon-cyan);
-}
-.verify-icon {
-  width: 14px; height: 14px;
-  border: 1.5px solid var(--neon-cyan);
-  border-radius: 50%;
-  position: relative;
-}
-.verify-icon::after {
-  content: '';
-  position: absolute;
-  width: 4px; height: 4px;
-  background: var(--neon-cyan);
-  border-radius: 50%;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 8px var(--neon-cyan);
-  animation: dotBlink 1.5s ease-in-out infinite;
-}
+.verify-handle { position: absolute; bottom: 175px; right: 25px; font-size: 10px; color: var(--neon-cyan); letter-spacing: 1px; display: flex; align-items: center; gap: 6px; text-shadow: 0 0 8px var(--neon-cyan); }
+.verify-icon { width: 14px; height: 14px; border: 1.5px solid var(--neon-cyan); border-radius: 50%; position: relative; }
+.verify-icon::after { content: ''; position: absolute; width: 4px; height: 4px; background: var(--neon-cyan); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 8px var(--neon-cyan); animation: dotBlink 1.5s ease-in-out infinite; }
 
 .card-info {
-  position: absolute;
-  bottom: 20px; left: 20px; right: 20px;
+  position: absolute; bottom: 20px;
+  left: 20px; right: 20px;
   padding: 15px 18px;
   background: linear-gradient(135deg, rgba(0,240,255,0.15), rgba(5,5,16,0.85));
   border: 1px solid rgba(0,240,255,0.5);
@@ -339,46 +253,20 @@ input[type=range]::-webkit-slider-thumb {
   box-shadow: inset 0 0 20px rgba(0,240,255,0.1);
 }
 
-.card-title-row {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 12px; padding-bottom: 10px;
-  border-bottom: 1px solid rgba(0,240,255,0.2);
-}
-
-.card-title {
-  font-size: 19px; font-weight: bold;
-  letter-spacing: 2px;
-  color: #fff;
-  text-shadow: 0 0 10px var(--neon-cyan);
-}
-
-.edition-badge {
-  font-size: 10px;
-  padding: 5px 10px;
-  background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan));
-  color: #fff;
-  border-radius: 4px;
-  letter-spacing: 1px;
-  font-weight: bold;
-  white-space: nowrap;
-}
-
-.card-data-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
+.card-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(0,240,255,0.2); }
+.card-title { font-size: 19px; font-weight: bold; letter-spacing: 2px; color: #fff; text-shadow: 0 0 10px var(--neon-cyan); }
+.edition-badge { font-size: 10px; padding: 5px 10px; background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan)); color: #fff; border-radius: 4px; letter-spacing: 1px; font-weight: bold; white-space: nowrap; }
+.card-data-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 .data-cell { font-size: 8px; letter-spacing: 1px; }
 .data-cell-label { color: rgba(0,240,255,0.7); margin-bottom: 4px; }
-.data-cell-value {
-  color: #fff;
-  font-size: 10px; font-weight: bold;
-  letter-spacing: 0.5px;
-}
+.data-cell-value { color: #fff; font-size: 10px; font-weight: bold; letter-spacing: 0.5px; }
 
+/* ====== منطقة الرفع - تم تعديلها ====== */
 .upload-area {
-  position: fixed; top: 50%; left: 50%;
-  transform: translate(-50%, -50%); z-index: 50;
+  position: fixed;
+  top: 50%; left: 60%;
+  transform: translate(-50%, -50%);
+  z-index: 200;
   width: 400px; height: 250px;
   border: 2px dashed var(--neon-cyan);
   border-radius: 15px;
@@ -387,18 +275,20 @@ input[type=range]::-webkit-slider-thumb {
   cursor: pointer;
   background: rgba(0,240,255,0.05);
   backdrop-filter: blur(10px);
+  user-select: none;
 }
-.upload-area:hover { box-shadow: 0 0 40px var(--neon-cyan); }
+.upload-area:hover { box-shadow: 0 0 40px var(--neon-cyan); background: rgba(0,240,255,0.1); }
 .upload-area.hidden { display: none; }
-.upload-icon { font-size: 48px; margin-bottom: 15px; color: var(--neon-cyan); }
-.upload-text { font-size: 14px; letter-spacing: 3px; margin-bottom: 8px; }
-.upload-hint { font-size: 11px; opacity: 0.5; letter-spacing: 1px; }
+.upload-icon { font-size: 48px; margin-bottom: 15px; color: var(--neon-cyan); pointer-events: none; }
+.upload-text { font-size: 14px; letter-spacing: 3px; margin-bottom: 8px; pointer-events: none; }
+.upload-hint { font-size: 11px; opacity: 0.5; letter-spacing: 1px; pointer-events: none; }
 #fileInput { display: none; }
 
 .loading {
   position: fixed; top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1000; text-align: center; display: none;
+  pointer-events: none;
 }
 .loading.active { display: block; }
 .spinner {
@@ -410,19 +300,16 @@ input[type=range]::-webkit-slider-thumb {
   animation: spin 1s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-.loading-text {
-  font-size: 14px; letter-spacing: 3px;
-  color: var(--neon-cyan); margin-top: 20px;
-}
+.loading-text { font-size: 14px; letter-spacing: 3px; color: var(--neon-cyan); margin-top: 20px; }
 
 .fps-counter {
   position: fixed; bottom: 25px; right: 25px;
-  z-index: 100;
-  padding: 12px 18px;
+  z-index: 100; padding: 12px 18px;
   background: var(--panel);
   border: 1px solid rgba(0,240,255,0.3);
   border-radius: 10px;
   font-size: 10px; letter-spacing: 2px;
+  pointer-events: none;
 }
 .fps-value { color: var(--neon-cyan); font-weight: bold; }
 </style>
@@ -557,12 +444,12 @@ input[type=range]::-webkit-slider-thumb {
   </div>
 </div>
 
-<div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+<div class="upload-area" id="uploadArea">
   <div class="upload-icon">⬆</div>
   <div class="upload-text">UPLOAD ARTWORK</div>
   <div class="upload-hint">CLICK OR DRAG IMAGE</div>
-  <input type="file" id="fileInput" accept="image/*">
 </div>
+<input type="file" id="fileInput" accept="image/*">
 
 <div class="loading" id="loading">
   <div class="spinner"></div>
@@ -578,8 +465,7 @@ let time = 0;
 let chromeEnabled = true;
 let nftSeed = Math.random() * 1000;
 let rotationY = 0;
-let currentPlaneW = 3.2;
-let currentPlaneH = 3.2;
+let currentAspect = 1;
 
 const settings = {
   metallic: 1.0,
@@ -609,7 +495,6 @@ uniform float uGlitter;
 uniform vec2 uMouse;
 uniform float uSeed;
 uniform int uHighlightMode;
-
 varying vec2 vUv;
 
 vec3 hsv2rgb(vec3 c) {
@@ -638,20 +523,15 @@ void main() {
   float lum = dot(baseTex.rgb, vec3(0.299, 0.587, 0.114));
   vec3 chromeBase = vec3(0.78, 0.82, 0.86);
   chromeBase = mix(chromeBase * 0.4, chromeBase * 1.2, lum);
-  
   float angleRad = 0.785;
   vec2 dir = vec2(cos(angleRad), sin(angleRad));
   float sweepCoord = dot(vUv, dir);
-  
   float sweep1 = sin(sweepCoord * 6.0 - uTime * uShimmer * 2.0);
   float sweep2 = sin(sweepCoord * 12.0 - uTime * uShimmer * 1.5 + 1.5);
-  
   float lightBand = smoothstep(0.7, 0.95, sweep1) * 0.7;
   lightBand += smoothstep(0.85, 1.0, sweep2) * 0.5;
-  
   float iriHue = sweepCoord * 2.0 + uTime * 0.15 + lum * 0.3 + uMouse.x * 0.5;
   vec3 iriColor = hsv2rgb(vec3(iriHue, 0.7, 1.0));
-  
   vec3 highlightColor;
   if (uHighlightMode == 0) {
     highlightColor = vec3(0.95, 0.97, 1.0);
@@ -665,5 +545,359 @@ void main() {
     highlightColor = vec3(0.4, 0.9, 1.0);
     highlightColor = mix(highlightColor, iriColor, 0.4 * uIridescent);
   }
-  
-  vec3 metallic = 
+  vec3 metallic = chromeBase;
+  metallic = mix(metallic, highlightColor, lightBand * 0.8);
+  metallic += iriColor * uIridescent * 0.25 * (0.5 + lum * 0.5);
+  vec2 glitterCoord = vUv * 300.0;
+  float glitterRand = random(floor(glitterCoord));
+  float glitterFlash = sin(uTime * 4.0 + glitterRand * 100.0 + uSeed) * 0.5 + 0.5;
+  glitterFlash = pow(glitterFlash, 12.0);
+  if (glitterRand > 0.97) {
+    metallic += vec3(1.0) * glitterFlash * uGlitter * 1.8;
+  }
+  float fineNoise = noise(vUv * 80.0 + uTime * 0.2) * 0.08 * uGlitter;
+  metallic += vec3(fineNoise);
+  float fastSweep = sin(sweepCoord * 20.0 - uTime * uShimmer * 4.0);
+  float thinLight = smoothstep(0.92, 1.0, fastSweep) * 0.6;
+  metallic += vec3(1.0) * thinLight;
+  vec3 baseColor = baseTex.rgb;
+  vec3 overlay;
+  for (int i = 0; i < 3; i++) {
+    if (baseColor[i] < 0.5) {
+      overlay[i] = 2.0 * baseColor[i] * metallic[i];
+    } else {
+      overlay[i] = 1.0 - 2.0 * (1.0 - baseColor[i]) * (1.0 - metallic[i]);
+    }
+  }
+  vec3 finalColor = mix(baseTex.rgb, overlay, uMetallic);
+  gl_FragColor = vec4(finalColor, baseTex.a);
+}
+`;
+
+function initScene() {
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 0, 6);
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  document.getElementById('scene').appendChild(renderer.domElement);
+  createParticles();
+  window.addEventListener('resize', onResize);
+  window.addEventListener('mousemove', onMouseMove);
+  setupControls();
+  animate();
+}
+
+function createParticles() {
+  const count = 400;
+  const geometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(count * 3);
+  const colors = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    positions[i*3] = (Math.random() - 0.5) * 25;
+    positions[i*3+1] = (Math.random() - 0.5) * 18;
+    positions[i*3+2] = (Math.random() - 0.5) * 10;
+    const isWhite = Math.random() > 0.4;
+    if (isWhite) { colors[i*3] = 1; colors[i*3+1] = 1; colors[i*3+2] = 1; }
+    else { colors[i*3] = 0; colors[i*3+1] = 0.94; colors[i*3+2] = 1; }
+  }
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  particleSystem = new THREE.Points(geometry, new THREE.PointsMaterial({
+    size: 0.06, vertexColors: true, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending
+  }));
+  scene.add(particleSystem);
+}
+
+function processImage(imageDataUrl) {
+  const img = new Image();
+  img.onload = function() {
+    const tempCanvas = document.createElement('canvas');
+    let w = img.width, h = img.height;
+    const maxSize = 1024;
+    if (w > h) { if (w > maxSize) { h = h * maxSize / w; w = maxSize; } }
+    else { if (h > maxSize) { w = w * maxSize / h; h = maxSize; } }
+    tempCanvas.width = w;
+    tempCanvas.height = h;
+    tempCanvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    
+    setTimeout(() => {
+      const texture = new THREE.CanvasTexture(tempCanvas);
+      texture.minFilter = THREE.LinearFilter;
+      
+      if (baseArtwork) scene.remove(baseArtwork);
+      if (chromeOverlay) scene.remove(chromeOverlay);
+      
+      const aspect = w / h;
+      currentAspect = aspect;
+      
+      let planeW, planeH;
+      const targetSize = 3.5;
+      if (aspect >= 1) {
+        planeW = targetSize;
+        planeH = targetSize / aspect;
+      } else {
+        planeH = targetSize;
+        planeW = targetSize * aspect;
+      }
+      
+      const baseGeo = new THREE.PlaneGeometry(planeW, planeH);
+      const baseMat = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+      baseArtwork = new THREE.Mesh(baseGeo, baseMat);
+      baseArtwork.position.y = 0.3;
+      scene.add(baseArtwork);
+      
+      const overlayGeo = new THREE.PlaneGeometry(planeW, planeH);
+      const overlayMat = new THREE.ShaderMaterial({
+        uniforms: {
+          uTexture: { value: texture },
+          uTime: { value: 0 },
+          uMetallic: { value: settings.metallic },
+          uShimmer: { value: settings.shimmer },
+          uIridescent: { value: settings.iridescent },
+          uGlitter: { value: settings.glitter },
+          uMouse: { value: new THREE.Vector2(0, 0) },
+          uSeed: { value: nftSeed },
+          uHighlightMode: { value: 0 }
+        },
+        vertexShader: chromeVertexShader,
+        fragmentShader: chromeFragmentShader,
+        transparent: true,
+        side: THREE.DoubleSide
+      });
+      chromeOverlay = new THREE.Mesh(overlayGeo, overlayMat);
+      chromeOverlay.position.z = 0.01;
+      chromeOverlay.position.y = 0.3;
+      chromeOverlay.visible = chromeEnabled;
+      scene.add(chromeOverlay);
+      
+      const card = document.getElementById('luxuryCard');
+      const fov = camera.fov * Math.PI / 180;
+      const distance = camera.position.z;
+      const visibleHeight = 2 * Math.tan(fov / 2) * distance;
+      const visibleWidth = visibleHeight * camera.aspect;
+      const cardW_px = (planeW / visibleWidth) * window.innerWidth;
+      const cardH_px = (planeH / visibleHeight) * window.innerHeight;
+      const extraBottom = 130;
+      
+      card.style.width = cardW_px + 'px';
+      card.style.height = (cardH_px + extraBottom) + 'px';
+      
+      document.getElementById('loading').classList.remove('active');
+      document.getElementById('uploadArea').classList.add('hidden');
+      document.getElementById('luxuryCard').classList.add('active');
+    }, 300);
+  };
+  img.src = imageDataUrl;
+}
+
+let lastTime = performance.now();
+let frameCount = 0;
+let fpsTime = performance.now();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const now = performance.now();
+  const dt = (now - lastTime) / 1000;
+  lastTime = now;
+  time += dt;
+  frameCount++;
+  if (now - fpsTime > 500) {
+    document.getElementById('fpsValue').textContent = Math.round(frameCount * 1000 / (now - fpsTime));
+    frameCount = 0;
+    fpsTime = now;
+  }
+  smoothMouseX += (mouseX - smoothMouseX) * 0.05;
+  smoothMouseY += (mouseY - smoothMouseY) * 0.05;
+  rotationY += dt * settings.rotation * 1.5;
+  if (baseArtwork) {
+    baseArtwork.position.y = 0.3 + Math.sin(time * 0.5) * 0.05;
+    baseArtwork.rotation.y = rotationY;
+  }
+  if (chromeOverlay && chromeOverlay.visible) {
+    chromeOverlay.material.uniforms.uTime.value = time;
+    chromeOverlay.material.uniforms.uMouse.value.set(smoothMouseX, smoothMouseY);
+    chromeOverlay.position.y = baseArtwork.position.y;
+    chromeOverlay.position.z = baseArtwork.position.z + 0.01;
+    chromeOverlay.rotation.y = baseArtwork.rotation.y;
+  }
+  if (particleSystem) {
+    particleSystem.rotation.y += 0.0005;
+    const positions = particleSystem.geometry.attributes.position.array;
+    for (let i = 1; i < positions.length; i += 3) {
+      positions[i] += 0.004;
+      if (positions[i] > 9) positions[i] = -9;
+    }
+    particleSystem.geometry.attributes.position.needsUpdate = true;
+  }
+  renderer.render(scene, camera);
+}
+
+function onResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+function onMouseMove(e) {
+  mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+  mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+}
+
+function toggleChromeSilver() {
+  chromeEnabled = !chromeEnabled;
+  const toggle = document.getElementById('traitChromeSilver');
+  toggle.classList.toggle('active');
+  toggle.querySelector('.trait-status').textContent = chromeEnabled ? 'FINISH · ACTIVE' : 'FINISH · DISABLED';
+  if (chromeOverlay) chromeOverlay.visible = chromeEnabled;
+}
+
+function setupControls() {
+  const sliderMap = {
+    'slider-metallic': ['metallic', 'val-metallic', 0.01, '%'],
+    'slider-shimmer': ['shimmer', 'val-shimmer', 0.01, '%'],
+    'slider-iridescent': ['iridescent', 'val-iridescent', 0.01, '%'],
+    'slider-glitter': ['glitter', 'val-glitter', 0.01, '%'],
+    'slider-rotation': ['rotation', 'val-rotation', 0.01, '%']
+  };
+  Object.keys(sliderMap).forEach(id => {
+    const slider = document.getElementById(id);
+    const [setting, valId, mult, suffix] = sliderMap[id];
+    slider.addEventListener('input', (e) => {
+      settings[setting] = e.target.value * mult;
+      document.getElementById(valId).textContent = e.target.value + suffix;
+      if (chromeOverlay) {
+        if (setting === 'metallic') chromeOverlay.material.uniforms.uMetallic.value = settings.metallic;
+        if (setting === 'shimmer') chromeOverlay.material.uniforms.uShimmer.value = settings.shimmer;
+        if (setting === 'iridescent') chromeOverlay.material.uniforms.uIridescent.value = settings.iridescent;
+        if (setting === 'glitter') chromeOverlay.material.uniforms.uGlitter.value = settings.glitter;
+      }
+    });
+  });
+  document.querySelectorAll('[data-highlights]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-highlights]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      settings.highlights = btn.dataset.highlights;
+      const map = { silver: 0, gold: 1, rainbow: 2, cyan: 3 };
+      if (chromeOverlay) {
+        chromeOverlay.material.uniforms.uHighlightMode.value = map[settings.highlights];
+      }
+    });
+  });
+  document.querySelectorAll('[data-rarity]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-rarity]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      settings.rarity = btn.dataset.rarity;
+      document.getElementById('displayRarity').textContent = btn.dataset.rarity.toUpperCase();
+    });
+  });
+  document.getElementById('cardName').addEventListener('input', (e) => {
+    document.getElementById('displayName').textContent = e.target.value;
+  });
+  document.getElementById('cardArtist').addEventListener('input', (e) => {
+    document.getElementById('displayArtist').textContent = e.target.value;
+  });
+  document.getElementById('cardEdition').addEventListener('input', (e) => {
+    document.getElementById('displayEdition').textContent = 'EDITION ' + e.target.value;
+  });
+  document.getElementById('cardCollection').addEventListener('input', (e) => {
+    document.getElementById('displayCollection').textContent = e.target.value;
+  });
+}
+
+function exportNFT() {
+  if (!baseArtwork) { alert('Upload an artwork first'); return; }
+  document.getElementById('loading').classList.add('active');
+  document.getElementById('loadingText').textContent = 'EXPORTING...';
+  renderer.render(scene, camera);
+  const sceneCanvas = renderer.domElement;
+  const card = document.getElementById('luxuryCard');
+  const cardRect = card.getBoundingClientRect();
+  const scale = 2;
+  const finalCanvas = document.createElement('canvas');
+  finalCanvas.width = cardRect.width * scale;
+  finalCanvas.height = cardRect.height * scale;
+  const ctx = finalCanvas.getContext('2d');
+  ctx.fillStyle = '#050510';
+  ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+  const dpr = window.devicePixelRatio || 1;
+  const sx = cardRect.left * dpr;
+  const sy = cardRect.top * dpr;
+  const sw = cardRect.width * dpr;
+  const sh = cardRect.height * dpr;
+  try {
+    ctx.drawImage(sceneCanvas, sx, sy, sw, sh, 0, 0, finalCanvas.width, finalCanvas.height);
+  } catch (err) {
+    console.warn('Scene draw fallback:', err);
+  }
+  html2canvas(card, {
+    backgroundColor: null,
+    scale: scale,
+    logging: false,
+    useCORS: true
+  }).then(frameCanvas => {
+    ctx.drawImage(frameCanvas, 0, 0, finalCanvas.width, finalCanvas.height);
+    const dataURL = finalCanvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.download = 'artmarks-card-' + Date.now() + '.png';
+    link.href = dataURL;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    document.getElementById('loading').classList.remove('active');
+  }).catch(err => {
+    document.getElementById('loading').classList.remove('active');
+    alert('Export error: ' + err.message);
+  });
+}
+
+// ====== ربط زر الرفع بشكل صحيح ======
+const uploadArea = document.getElementById('uploadArea');
+const fileInput = document.getElementById('fileInput');
+
+uploadArea.addEventListener('click', function(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  fileInput.click();
+});
+
+fileInput.addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  document.getElementById('loading').classList.add('active');
+  document.getElementById('loadingText').textContent = 'LOADING...';
+  nftSeed = Math.random() * 1000;
+  const reader = new FileReader();
+  reader.onload = (ev) => setTimeout(() => processImage(ev.target.result), 200);
+  reader.readAsDataURL(file);
+});
+
+uploadArea.addEventListener('dragover', (e) => { 
+  e.preventDefault(); 
+  uploadArea.style.background = 'rgba(0,240,255,0.2)';
+});
+uploadArea.addEventListener('dragleave', (e) => { 
+  e.preventDefault(); 
+  uploadArea.style.background = 'rgba(0,240,255,0.05)';
+});
+uploadArea.addEventListener('drop', (e) => {
+  e.preventDefault();
+  uploadArea.style.background = 'rgba(0,240,255,0.05)';
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    document.getElementById('loading').classList.add('active');
+    nftSeed = Math.random() * 1000;
+    const reader = new FileReader();
+    reader.onload = (ev) => setTimeout(() => processImage(ev.target.result), 200);
+    reader.readAsDataURL(file);
+  }
+});
+
+initScene();
+</script>
+
+</body>
+</html>
