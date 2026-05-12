@@ -1,425 +1,120 @@
-ها هو الكود الكامل مع إضافة **البرواز المستقبلي (Cyber Frame)** المشابه للصورة المرجعية (Cyan/Pink Neon، زوايا مقطعة، براغي، وخطوط تقنية):
+# ============================================
+# ARTWORK TO NFT ANIMATOR
+# Professional NFT Generator
+# ============================================
 
-```html
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Art Marks - Cyber Frame Hologram</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gifshot/0.3.2/gifshot.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            background: #020202;
-            color: #fff;
-            font-family: 'Orbitron', sans-serif;
-            overflow: hidden;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        
-        .scanlines {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%);
-            background-size: 100% 4px;
-            z-index: 100;
-            pointer-events: none;
-        }
-        
-        .vignette {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.9) 100%);
-            z-index: 90;
-            pointer-events: none;
-        }
-        
-        .cyber-btn {
-            background: linear-gradient(90deg, #00d4ff, #ff00aa);
-            color: #000;
-            border: none;
-            padding: 18px 50px;
-            font-weight: 900;
-            font-size: 16px;
-            cursor: pointer;
-            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
-            transition: all 0.3s;
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            position: relative;
-            overflow: hidden;
-        }
-        .cyber-btn:hover {
-            box-shadow: 0 0 50px rgba(0, 212, 255, 0.9);
-            transform: translateY(-2px);
-        }
-        
-        .upload-zone {
-            border: 3px dashed rgba(0, 212, 255, 0.4);
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(10px);
-            padding: 60px 80px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.4s;
-            text-align: center;
-            z-index: 30;
-        }
-        .upload-zone:hover {
-            border-color: #00d4ff;
-            box-shadow: 0 0 40px rgba(0, 212, 255, 0.4);
-            transform: scale(1.02);
-        }
-        
-        .loading {
-            border: 4px solid rgba(0, 212, 255, 0.2);
-            border-top: 4px solid #00d4ff;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        
-        canvas {
-            border-radius: 10px;
-            box-shadow: 0 0 80px rgba(0, 212, 255, 0.3);
-        }
-    </style>
-</head>
-<body>
+# تثبيت:
+# pip install pillow moviepy numpy opencv-python imageio imageio-ffmpeg
 
-    <div class="scanlines"></div>
-    <div class="vignette"></div>
+from PIL import Image, ImageEnhance, ImageFilter
+from moviepy.editor import *
+import numpy as np
+import cv2
+import random
 
-    <div class="absolute top-8 text-center z-30">
-        <h1 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#00d4ff] via-[#ff00aa] to-[#00d4ff]" style="filter: drop-shadow(0 0 10px rgba(0,212,255,0.8));">
-            ART MARKS
-        </h1>
-        <p class="text-[#4a7e6e] mt-2 text-sm tracking-[0.3em]">CYBER FRAME EDITION</p>
-    </div>
+# --------------------------------
+# تحميل اللوحة
+# --------------------------------
+IMAGE_PATH = "input.jpg"
 
-    <div id="upload-section" class="upload-zone" onclick="document.getElementById('file').click()">
-        <input type="file" id="file" accept="image/*" style="display:none" onchange="handleUpload(event)">
-        <div class="text-6xl mb-4">🎴</div>
-        <h3 class="text-[#00d4ff] font-bold text-xl">رفع الصورة</h3>
-        <p class="text-gray-500 text-xs mt-2">سيتم إضافة البرواز المستقبلي تلقائياً</p>
-    </div>
+img = Image.open(IMAGE_PATH).convert("RGB")
 
-    <div id="controls" class="hidden z-30 mt-6 flex items-center gap-6">
-        <button onclick="saveGIF()" class="cyber-btn">💾 حفظ كـ GIF</button>
-        <div id="loading" class="loading hidden"></div>
-        <span id="status" class="text-[#00d4ff] text-xs font-mono hidden">جاري التصوير...</span>
-    </div>
+# --------------------------------
+# Resize احترافي
+# --------------------------------
+SIZE = 1080
+img = img.resize((SIZE, SIZE), Image.LANCZOS)
 
-    <div id="display" class="hidden relative z-20 mt-4">
-        <canvas id="c" width="800" height="500" class="bg-black"></canvas>
-    </div>
+# --------------------------------
+# تحسين الجودة بدون تخريب اللوحة
+# --------------------------------
+img = ImageEnhance.Sharpness(img).enhance(1.2)
+img = ImageEnhance.Contrast(img).enhance(1.08)
+img = ImageEnhance.Color(img).enhance(1.05)
 
-    <script>
-        let img = null;
-        let hue = 0;
-        let rotation = 0;
-        const canvas = document.getElementById('c');
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+# Glow خفيف
+glow = img.filter(ImageFilter.GaussianBlur(radius=8))
+img = Image.blend(img, glow, 0.08)
 
-        function handleUpload(e) {
-            const f = e.target.files[0];
-            if(!f) return;
-            const r = new FileReader();
-            r.onload = (ev) => {
-                const i = new Image();
-                i.onload = () => {
-                    img = i;
-                    document.getElementById('upload-section').classList.add('hidden');
-                    document.getElementById('controls').classList.remove('hidden');
-                    document.getElementById('display').classList.remove('hidden');
-                    animate();
-                };
-                i.src = ev.target.result;
-            };
-            r.readAsDataURL(f);
-        }
+img.save("art_temp.png")
 
-        function getRainbowColor(brightness, x, y, time) {
-            const hueVal = (time + (x / 800) * 100 + (y / 500) * 50) % 360;
-            const sat = 1.0;
-            const light = 0.35 + (brightness / 255) * 0.45;
-            const c = (1 - Math.abs(2 * light - 1)) * sat;
-            const x2 = c * (1 - Math.abs(((hueVal / 60) % 2) - 1));
-            const m = light - c / 2;
-            let r, g, b;
-            if (hueVal < 60) [r, g, b] = [c, x2, 0];
-            else if (hueVal < 120) [r, g, b] = [x2, c, 0];
-            else if (hueVal < 180) [r, g, b] = [0, c, x2];
-            else if (hueVal < 240) [r, g, b] = [0, x2, c];
-            else if (hueVal < 300) [r, g, b] = [x2, 0, c];
-            else [r, g, b] = [c, 0, x2];
-            return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
-        }
+# --------------------------------
+# حركة سينمائية ناعمة
+# --------------------------------
+clip = ImageClip("art_temp.png").set_duration(8)
 
-        // رسم البرواز المستقبلي (Cyber Frame)
-        function drawCyberFrame(time) {
-            const w = 800;
-            const h = 500;
-            const pad = 15; // المسافة من الحافة
-            const cut = 40; // حجم القطع في الزوايا
-            
-            // ألوان متدرجة (سيان وردي)
-            const color1 = `hsl(${(time % 360)}, 100%, 60%)`;
-            const color2 = `hsl(${((time + 180) % 360)}, 100%, 60%)`;
-            
-            ctx.save();
-            
-            // إعدادات التوهج (Glow)
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = color1;
-            ctx.lineWidth = 4;
-            
-            // رسم الشكل الخارجي (أوكتاجون مع تقاطعات تقنية)
-            ctx.beginPath();
-            // أعلى يسار مع قطع
-            ctx.moveTo(pad + cut, pad);
-            ctx.lineTo(w - pad - cut, pad);
-            // أعلى يمين
-            ctx.lineTo(w - pad, pad + cut);
-            ctx.lineTo(w - pad, h - pad - cut - 60); // جانب أيمن (نقصان للبرواز السفلي)
-            // زاوية يمين سفل مقطوعة
-            ctx.lineTo(w - pad - 20, h - pad - 40);
-            ctx.lineTo(w - pad - 40, h - pad);
-            // أسفل (برواز سفلي أعرض للمعلومات)
-            ctx.lineTo(pad + 40, h - pad);
-            ctx.lineTo(pad + 20, h - pad - 40);
-            // جانب أيسر
-            ctx.lineTo(pad, h - pad - cut - 60);
-            ctx.lineTo(pad, pad + cut);
-            ctx.closePath();
-            
-            // تدرج لوني للخط
-            const grad = ctx.createLinearGradient(0, 0, w, h);
-            grad.addColorStop(0, color1);
-            grad.addColorStop(0.5, color2);
-            grad.addColorStop(1, color1);
-            ctx.strokeStyle = grad;
-            ctx.stroke();
-            
-            // خط داخلي (Inner Frame)
-            ctx.lineWidth = 2;
-            ctx.shadowBlur = 10;
-            ctx.beginPath();
-            ctx.moveTo(pad + 30, pad + 20);
-            ctx.lineTo(w - pad - 30, pad + 20);
-            ctx.lineTo(w - pad - 20, h - pad - 80);
-            ctx.lineTo(pad + 20, h - pad - 80);
-            ctx.closePath();
-            ctx.strokeStyle = 'rgba(0, 212, 255, 0.6)';
-            ctx.stroke();
-            
-            // براغي/دوائر في الزوايا (Corner Bolts)
-            ctx.fillStyle = color1;
-            ctx.shadowBlur = 15;
-            const bolts = [
-                [pad + 10, pad + 10], [w - pad - 10, pad + 10],
-                [w - pad - 10, h - pad - 10], [pad + 10, h - pad - 10]
-            ];
-            bolts.forEach(([x, y]) => {
-                ctx.beginPath();
-                ctx.arc(x, y, 4, 0, Math.PI * 2);
-                ctx.fill();
-            });
-            
-            // خطوط تقنية على الجانبين (Side Circuits)
-            ctx.strokeStyle = 'rgba(0, 212, 255, 0.4)';
-            ctx.lineWidth = 1;
-            ctx.shadowBlur = 5;
-            for(let i=0; i<5; i++) {
-                // يمين
-                ctx.beginPath();
-                ctx.moveTo(w - pad - 10, pad + 80 + i*30);
-                ctx.lineTo(w - pad - 30, pad + 80 + i*30);
-                ctx.stroke();
-                // يسار
-                ctx.beginPath();
-                ctx.moveTo(pad + 10, pad + 80 + i*30);
-                ctx.lineTo(pad + 30, pad + 80 + i*30);
-                ctx.stroke();
-            }
-            
-            // اللوحة السفلية (Bottom Info Panel) - مثل الصورة المرجعية
-            ctx.fillStyle = 'rgba(0, 20, 30, 0.8)';
-            ctx.strokeStyle = color1;
-            ctx.lineWidth = 2;
-            ctx.shadowBlur = 10;
-            
-            // مستطيل البيانات السفلي
-            const infoY = h - pad - 75;
-            const infoH = 60;
-            ctx.beginPath();
-            ctx.moveTo(pad + 50, infoY);
-            ctx.lineTo(w - pad - 50, infoY);
-            ctx.lineTo(w - pad - 30, infoY + infoH);
-            ctx.lineTo(pad + 30, infoY + infoH);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-            
-            // نص البيانات
-            ctx.textAlign = 'center';
-            ctx.font = 'bold 20px Orbitron';
-            ctx.fillStyle = '#fff';
-            ctx.shadowBlur = 10;
-            ctx.fillText('ART MARKS AUTHENTIC', w/2, infoY + 28);
-            
-            ctx.font = '12px Share Tech Mono';
-            ctx.fillStyle = color2;
-            ctx.fillText('EDITION 1/1  //  LEGENDARY  //  PHOSPHOR', w/2, infoY + 50);
-            
-            // زخرفة علوية (Top Bar)
-            ctx.fillStyle = grad;
-            ctx.fillRect(w/2 - 60, pad - 2, 120, 4);
-            
-            ctx.restore();
-        }
+def motion(get_frame, t):
+    frame = Image.fromarray(get_frame(t))
 
-        function animate() {
-            if(!img) return;
-            hue = (hue + 2) % 360;
-            rotation += 0.015;
-            
-            ctx.fillStyle = 'rgba(2, 2, 2, 0.25)';
-            ctx.fillRect(0, 0, 800, 500);
-            
-            // معالجة الصورة
-            ctx.save();
-            ctx.translate(400, 250);
-            ctx.scale(Math.cos(rotation), 1);
-            ctx.translate(-400, -250);
-            
-            const temp = document.createElement('canvas');
-            temp.width = 800; temp.height = 500;
-            const tCtx = temp.getContext('2d');
-            
-            const aspect = img.width / img.height;
-            let w = 800, h = 500;
-            if(aspect > w/h) h = w/aspect; else w = h*aspect;
-            tCtx.drawImage(img, (800-w)/2, (500-h)/2 - 30, w, h); // رفع قليلاً للبرواز السفلي
-            
-            const d = tCtx.getImageData(0, 0, 800, 500);
-            for(let i=0; i<d.data.length; i+=4) {
-                const bright = (d.data[i]+d.data[i+1]+d.data[i+2])/3;
-                if(bright > 20) {
-                    const [r,g,b] = getRainbowColor(bright, (i/4)%800, Math.floor((i/4)/800), hue);
-                    d.data[i]=r; d.data[i+1]=g; d.data[i+2]=b;
-                } else {
-                    d.data[i]=d.data[i+1]=d.data[i+2]=0;
-                }
-            }
-            tCtx.putImageData(d,0,0);
-            
-            // Glitch
-            if(Math.random() > 0.3) {
-                const shift = (Math.random()-0.5)*20;
-                ctx.globalCompositeOperation = 'screen';
-                ctx.fillStyle = 'rgba(255,0,100,0.5)';
-                ctx.drawImage(temp, shift, 0);
-                ctx.fillStyle = 'rgba(0,255,255,0.5)';
-                ctx.drawImage(temp, -shift, 0);
-                ctx.globalCompositeOperation = 'source-over';
-            }
-            if(Math.random() > 0.5) {
-                for(let g=0; g<8; g++) {
-                    const gy = Math.random()*500;
-                    const gh = Math.random()*40+5;
-                    ctx.drawImage(temp, 0, gy, 800, gh, (Math.random()-0.5)*20, gy, 800, gh);
-                }
-            }
-            
-            ctx.shadowBlur = 30;
-            ctx.shadowColor = `hsl(${hue},100%,50%)`;
-            ctx.drawImage(temp,0,0);
-            ctx.restore();
-            
-            // رسم البرواز الجديد هنا
-            drawCyberFrame(hue);
-            
-            // Scanlines
-            ctx.fillStyle = 'rgba(0,0,0,0.4)';
-            for(let y=(Date.now()/20)%6; y<500; y+=6) ctx.fillRect(0,y,800,2);
-            
-            if(Math.random() > 0.7) {
-                ctx.fillStyle = `rgba(255,255,255,${Math.random()*0.1})`;
-                ctx.fillRect(0, Math.random()*500, 800, Math.random()*5);
-            }
-            
-            requestAnimationFrame(animate);
-        }
+    zoom = 1 + (t * 0.01)
 
-        function saveGIF() {
-            const btn = document.querySelector('button');
-            const loading = document.getElementById('loading');
-            const status = document.getElementById('status');
-            
-            btn.disabled = true;
-            loading.classList.remove('hidden');
-            status.classList.remove('hidden');
-            status.innerText = 'جاري التسجيل (3 ثوانٍ)...';
-            
-            const frames = [];
-            let count = 0;
-            const max = 60; // 3 seconds
-            
-            const interval = setInterval(() => {
-                if(count < max) {
-                    frames.push(canvas.toDataURL('image/png', 0.8));
-                    count++;
-                    status.innerText = `تسجيل... ${Math.round((count/max)*100)}%`;
-                } else {
-                    clearInterval(interval);
-                    status.innerText = 'جاري إنشاء GIF...';
-                    
-                    gifshot.createGIF({
-                        images: frames,
-                        gifWidth: 800,
-                        gifHeight: 500,
-                        interval: 0.05,
-                        sampleInterval: 10
-                    }, obj => {
-                        if(!obj.error) {
-                            const a = document.createElement('a');
-                            a.href = obj.image;
-                            a.download = `ArtMarks_CyberFrame_${Date.now()}.gif`;
-                            a.click();
-                        }
-                        loading.classList.add('hidden');
-                        status.classList.add('hidden');
-                        btn.disabled = false;
-                    });
-                }
-            }, 50);
-        }
-    </script>
-</body>
-</html>
-```
+    w, h = frame.size
+    nw = int(w * zoom)
+    nh = int(h * zoom)
 
-**ما الجديد:**
-1.  **دالة `drawCyberFrame`:** ترسم بروازاً ثماني الأضلاع (Octagon) بألوان Cyan/Pink متدرجة.
-2.  **زوايا مقطعة:** في الأعلى والأسفل (مثل صورة النمر).
-3.  **براغي مضيئة:** في زوايا البرواز.
-4.  **خطوط تقنية:** على الجوانب (Circuits).
-5.  **لوحة بيانات سفلية:** تحتوي على "ART MARKS AUTHENTIC" و "EDITION 1/1".
-6.  **شريط علوي:** مزخرف في الأعلى.
+    frame = frame.resize((nw, nh), Image.LANCZOS)
 
-**سيتم تسجيل كل هذا في الـ GIF النهائي.**
+    left = (nw - w) // 2
+    top = (nh - h) // 2
+
+    frame = frame.crop((left, top, left + w, top + h))
+
+    return np.array(frame)
+
+animated = clip.fl(motion)
+
+# --------------------------------
+# particles فنية خفيفة
+# --------------------------------
+particles = []
+
+for i in range(40):
+    particles.append({
+        "x": random.randint(0, SIZE),
+        "y": random.randint(0, SIZE),
+        "size": random.randint(1, 3),
+        "speed": random.uniform(0.2, 1)
+    })
+
+def make_frame(t):
+
+    frame = animated.get_frame(t)
+    overlay = frame.copy()
+
+    for p in particles:
+
+        y = int((p["y"] - t * 20 * p["speed"]) % SIZE)
+
+        cv2.circle(
+            overlay,
+            (p["x"], y),
+            p["size"],
+            (255,255,255),
+            -1
+        )
+
+    # cinematic glow
+    blur = cv2.GaussianBlur(overlay, (0,0), 4)
+
+    final = cv2.addWeighted(
+        overlay,
+        0.92,
+        blur,
+        0.15,
+        0
+    )
+
+    return final
+
+final_clip = VideoClip(make_frame, duration=8)
+
+# --------------------------------
+# تصدير احترافي
+# --------------------------------
+final_clip.write_videofile(
+    "nft_artwork.mp4",
+    fps=30,
+    codec="libx264",
+    bitrate="10000k",
+    audio=False
+)
