@@ -1,104 +1,100 @@
-الآن فهمت تماماً. إليك النسخة النهائية التي تحتوي على كل شيء طلبته:
+🔥 **نسخة النهائية - المحرك السينمائي بدون أزرار تحكم**
 
-**المميزات:**
-1.  **ألوان طيف فسفورية تلقائية (Rainbow Cycle)**: الألوان تتغير باستمرار عبر الطيف الكامل (أخضر → أزرق → بنفسجي → وردي → أصفر).
-2.  **Glitch كثيف وواضح**: يظهر بشكل عشوائي قوي مع انزياح ألوان (RGB Split).
-3.  **حفظ كـ GIF حقيقي**: يستخدم مكتبة `gif.js` لتصدير الرسوم المتحركة كملف GIF.
-4.  **دوران 180 درجة (Y-Axis Rotation)**: الصورة تدور حول محورها الأفقي كأنها بطاقة تقلب.
-5.  **إضاءة هولوغرام خارجة (Volumetric Light)**: أشعة ضوئية تخرج من البطاقة نحو المشاهد.
+هذه النسخة تحتوي على:
+1.  **جليتش قوي ومستمر** (RGB Split + Slicing) - لا يتوقف أبداً.
+2.  **ألوان طيف مشعة** (Rainbow Phosphor) تتدفق عبر الصورة تلقائياً.
+3.  **دوران 180 درجة مستمر** (Y-Axis Rotation) - كأن البطاقة تدور في الهواء.
+4.  **حفظ GIF** بنقرة واحدة.
 
-انسخ هذا الكود كاملاً:
+انسخ هذا الكود كاملاً إلى `index.html`:
 
 ```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Art Marks - Rainbow Hologram Engine</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art Marks - Auto Hologram Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- GIF Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
         
-        body { 
-            background: radial-gradient(circle at center, #0a1515 0%, #000 100%);
-            color: #fff; 
+        body {
+            background: #020202;
+            color: #fff;
             font-family: 'Orbitron', sans-serif;
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             overflow: hidden;
+            margin: 0;
         }
         
-        .upload-box {
-            border: 2px dashed #00d4ff;
-            background: rgba(0, 212, 255, 0.05);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-        .upload-box:hover {
-            background: rgba(0, 212, 255, 0.15);
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
-            transform: scale(1.02);
+        /* CRT Scanlines */
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+            background-size: 100% 4px;
+            z-index: 50;
+            pointer-events: none;
         }
         
-        #canvas-container {
-            perspective: 1000px;
-            position: relative;
+        /* Vignette */
+        .vignette {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 100%);
+            z-index: 40;
+            pointer-events: none;
         }
         
-        #holo-card {
-            width: 600px;
-            height: 400px;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.1s;
-        }
-        
-        canvas {
-            display: block;
-            border-radius: 8px;
-            box-shadow: 0 0 50px rgba(0, 212, 255, 0.3);
-        }
-        
-        /* Volumetric Light Effect */
+        /* Volumetric Light Beam */
         .light-beam {
             position: absolute;
             bottom: 50%;
             left: 50%;
-            width: 200px;
-            height: 400px;
-            background: linear-gradient(to top, rgba(0, 212, 255, 0.4), transparent);
-            transform: translateX(-50%) rotateX(60deg);
+            width: 300px;
+            height: 500px;
+            background: linear-gradient(to top, rgba(0, 255, 255, 0.3), transparent);
+            transform: translateX(-50%) rotateX(70deg);
             transform-origin: bottom;
-            filter: blur(20px);
+            filter: blur(40px);
+            animation: beamPulse 2s ease-in-out infinite;
             pointer-events: none;
-            opacity: 0.6;
-            animation: pulse 3s ease-in-out infinite;
+            z-index: 5;
         }
         
-        @keyframes pulse {
-            0%, 100% { opacity: 0.4; height: 300px; }
-            50% { opacity: 0.8; height: 500px; }
+        @keyframes beamPulse {
+            0%, 100% { opacity: 0.3; height: 400px; }
+            50% { opacity: 0.6; height: 600px; }
         }
         
         .cyber-btn {
-            background: linear-gradient(90deg, #00d4ff, #4a7e6e);
-            border: none;
+            background: #00d4ff;
             color: #000;
-            padding: 12px 30px;
+            border: none;
+            padding: 15px 40px;
             font-weight: bold;
             cursor: pointer;
             clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
-            transition: 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         .cyber-btn:hover {
-            filter: brightness(1.3);
-            box-shadow: 0 0 30px #00d4ff;
+            background: #fff;
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.9);
+            transform: translateY(-2px);
+        }
+        
+        #holo-container {
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+        
+        canvas {
+            box-shadow: 0 0 60px rgba(0, 212, 255, 0.4);
+            border: 1px solid rgba(0, 212, 255, 0.3);
         }
         
         .loading {
@@ -112,45 +108,47 @@
         @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="p-4">
+<body class="h-screen w-screen flex flex-col items-center justify-center relative">
 
-    <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00d4ff] to-[#ff00aa] mb-2 mt-4" style="filter: drop-shadow(0 0 10px rgba(0,212,255,0.5));">
-        ART MARKS <span class="text-white text-lg">// RAINBOW HOLOGRAM</span>
-    </h1>
-    <p class="text-[#4a7e6e] mb-6 font-mono text-sm">PRISMATIC AUTHENTICITY SYSTEM</p>
+    <!-- Effects -->
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
 
-    <!-- Upload -->
-    <div id="upload-section" class="upload-box p-10 rounded-lg text-center mb-6" onclick="document.getElementById('file').click()">
-        <input type="file" id="file" accept="image/*" style="display:none" onchange="init(event)">
-        <div class="text-5xl mb-3">🌈</div>
-        <h3 class="text-[#00d4ff] font-bold">اضغط لرفع الصورة</h3>
-        <p class="text-gray-500 text-xs mt-2">ستتحول تلقائياً لألوان الطيف الفسفورية</p>
+    <!-- Header -->
+    <div class="absolute top-8 text-center z-30">
+        <h1 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#00d4ff] via-[#ff00aa] to-[#00d4ff]" style="filter: drop-shadow(0 0 10px rgba(0,212,255,0.8));">
+            ART MARKS
+        </h1>
+        <p class="text-[#4a7e6e] text-xs tracking-[0.3em] mt-2">AUTOMATIC HOLOGRAM GENERATOR</p>
     </div>
 
-    <!-- Controls -->
-    <div id="controls" class="hidden flex gap-6 mb-6 items-center bg-black/50 p-4 rounded border border-[#4a7e6e] backdrop-blur">
-        <div class="text-center">
-            <label class="block text-[#00d4ff] text-xs mb-1">GLITCH INTENSITY</label>
-            <input type="range" id="glitch" min="0" max="20" value="8" class="w-32 accent-[#00d4ff]">
+    <!-- Upload Section -->
+    <div id="upload-section" class="z-30 text-center">
+        <div class="border-2 border-dashed border-[#00d4ff]/50 bg-black/40 backdrop-blur p-12 rounded-lg cursor-pointer hover:border-[#00d4ff] hover:bg-[#00d4ff]/10 transition-all duration-300 group" onclick="document.getElementById('file').click()">
+            <input type="file" id="file" accept="image/*" style="display:none" onchange="init(event)">
+            <div class="text-6xl mb-4 group-hover:scale-110 transition-transform">📡</div>
+            <h3 class="text-[#00d4ff] font-bold text-xl tracking-widest">INITIATE UPLOAD</h3>
+            <p class="text-gray-500 text-xs mt-2 font-mono">IMAGE WILL BE CONVERTED TO PHOSPHOR PNG</p>
         </div>
-        <div class="text-center">
-            <label class="block text-[#00d4ff] text-xs mb-1">ROTATION SPEED</label>
-            <input type="range" id="rotSpeed" min="1" max="10" value="5" class="w-32 accent-[#00d4ff]">
-        </div>
+    </div>
+
+    <!-- Controls (Save Only) -->
+    <div id="controls" class="hidden z-30 mt-6 flex items-center gap-4">
         <button onclick="saveGIF()" class="cyber-btn flex items-center gap-2">
-            <span>💾</span> حفظ كـ GIF
+            <span>💾</span> EXPORT ANIMATION (GIF)
         </button>
         <div id="loading" class="loading hidden"></div>
+        <span id="status" class="text-[#00d4ff] text-xs font-mono hidden">RENDERING FRAMES...</span>
     </div>
 
     <!-- Hologram Display -->
-    <div id="display" class="hidden relative">
+    <div id="display" class="hidden relative mt-8 z-20">
         <div class="light-beam"></div>
-        <div id="canvas-container">
-            <canvas id="c" width="600" height="400" class="border-2 border-[#00d4ff]/50"></canvas>
+        <div id="holo-container">
+            <canvas id="c" width="800" height="450" class="rounded bg-black"></canvas>
         </div>
-        <div class="text-center mt-4 text-[#00d4ff] font-mono text-xs">
-            <span id="status">RENDERING HOLOGRAM...</span>
+        <div class="absolute -bottom-8 left-0 w-full text-center">
+            <p class="text-[#00d4ff] text-xs font-mono tracking-widest animate-pulse">◉ HOLOGRAM ACTIVE // RAINBOW CYCLE // GLITCH:ON</p>
         </div>
     </div>
 
@@ -158,10 +156,11 @@
         let img = null;
         let hue = 0;
         let rotation = 0;
-        let animId = null;
+        let glitchOffset = 0;
         const canvas = document.getElementById('c');
-        const ctx = canvas.getContext('2d');
-
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        
+        // Initialize
         function init(e) {
             const f = e.target.files[0];
             if(!f) return;
@@ -181,139 +180,175 @@
             r.readAsDataURL(f);
         }
 
-        function animate() {
-            const glitch = parseInt(document.getElementById('glitch').value);
-            const rotSpeed = parseInt(document.getElementById('rotSpeed').value);
+        // Color Conversion
+        function getRainbowColor(brightness, x, y) {
+            // Dynamic hue based on position and time
+            const hueVal = (hue + (x / canvas.width) * 60 + (y / canvas.height) * 30) % 360;
+            const sat = 1.0; // Full saturation
+            const light = 0.3 + (brightness / 255) * 0.5; // Brightness based on original
             
-            hue = (hue + 2) % 360; // Automatic rainbow cycle
-            rotation += rotSpeed * 0.5;
+            // HSL to RGB
+            const c = (1 - Math.abs(2 * light - 1)) * sat;
+            const x2 = c * (1 - Math.abs(((hueVal / 60) % 2) - 1));
+            const m = light - c / 2;
+            let r, g, b;
             
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, 600, 400);
+            if (hueVal < 60) [r, g, b] = [c, x2, 0];
+            else if (hueVal < 120) [r, g, b] = [x2, c, 0];
+            else if (hueVal < 180) [r, g, b] = [0, c, x2];
+            else if (hueVal < 240) [r, g, b] = [0, x2, c];
+            else if (hueVal < 300) [r, g, b] = [x2, 0, c];
+            else [r, g, b] = [c, 0, x2];
             
-            // Background grid with rainbow tint
-            ctx.strokeStyle = `hsla(${hue}, 70%, 50%, 0.2)`;
-            for(let i=0; i<600; i+=40) {
-                ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,400); ctx.stroke();
-            }
-            
-            if(img) {
-                ctx.save();
-                
-                // Center and rotate 180 (flip)
-                ctx.translate(300, 200);
-                ctx.scale(Math.cos(rotation * 0.01), 1); // Horizontal flip rotation
-                ctx.translate(-300, -200);
-                
-                // Rainbow color processing
-                const temp = document.createElement('canvas');
-                temp.width = 600; temp.height = 400;
-                const tCtx = temp.getContext('2d');
-                
-                // Draw image
-                const aspect = img.width/img.height;
-                let w=600, h=400;
-                if(aspect>1.5){h=w/aspect;}else{w=h*aspect;}
-                tCtx.drawImage(img, (600-w)/2, (400-h)/2, w, h);
-                
-                // Get and color pixels
-                const d = tCtx.getImageData(0,0,600,400);
-                for(let i=0; i<d.data.length; i+=4) {
-                    const bright = (d.data[i]+d.data[i+1]+d.data[i+2])/3;
-                    if(bright>30) {
-                        const pixelHue = (hue + bright/2) % 360;
-                        const rgb = hslToRgb(pixelHue/360, 1, bright/255);
-                        d.data[i]=rgb[0]; d.data[i+1]=rgb[1]; d.data[i+2]=rgb[2];
-                    }
-                }
-                tCtx.putImageData(d,0,0);
-                
-                // Glitch Effect (Heavy)
-                if(glitch>0 && Math.random()<0.1) {
-                    for(let g=0; g<glitch; g++) {
-                        const gy = Math.random()*400;
-                        const gh = Math.random()*30+5;
-                        const shift = (Math.random()-0.5)*glitch*3;
-                        ctx.drawImage(temp, 0, gy, 600, gh, shift, gy, 600, gh);
-                    }
-                }
-                
-                // Main draw with glow
-                ctx.shadowBlur = 20;
-                ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
-                ctx.drawImage(temp, 0, 0);
-                ctx.shadowBlur = 0;
-                
-                // RGB Split Glitch lines
-                if(Math.random()<0.05) {
-                    ctx.globalCompositeOperation = 'screen';
-                    ctx.fillStyle = 'rgba(255,0,0,0.3)';
-                    ctx.fillRect(Math.random()*50, 0, 600, 400);
-                    ctx.globalCompositeOperation = 'source-over';
-                }
-                
-                // Scanlines
-                ctx.fillStyle = `rgba(0,0,0,${0.3+Math.random()*0.2})`;
-                for(let y=0; y<400; y+=4) ctx.fillRect(0,y,600,2);
-                
-                ctx.restore();
-            }
-            
-            animId = requestAnimationFrame(animate);
+            return [
+                Math.round((r + m) * 255),
+                Math.round((g + m) * 255),
+                Math.round((b + m) * 255)
+            ];
         }
 
+        // Main Animation Loop
+        function animate() {
+            if(!img) return;
+            
+            // Update globals
+            hue = (hue + 3) % 360; // Fast rainbow cycle
+            rotation += 0.02; // Rotation speed
+            
+            // Clear with trail
+            ctx.fillStyle = 'rgba(2, 2, 2, 0.3)';
+            ctx.fillRect(0, 0, 800, 450);
+            
+            // Save context for transforms
+            ctx.save();
+            
+            // 180 Degree Rotation (Y-Axis simulation)
+            const centerX = 400;
+            const centerY = 225;
+            ctx.translate(centerX, centerY);
+            ctx.scale(Math.cos(rotation), 1); // The 180 flip effect
+            ctx.translate(-centerX, -centerY);
+            
+            // Process Image
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = 800;
+            tempCanvas.height = 450;
+            const tCtx = tempCanvas.getContext('2d');
+            
+            // Draw original
+            const aspect = img.width / img.height;
+            let w = 800, h = 450;
+            if(aspect > w/h) { h = w / aspect; } else { w = h * aspect; }
+            tCtx.drawImage(img, (800-w)/2, (450-h)/2, w, h);
+            
+            // Get pixels and convert to Rainbow Phosphor
+            const imgData = tCtx.getImageData(0, 0, 800, 450);
+            const data = imgData.data;
+            
+            for(let i=0; i<data.length; i+=4) {
+                const bright = (data[i] + data[i+1] + data[i+2]) / 3;
+                if(bright > 20) { // Threshold
+                    const [r, g, b] = getRainbowColor(bright, (i/4)%800, Math.floor((i/4)/800));
+                    data[i] = r;
+                    data[i+1] = g;
+                    data[i+2] = b;
+                } else {
+                    data[i] = data[i+1] = data[i+2] = 0; // Deep black
+                }
+            }
+            tCtx.putImageData(imgData, 0, 0);
+            
+            // === HEAVY GLITCH EFFECTS ===
+            
+            // 1. RGB Split (Channel Shift)
+            if(Math.random() > 0.3) { // 70% chance
+                const shift = (Math.random() - 0.5) * 20;
+                ctx.globalCompositeOperation = 'screen';
+                ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+                ctx.drawImage(tempCanvas, shift, 0);
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.5)';
+                ctx.drawImage(tempCanvas, -shift, 0);
+                ctx.globalCompositeOperation = 'source-over';
+            }
+            
+            // 2. Horizontal Slice Displacement (Tearing)
+            if(Math.random() > 0.5) {
+                const slices = 5 + Math.floor(Math.random() * 10);
+                for(let i=0; i<slices; i++) {
+                    const y = Math.random() * 450;
+                    const h = Math.random() * 50 + 5;
+                    const offset = (Math.random() - 0.5) * 30;
+                    ctx.drawImage(tempCanvas, 0, y, 800, h, offset, y, 800, h);
+                }
+            }
+            
+            // 3. Main Draw with Glow
+            ctx.shadowBlur = 30;
+            ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+            ctx.drawImage(tempCanvas, 0, 0);
+            ctx.shadowBlur = 0;
+            
+            ctx.restore(); // End rotation transform
+            
+            // 4. Scanlines Overlay (Canvas level)
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+            for(let y=0; y<450; y+=3) {
+                if((y + Date.now()/10) % 6 < 3) {
+                    ctx.fillRect(0, y, 800, 1);
+                }
+            }
+            
+            // 5. Random Noise/Static
+            if(Math.random() > 0.7) {
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.1})`;
+                ctx.fillRect(0, Math.random()*450, 800, Math.random()*5);
+            }
+            
+            requestAnimationFrame(animate);
+        }
+
+        // Save as GIF
         function saveGIF() {
-            document.getElementById('loading').classList.remove('hidden');
+            const loading = document.getElementById('loading');
+            const status = document.getElementById('status');
+            loading.classList.remove('hidden');
+            status.classList.remove('hidden');
+            status.innerText = "CAPTURING FRAMES...";
             
             const gif = new GIF({
                 workers: 2,
                 quality: 10,
-                width: 600,
-                height: 400,
+                width: 800,
+                height: 450,
                 workerScript: 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js'
             });
             
-            // Capture 60 frames (2 seconds at 30fps)
             let frames = 0;
-            const capture = () => {
-                if(frames<60) {
+            const maxFrames = 60; // 2 seconds at 30fps
+            
+            function capture() {
+                if(frames < maxFrames) {
                     gif.addFrame(canvas, {delay: 33, copy: true});
                     frames++;
+                    status.innerText = `CAPTURING... ${Math.round((frames/maxFrames)*100)}%`;
                     setTimeout(capture, 33);
                 } else {
+                    status.innerText = "RENDERING GIF...";
                     gif.render();
                 }
-            };
+            }
             
             gif.on('finished', (blob) => {
-                document.getElementById('loading').classList.add('hidden');
+                loading.classList.add('hidden');
+                status.classList.add('hidden');
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `ArtMarks_Rainbow_${Date.now()}.gif`;
+                a.download = `ArtMarks_RainbowGlitch_${Date.now()}.gif`;
                 a.click();
             });
             
             capture();
-        }
-
-        function hslToRgb(h,s,l) {
-            let r,g,b;
-            if(s==0){r=g=b=l;}else{
-                const hue2rgb=(p,q,t)=>{
-                    if(t<0)t+=1;if(t>1)t-=1;
-                    if(t<1/6)return p+(q-p)*6*t;
-                    if(t<1/2)return q;
-                    if(t<2/3)return p+(q-p)*(2/3-t)*6;
-                    return p;
-                };
-                const q=l<0.5?l*(1+s):l+s-l*s;
-                const p=2*l-q;
-                r=hue2rgb(p,q,h+1/3);
-                g=hue2rgb(p,q,h);
-                b=hue2rgb(p,q,h-1/3);
-            }
-            return [Math.round(r*255),Math.round(g*255),Math.round(b*255)];
         }
     </script>
 </body>
