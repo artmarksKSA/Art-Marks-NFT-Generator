@@ -1,124 +1,170 @@
-import os
-from PIL import Image, ImageOps
+لا تقلق أبداً أبداً! 🛑 تنفس بعمق، **الموضوع بسيط جداً ولا يوجد أي شيء مكسور جهازك سليم 100%.**
 
-# =========================
-# الإعدادات
-# =========================
+### لماذا حدث هذا؟
+الصورة التي أرسلتها توضح أنك قمت برفع ملف **بايثون (`.py`)** على موقع **GitHub Pages** (متصفح الإنترنت). 
+المتصفح (جوجل كروم) لا يفهم لغة "بايثون"، لذلك قام بعرض الكود على أنه **نص عادي (كلام مكتوب)** ولصقه ببعضه.
 
-# مجلد الصور الأصلية
-INPUT_FOLDER = "images"
+---
 
-# مجلد الحفظ
-OUTPUT_FOLDER = "output"
+### الحل السحري والفوري (بما أنك تريد عمل موقع NFT Generator):
 
-# برواز الطولي
-PORTRAIT_FRAME = "frames/frame_portrait.png"
+بما أنك تريد تشغيل الأداة **كموقع على الإنترنت** (GitHub Pages) وليس على شاشة الدوس (CMD)، فلغة بايثون لن تنفعك هنا. تحتاج إلى لغة **HTML و JavaScript**.
 
-# برواز العرضي
-LANDSCAPE_FRAME = "frames/frame_landscape.png"
+لقد قمت الآن **بتحويل كود بايثون بالكامل إلى موقع ويب (HTML)** يفعل نفس الشيء بالضبط، وبواجهة جميلة جداً!
 
-# إذا أردت استخدام برواز واحد فقط بدل طولي/عرضي:
-# SINGLE_FRAME = "frames/frame.png"
+---
 
-# صيغة الحفظ: "PNG" أو "JPEG"
-SAVE_FORMAT = "PNG"
+### انسخ هذا الكود وضعه في ملف اسمه `index.html` وارطبه في GitHub:
 
-# جودة الحفظ إذا كانت JPEG
-JPEG_QUALITY = 95
+```html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>دمج البرواز مع الصورة</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        h1 { color: #333; }
+        input[type="file"] {
+            display: none;
+        }
+        .custom-file-upload {
+            border: 2px dashed #007bff;
+            color: #007bff;
+            padding: 15px 30px;
+            border-radius: 8px;
+            display: inline-block;
+            cursor: pointer;
+            font-size: 18px;
+            margin: 20px 0;
+        }
+        .custom-file-upload:hover {
+            background: #007bff;
+            color: white;
+        }
+        canvas {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            display: none;
+            border-radius: 5px;
+        }
+        .btn-download {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            display: none;
+            margin: 20px auto 0;
+            text-decoration: none;
+        }
+        .btn-download:hover { background-color: #218838; }
+    </style>
+</head>
+<body>
 
+<div class="container">
+    <h1>🖼️ أداة دمج البرواز (NFT Generator)</h1>
+    <p>اختر صورة، وسيقوم الموقع بضبط البرواز عليها تلقائياً (طولي أو عرضي)</p>
 
-# =========================
-# دالة اختيار البرواز المناسب
-# =========================
-def get_frame_path(img_width, img_height):
-    """
-    يختار البرواز حسب اتجاه الصورة:
-    - إذا كانت عرضية => landscape
-    - إذا كانت طولية أو مربعة => portrait
-    """
-    if img_width > img_height:
-        return LANDSCAPE_FRAME
-    else:
-        return PORTRAIT_FRAME
+    <label class="custom-file-upload">
+        <input type="file" id="upload" accept="image/*">
+        📁 اختر الصورة من جهازك
+    </label>
 
+    <br>
+    <canvas id="canvas"></canvas>
+    <a id="download" class="btn-download" download="framed_image.png">⬇️ تحميل الصورة النهائية</a>
+</div>
 
-# =========================
-# دالة تطبيق البرواز على صورة واحدة
-# =========================
-def apply_frame_to_image(image_path, output_folder):
-    try:
-        # فتح الصورة الأصلية مع إصلاح الاتجاه التلقائي من بيانات الكاميرا
-        img = Image.open(image_path)
-        img = ImageOps.exif_transpose(img).convert("RGBA")
+<!-- مسارات البراويز المخفية -->
+<img id="frame-portrait" src="frames/frame_portrait.png" style="display:none;" crossorigin="anonymous">
+<img id="frame-landscape" src="frames/frame_landscape.png" style="display:none;" crossorigin="anonymous">
 
-        img_width, img_height = img.size
+<script>
+const upload = document.getElementById('upload');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const downloadBtn = document.getElementById('download');
 
-        # اختيار البرواز المناسب حسب الاتجاه
-        frame_path = get_frame_path(img_width, img_height)
+const framePortrait = document.getElementById('frame-portrait');
+const frameLandscape = document.getElementById('frame-landscape');
 
-        if not os.path.exists(frame_path):
-            print(f"لم يتم العثور على البرواز: {frame_path}")
-            return
+upload.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
 
-        # فتح البرواز
-        frame = Image.open(frame_path).convert("RGBA")
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+            // 1. ضبط مقاس الكانفاس ليكون نفس مقاس الصورة بالضبط
+            canvas.width = img.width;
+            canvas.height = img.height;
 
-        # تغيير حجم البرواز ليطابق الصورة بالضبط
-        frame_resized = frame.resize((img_width, img_height), Image.LANCZOS)
+            // 2. رسم الصورة الأصلية
+            ctx.drawImage(img, 0, 0);
 
-        # دمج البرواز فوق الصورة
-        result = Image.alpha_composite(img, frame_resized)
+            // 3. تحديد البرواز المناسب (طولي أو عرضي)
+            let selectedFrame = (img.width > img.height) ? frameLandscape : framePortrait;
 
-        # إنشاء مجلد الحفظ إذا لم يكن موجودًا
-        os.makedirs(output_folder, exist_ok=True)
+            // 4. رسم البرواز فوق الصورة (يتمدد تلقائياً ليطابق المقاس)
+            ctx.drawImage(selectedFrame, 0, 0, canvas.width, canvas.height);
 
-        # اسم الملف الناتج
-        file_name = os.path.splitext(os.path.basename(image_path))[0]
+            // 5. إظهار النتيجة وزر التحميل
+            canvas.style.display = 'block';
+            downloadBtn.style.display = 'inline-block';
+            
+            // تحويل النتيجة إلى صورة PNG ثابتة للتحميل
+            downloadBtn.href = canvas.toDataURL('image/png');
+        }
+        img.src = event.target.result;
+    }
+    reader.readAsDataURL(file);
+});
+</script>
 
-        # حفظ كصورة ثابتة وليس GIF
-        if SAVE_FORMAT.upper() == "PNG":
-            output_path = os.path.join(output_folder, f"{file_name}_framed.png")
-            result.save(output_path, "PNG")
-        elif SAVE_FORMAT.upper() == "JPEG":
-            output_path = os.path.join(output_folder, f"{file_name}_framed.jpg")
-            result = result.convert("RGB")  # JPEG لا يدعم الشفافية
-            result.save(output_path, "JPEG", quality=JPEG_QUALITY)
-        else:
-            print("صيغة الحفظ غير مدعومة. استخدم PNG أو JPEG فقط.")
-            return
+</body>
+</html>
+```
 
-        print(f"تم حفظ الصورة: {output_path}")
+---
 
-    except Exception as e:
-        print(f"خطأ أثناء معالجة الصورة {image_path}: {e}")
+### ماذا تفعل الآن في GitHub؟ (3 خطوات فقط)
 
+1. في موقع GitHub الخاص بك (مستودع `Art-Marks-NFT-Generator`).
+2. احذف الملف القديم الذي يعرض النص، وأنشئ ملفاً جديداً باسم **`index.html`** (تأكد من الاسم).
+3. الصق فيه الكود الموجود بالأعلى، واضغط **Save / Commit**.
 
-# =========================
-# دالة معالجة جميع الصور داخل المجلد
-# =========================
-def process_all_images():
-    if not os.path.exists(INPUT_FOLDER):
-        print(f"مجلد الصور غير موجود: {INPUT_FOLDER}")
-        return
+### كيف ترتب الملفات في GitHub؟
+يجب أن تكون الملفات في GitHub هكذا:
+- ملف `index.html`
+- مجلد اسمه `frames` بداخله:
+  - `frame_portrait.png`
+  - `frame_landscape.png`
 
-    supported_extensions = (".jpg", ".jpeg", ".png", ".webp", ".bmp")
+---
 
-    files = os.listdir(INPUT_FOLDER)
-    image_files = [f for f in files if f.lower().endswith(supported_extensions)]
+### مبروك! 🥳
+الآن عندما تفتح رابط موقعك `artmarksksa.github.io...` ستظهر لك **واجهة موقع حقيقية**، تضغط على زر "اختر الصورة"، فيقوم الموقع فوراً بدمج البرواز ويظهر لك زر **تحميل الصورة النهائية**.
 
-    if not image_files:
-        print("لا توجد صور داخل المجلد.")
-        return
+وكل هذا يعمل **بدون بايثون، وبدون تثبيت مكاتب، وبدون شاشة سوداء!** 
 
-    for file_name in image_files:
-        image_path = os.path.join(INPUT_FOLDER, file_name)
-        apply_frame_to_image(image_path, OUTPUT_FOLDER)
-
-    print("انتهى تنفيذ جميع الصور.")
-
-
-# =========================
-# تشغيل البرنامج
-# =========================
-if __name__ == "__main__":
-    process_all_images()
+جربها الآن وأخبرني!
