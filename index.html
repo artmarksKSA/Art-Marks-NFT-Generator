@@ -102,8 +102,14 @@ body {
 .left-panel::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 2px; }
 
 .panel-title { font-size: 14px; letter-spacing: 3px; color: var(--neon-cyan); margin-bottom: 20px; text-shadow: 0 0 10px var(--neon-cyan); }
-.section-title { font-size: 11px; letter-spacing: 2px; color: var(--neon-cyan); margin: 15px 0 10px; }
-.slider-group { margin-bottom: 18px; }
+.section-title { 
+  font-size: 11px; letter-spacing: 2px; color: var(--neon-cyan); 
+  margin: 18px 0 10px; padding-top: 12px;
+  border-top: 1px solid rgba(0,240,255,0.15);
+}
+.section-title:first-of-type { border-top: none; padding-top: 0; }
+
+.slider-group { margin-bottom: 14px; }
 .slider-label { font-size: 10px; letter-spacing: 2px; color: rgba(255,255,255,0.7); margin-bottom: 6px; display: flex; justify-content: space-between; }
 .slider-value { color: var(--neon-cyan); }
 input[type=range] {
@@ -186,7 +192,6 @@ input[type=range]::-webkit-slider-thumb {
 }
 .export-btn.video { background: linear-gradient(90deg, #ff00ea, #b829ff); box-shadow: 0 0 25px rgba(255,0,234,0.5); }
 
-/* ====== الإطار يتأقلم مع الصورة ====== */
 .luxury-card {
   position: fixed;
   top: 50%; left: 50%;
@@ -350,7 +355,7 @@ input[type=range]::-webkit-slider-thumb {
   </div>
   
   <div class="slider-group">
-    <div class="slider-label"><span>SHIMMER</span><span class="slider-value" id="val-shimmer">70%</span></div>
+    <div class="slider-label"><span>SHIMMER SPEED</span><span class="slider-value" id="val-shimmer">70%</span></div>
     <input type="range" id="slider-shimmer" min="10" max="200" value="70">
   </div>
   
@@ -364,12 +369,41 @@ input[type=range]::-webkit-slider-thumb {
     <input type="range" id="slider-glitter" min="0" max="100" value="60">
   </div>
   
+  <div class="section-title">⚡ DIAGONAL LINES</div>
+  
+  <div class="slider-group">
+    <div class="slider-label"><span>🔆 LINE OPACITY</span><span class="slider-value" id="val-lineOpacity">100%</span></div>
+    <input type="range" id="slider-lineOpacity" min="0" max="200" value="100">
+  </div>
+  
+  <div class="slider-group">
+    <div class="slider-label"><span>📏 LINE WIDTH</span><span class="slider-value" id="val-lineWidth">50%</span></div>
+    <input type="range" id="slider-lineWidth" min="10" max="100" value="50">
+  </div>
+  
+  <div class="slider-group">
+    <div class="slider-label"><span>🔢 LINE COUNT</span><span class="slider-value" id="val-lineCount">6</span></div>
+    <input type="range" id="slider-lineCount" min="2" max="30" value="6">
+  </div>
+  
+  <div class="slider-group">
+    <div class="slider-label"><span>🧭 LINE ANGLE</span><span class="slider-value" id="val-lineAngle">45°</span></div>
+    <input type="range" id="slider-lineAngle" min="0" max="180" value="45">
+  </div>
+  
+  <div class="slider-group">
+    <div class="slider-label"><span>⚡ LINE SHARPNESS</span><span class="slider-value" id="val-lineSharpness">70%</span></div>
+    <input type="range" id="slider-lineSharpness" min="10" max="100" value="70">
+  </div>
+  
+  <div class="section-title">ANIMATION</div>
+  
   <div class="slider-group">
     <div class="slider-label"><span>ROTATION SPEED</span><span class="slider-value" id="val-rotation">50%</span></div>
     <input type="range" id="slider-rotation" min="0" max="200" value="50">
   </div>
   
-  <div class="section-title">HIGHLIGHTS</div>
+  <div class="section-title">HIGHLIGHTS COLOR</div>
   <div class="btn-row">
     <button class="mini-btn active" data-highlights="silver">SILVER</button>
     <button class="mini-btn" data-highlights="gold">GOLD</button>
@@ -467,7 +501,13 @@ const settings = {
   glitter: 0.6,
   rotation: 0.5,
   highlights: 'silver',
-  rarity: 'legendary'
+  rarity: 'legendary',
+  // إعدادات الخطوط القطرية الجديدة
+  lineOpacity: 1.0,
+  lineWidth: 0.5,
+  lineCount: 6.0,
+  lineAngle: 45.0,
+  lineSharpness: 0.7
 };
 
 const chromeVertexShader = `
@@ -488,6 +528,14 @@ uniform float uGlitter;
 uniform vec2 uMouse;
 uniform float uSeed;
 uniform int uHighlightMode;
+
+// uniforms الخطوط القطرية الجديدة
+uniform float uLineOpacity;
+uniform float uLineWidth;
+uniform float uLineCount;
+uniform float uLineAngle;
+uniform float uLineSharpness;
+
 varying vec2 vUv;
 
 vec3 hsv2rgb(vec3 c) {
@@ -513,18 +561,35 @@ float noise(vec2 st) {
 
 void main() {
   vec4 baseTex = texture2D(uTexture, vUv);
+  
   float lum = dot(baseTex.rgb, vec3(0.299, 0.587, 0.114));
+  
   vec3 chromeBase = vec3(0.78, 0.82, 0.86);
   chromeBase = mix(chromeBase * 0.4, chromeBase * 1.2, lum);
-  float angleRad = 0.785;
+  
+  // ====== الخطوط القطرية - يتحكم بها المستخدم الآن ======
+  float angleRad = uLineAngle * 3.14159265 / 180.0;
   vec2 dir = vec2(cos(angleRad), sin(angleRad));
   float sweepCoord = dot(vUv, dir);
-  float sweep1 = sin(sweepCoord * 6.0 - uTime * uShimmer * 2.0);
-  float sweep2 = sin(sweepCoord * 12.0 - uTime * uShimmer * 1.5 + 1.5);
-  float lightBand = smoothstep(0.7, 0.95, sweep1) * 0.7;
-  lightBand += smoothstep(0.85, 1.0, sweep2) * 0.5;
+  
+  // الخطوط الرئيسية - عددها يتحكم بها المستخدم
+  float sweep1 = sin(sweepCoord * uLineCount - uTime * uShimmer * 2.0);
+  float sweep2 = sin(sweepCoord * (uLineCount * 2.0) - uTime * uShimmer * 1.5 + 1.5);
+  
+  // عرض الخطوط - يتحكم به المستخدم
+  float widthFactor = 1.0 - uLineWidth;
+  float lightBand = smoothstep(0.7 + widthFactor * 0.2, 0.95, sweep1) * 0.7;
+  lightBand += smoothstep(0.85 + widthFactor * 0.1, 1.0, sweep2) * 0.5;
+  
+  // حدّة الخطوط - يتحكم بها المستخدم
+  lightBand = pow(lightBand, 1.0 / uLineSharpness);
+  
+  // وضوح الخطوط - يتحكم بها المستخدم
+  lightBand *= uLineOpacity;
+  
   float iriHue = sweepCoord * 2.0 + uTime * 0.15 + lum * 0.3 + uMouse.x * 0.5;
   vec3 iriColor = hsv2rgb(vec3(iriHue, 0.7, 1.0));
+  
   vec3 highlightColor;
   if (uHighlightMode == 0) {
     highlightColor = vec3(0.95, 0.97, 1.0);
@@ -538,9 +603,11 @@ void main() {
     highlightColor = vec3(0.4, 0.9, 1.0);
     highlightColor = mix(highlightColor, iriColor, 0.4 * uIridescent);
   }
+  
   vec3 metallic = chromeBase;
   metallic = mix(metallic, highlightColor, lightBand * 0.8);
   metallic += iriColor * uIridescent * 0.25 * (0.5 + lum * 0.5);
+  
   vec2 glitterCoord = vUv * 300.0;
   float glitterRand = random(floor(glitterCoord));
   float glitterFlash = sin(uTime * 4.0 + glitterRand * 100.0 + uSeed) * 0.5 + 0.5;
@@ -548,11 +615,15 @@ void main() {
   if (glitterRand > 0.97) {
     metallic += vec3(1.0) * glitterFlash * uGlitter * 1.8;
   }
+  
   float fineNoise = noise(vUv * 80.0 + uTime * 0.2) * 0.08 * uGlitter;
   metallic += vec3(fineNoise);
-  float fastSweep = sin(sweepCoord * 20.0 - uTime * uShimmer * 4.0);
-  float thinLight = smoothstep(0.92, 1.0, fastSweep) * 0.6;
+  
+  // الخط الرفيع السريع - يتأثر بإعدادات المستخدم أيضاً
+  float fastSweep = sin(sweepCoord * (uLineCount * 3.5) - uTime * uShimmer * 4.0);
+  float thinLight = smoothstep(0.92 - uLineWidth * 0.1, 1.0, fastSweep) * 0.6 * uLineOpacity;
   metallic += vec3(1.0) * thinLight;
+  
   vec3 baseColor = baseTex.rgb;
   vec3 overlay;
   for (int i = 0; i < 3; i++) {
@@ -562,7 +633,9 @@ void main() {
       overlay[i] = 1.0 - 2.0 * (1.0 - baseColor[i]) * (1.0 - metallic[i]);
     }
   }
+  
   vec3 finalColor = mix(baseTex.rgb, overlay, uMetallic);
+  
   gl_FragColor = vec4(finalColor, baseTex.a);
 }
 `;
@@ -652,7 +725,13 @@ function processImage(imageDataUrl) {
           uGlitter: { value: settings.glitter },
           uMouse: { value: new THREE.Vector2(0, 0) },
           uSeed: { value: nftSeed },
-          uHighlightMode: { value: 0 }
+          uHighlightMode: { value: 0 },
+          // uniforms جديدة للخطوط
+          uLineOpacity: { value: settings.lineOpacity },
+          uLineWidth: { value: settings.lineWidth },
+          uLineCount: { value: settings.lineCount },
+          uLineAngle: { value: settings.lineAngle },
+          uLineSharpness: { value: settings.lineSharpness }
         },
         vertexShader: chromeVertexShader,
         fragmentShader: chromeFragmentShader,
@@ -747,13 +826,19 @@ function toggleChromeSilver() {
 }
 
 function setupControls() {
+  // الإعدادات الأصلية
   const sliderMap = {
     'slider-metallic': ['metallic', 'val-metallic', 0.01, '%'],
     'slider-shimmer': ['shimmer', 'val-shimmer', 0.01, '%'],
     'slider-iridescent': ['iridescent', 'val-iridescent', 0.01, '%'],
     'slider-glitter': ['glitter', 'val-glitter', 0.01, '%'],
-    'slider-rotation': ['rotation', 'val-rotation', 0.01, '%']
+    'slider-rotation': ['rotation', 'val-rotation', 0.01, '%'],
+    // الإعدادات الجديدة للخطوط القطرية
+    'slider-lineOpacity': ['lineOpacity', 'val-lineOpacity', 0.01, '%'],
+    'slider-lineWidth': ['lineWidth', 'val-lineWidth', 0.01, '%'],
+    'slider-lineSharpness': ['lineSharpness', 'val-lineSharpness', 0.01, '%']
   };
+  
   Object.keys(sliderMap).forEach(id => {
     const slider = document.getElementById(id);
     const [setting, valId, mult, suffix] = sliderMap[id];
@@ -765,9 +850,29 @@ function setupControls() {
         if (setting === 'shimmer') chromeOverlay.material.uniforms.uShimmer.value = settings.shimmer;
         if (setting === 'iridescent') chromeOverlay.material.uniforms.uIridescent.value = settings.iridescent;
         if (setting === 'glitter') chromeOverlay.material.uniforms.uGlitter.value = settings.glitter;
+        if (setting === 'lineOpacity') chromeOverlay.material.uniforms.uLineOpacity.value = settings.lineOpacity;
+        if (setting === 'lineWidth') chromeOverlay.material.uniforms.uLineWidth.value = settings.lineWidth;
+        if (setting === 'lineSharpness') chromeOverlay.material.uniforms.uLineSharpness.value = settings.lineSharpness;
       }
     });
   });
+  
+  // عدد الخطوط (قيمة صحيحة)
+  const lineCountSlider = document.getElementById('slider-lineCount');
+  lineCountSlider.addEventListener('input', (e) => {
+    settings.lineCount = parseFloat(e.target.value);
+    document.getElementById('val-lineCount').textContent = e.target.value;
+    if (chromeOverlay) chromeOverlay.material.uniforms.uLineCount.value = settings.lineCount;
+  });
+  
+  // زاوية الخطوط (بالدرجات)
+  const lineAngleSlider = document.getElementById('slider-lineAngle');
+  lineAngleSlider.addEventListener('input', (e) => {
+    settings.lineAngle = parseFloat(e.target.value);
+    document.getElementById('val-lineAngle').textContent = e.target.value + '°';
+    if (chromeOverlay) chromeOverlay.material.uniforms.uLineAngle.value = settings.lineAngle;
+  });
+  
   document.querySelectorAll('[data-highlights]').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('[data-highlights]').forEach(b => b.classList.remove('active'));
@@ -801,7 +906,6 @@ function setupControls() {
   });
 }
 
-// ====== حفظ صورة PNG ثابتة ======
 function exportNFT() {
   if (!baseArtwork) { alert('Upload an artwork first'); return; }
   document.getElementById('loading').classList.add('active');
@@ -848,13 +952,15 @@ function exportNFT() {
   });
 }
 
-// ====== حفظ فيديو WebM متحرك ======
 function exportVideo() {
   if (!baseArtwork) { alert('Upload an artwork first'); return; }
 
   const card = document.getElementById('luxuryCard');
   const cardRect = card.getBoundingClientRect();
-  const duration = 5000; // مدة الفيديو 5 ثواني
+  
+  const rotationSpeed = settings.rotation * 1.5;
+  const fullRotationTime = (2 * Math.PI) / rotationSpeed;
+  const duration = Math.max(fullRotationTime * 1000, 4000);
   const fps = 30;
 
   document.getElementById('loading').classList.add('active');
@@ -901,40 +1007,34 @@ function exportVideo() {
       document.getElementById('loading').classList.remove('active');
     };
 
+    rotationY = 0;
     recorder.start();
     const startTime = performance.now();
 
     function recordFrame() {
       const elapsed = performance.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
-
       document.getElementById('loadingText').textContent = 'RECORDING ' + Math.round(progress * 100) + '%';
-
       recCtx.fillStyle = '#050510';
       recCtx.fillRect(0, 0, recCanvas.width, recCanvas.height);
-
       const sceneCanvas = renderer.domElement;
       const dpr = window.devicePixelRatio || 1;
       const sx = cardRect.left * dpr;
       const sy = cardRect.top * dpr;
       const sw = cardRect.width * dpr;
       const sh = cardRect.height * dpr;
-
       try {
         recCtx.drawImage(sceneCanvas, sx, sy, sw, sh, 0, 0, recCanvas.width, recCanvas.height);
       } catch (err) {}
-
       if (frameImage) {
         recCtx.drawImage(frameImage, 0, 0, recCanvas.width, recCanvas.height);
       }
-
       if (elapsed < duration) {
         requestAnimationFrame(recordFrame);
       } else {
         recorder.stop();
       }
     }
-
     recordFrame();
   }).catch(err => {
     document.getElementById('loading').classList.remove('active');
@@ -942,7 +1042,6 @@ function exportVideo() {
   });
 }
 
-// ====== ربط زر الرفع ======
 const uploadArea = document.getElementById('uploadArea');
 const fileInput = document.getElementById('fileInput');
 
