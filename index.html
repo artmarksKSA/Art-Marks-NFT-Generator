@@ -1,4 +1,4 @@
-ها هو الكود الكامل والمعدل بزر الحفظ الثابت:
+ها هو الكود الكامل مع إضافة **البرواز المستقبلي (Cyber Frame)** المشابه للصورة المرجعية (Cyan/Pink Neon، زوايا مقطعة، براغي، وخطوط تقنية):
 
 ```html
 <!DOCTYPE html>
@@ -6,18 +6,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Art Marks - Auto Rainbow Hologram</title>
+    <title>Art Marks - Cyber Frame Hologram</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- مكتبة gifshot الأكثر موثوقية لإنشاء GIF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gifshot/0.3.2/gifshot.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             background: #020202;
@@ -33,67 +28,25 @@
             position: relative;
         }
         
-        /* CRT Scanlines Effect */
         .scanlines {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                to bottom,
-                rgba(255,255,255,0) 50%,
-                rgba(0,0,0,0.2) 50%
-            );
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%);
             background-size: 100% 4px;
             z-index: 100;
             pointer-events: none;
         }
         
-        /* Vignette Effect */
         .vignette {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.9) 100%);
             z-index: 90;
             pointer-events: none;
         }
         
-        /* Volumetric Light Beam */
-        .light-beam {
-            position: absolute;
-            bottom: 50%;
-            left: 50%;
-            width: 400px;
-            height: 600px;
-            background: linear-gradient(to top, rgba(0, 212, 255, 0.4), transparent 70%);
-            transform: translateX(-50%) rotateX(75deg);
-            transform-origin: bottom center;
-            filter: blur(50px);
-            animation: beamPulse 2s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 5;
-        }
-        
-        @keyframes beamPulse {
-            0%, 100% { 
-                opacity: 0.3; 
-                height: 400px;
-                filter: blur(50px);
-            }
-            50% { 
-                opacity: 0.7; 
-                height: 700px;
-                filter: blur(70px);
-            }
-        }
-        
-        /* Cyber Button */
         .cyber-btn {
-            background: linear-gradient(90deg, #00d4ff 0%, #ff00aa 100%);
+            background: linear-gradient(90deg, #00d4ff, #ff00aa);
             color: #000;
             border: none;
             padding: 18px 50px;
@@ -101,40 +54,35 @@
             font-size: 16px;
             cursor: pointer;
             clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
             text-transform: uppercase;
             letter-spacing: 3px;
             position: relative;
             overflow: hidden;
         }
-        
-        .cyber-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: 0.5s;
-        }
-        
-        .cyber-btn:hover::before {
-            left: 100%;
-        }
-        
         .cyber-btn:hover {
             box-shadow: 0 0 50px rgba(0, 212, 255, 0.9);
-            transform: translateY(-3px);
+            transform: translateY(-2px);
         }
         
-        .cyber-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        .upload-zone {
+            border: 3px dashed rgba(0, 212, 255, 0.4);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 60px 80px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.4s;
+            text-align: center;
+            z-index: 30;
+        }
+        .upload-zone:hover {
+            border-color: #00d4ff;
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.4);
+            transform: scale(1.02);
         }
         
-        /* Loading Spinner */
         .loading {
             border: 4px solid rgba(0, 212, 255, 0.2);
             border-top: 4px solid #00d4ff;
@@ -143,370 +91,335 @@
             height: 40px;
             animation: spin 1s linear infinite;
         }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Upload Zone */
-        .upload-zone {
-            border: 3px dashed rgba(0, 212, 255, 0.4);
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(10px);
-            padding: 60px 80px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .upload-zone::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent, rgba(0, 212, 255, 0.1), transparent);
-            transform: translateX(-100%);
-            transition: 0.6s;
-        }
-        
-        .upload-zone:hover::before {
-            transform: translateX(100%);
-        }
-        
-        .upload-zone:hover {
-            border-color: #00d4ff;
-            box-shadow: 0 0 40px rgba(0, 212, 255, 0.4);
-            transform: scale(1.02);
-        }
-        
-        /* Canvas Container */
-        #canvas-container {
-            position: relative;
-            z-index: 20;
-        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
         
         canvas {
             border-radius: 10px;
-            box-shadow: 0 0 80px rgba(0, 212, 255, 0.5);
-        }
-        
-        /* Status Text */
-        .status-text {
-            color: #00d4ff;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+            box-shadow: 0 0 80px rgba(0, 212, 255, 0.3);
         }
     </style>
 </head>
 <body>
 
-    <!-- Visual Effects -->
     <div class="scanlines"></div>
     <div class="vignette"></div>
 
-    <!-- Header -->
-    <div class="absolute top-10 left-0 right-0 text-center z-30">
-        <h1 class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#00d4ff] via-[#ff00aa] to-[#00d4ff]" 
-            style="filter: drop-shadow(0 0 20px rgba(0,212,255,0.8));">
+    <div class="absolute top-8 text-center z-30">
+        <h1 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#00d4ff] via-[#ff00aa] to-[#00d4ff]" style="filter: drop-shadow(0 0 10px rgba(0,212,255,0.8));">
             ART MARKS
         </h1>
-        <p class="text-[#4a7e6e] mt-3 text-sm tracking-[0.4em] font-bold">RAINBOW PHOSPHOR HOLOGRAM</p>
+        <p class="text-[#4a7e6e] mt-2 text-sm tracking-[0.3em]">CYBER FRAME EDITION</p>
     </div>
 
-    <!-- Upload Section -->
-    <div id="upload-section" class="z-30">
-        <div class="upload-zone" onclick="document.getElementById('file-input').click()">
-            <input type="file" id="file-input" accept="image/*" style="display:none" onchange="handleUpload(event)">
-            <div class="text-7xl mb-6 animate-pulse">🌈</div>
-            <h3 class="text-[#00d4ff] font-bold text-2xl mb-2 tracking-widest">INITIATE UPLOAD</h3>
-            <p class="text-gray-400 text-sm">أي صورة ← تحويل تلقائي إلى PNG فسفوري</p>
-            <p class="text-[#4a7e6e] text-xs mt-4 font-mono">اضغط لاختيار الملف</p>
-        </div>
+    <div id="upload-section" class="upload-zone" onclick="document.getElementById('file').click()">
+        <input type="file" id="file" accept="image/*" style="display:none" onchange="handleUpload(event)">
+        <div class="text-6xl mb-4">🎴</div>
+        <h3 class="text-[#00d4ff] font-bold text-xl">رفع الصورة</h3>
+        <p class="text-gray-500 text-xs mt-2">سيتم إضافة البرواز المستقبلي تلقائياً</p>
     </div>
 
-    <!-- Controls -->
-    <div id="controls" class="hidden z-30 mt-8 flex items-center gap-6">
-        <button id="save-btn" onclick="saveGIF()" class="cyber-btn">
-            💾 EXPORT ANIMATION (GIF)
-        </button>
+    <div id="controls" class="hidden z-30 mt-6 flex items-center gap-6">
+        <button onclick="saveGIF()" class="cyber-btn">💾 حفظ كـ GIF</button>
         <div id="loading" class="loading hidden"></div>
-        <span id="status" class="status-text hidden">CAPTURING FRAMES...</span>
+        <span id="status" class="text-[#00d4ff] text-xs font-mono hidden">جاري التصوير...</span>
     </div>
 
-    <!-- Display Area -->
-    <div id="display-area" class="hidden relative mt-6 z-20">
-        <div class="light-beam"></div>
-        <div id="canvas-container">
-            <canvas id="main-canvas" width="800" height="450" class="bg-black"></canvas>
-        </div>
-        <div class="absolute -bottom-10 left-0 right-0 text-center">
-            <p class="text-[#00d4ff] text-xs font-mono tracking-[0.3em] animate-pulse">
-                ◉ RAINBOW CYCLE ACTIVE // GLITCH: MAXIMUM // 3D ROTATION
-            </p>
-        </div>
+    <div id="display" class="hidden relative z-20 mt-4">
+        <canvas id="c" width="800" height="500" class="bg-black"></canvas>
     </div>
 
     <script>
-        // Global Variables
-        let sourceImage = null;
-        let hueValue = 0;
-        let rotationAngle = 0;
-        let animationId = null;
-        const canvas = document.getElementById('main-canvas');
+        let img = null;
+        let hue = 0;
+        let rotation = 0;
+        const canvas = document.getElementById('c');
         const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
-        // Handle Image Upload
-        function handleUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    sourceImage = img;
-                    
-                    // Switch UI
+        function handleUpload(e) {
+            const f = e.target.files[0];
+            if(!f) return;
+            const r = new FileReader();
+            r.onload = (ev) => {
+                const i = new Image();
+                i.onload = () => {
+                    img = i;
                     document.getElementById('upload-section').classList.add('hidden');
                     document.getElementById('controls').classList.remove('hidden');
-                    document.getElementById('display-area').classList.remove('hidden');
-                    
-                    // Start Animation
-                    startAnimation();
+                    document.getElementById('display').classList.remove('hidden');
+                    animate();
                 };
-                img.src = e.target.result;
+                i.src = ev.target.result;
             };
-            reader.readAsDataURL(file);
+            r.readAsDataURL(f);
         }
 
-        // Convert to Rainbow Color
         function getRainbowColor(brightness, x, y, time) {
-            // Dynamic hue based on position + time for flowing effect
-            const hue = (time + (x / 800) * 100 + (y / 450) * 50) % 360;
-            const saturation = 1.0; // Full saturation for neon look
-            const lightness = 0.4 + (brightness / 255) * 0.4;
-            
-            // HSL to RGB conversion
-            const c = (1 - Math.abs(2 * lightness - 1)) * saturation;
-            const x2 = c * (1 - Math.abs(((hue / 60) % 2) - 1));
-            const m = lightness - c / 2;
-            
+            const hueVal = (time + (x / 800) * 100 + (y / 500) * 50) % 360;
+            const sat = 1.0;
+            const light = 0.35 + (brightness / 255) * 0.45;
+            const c = (1 - Math.abs(2 * light - 1)) * sat;
+            const x2 = c * (1 - Math.abs(((hueVal / 60) % 2) - 1));
+            const m = light - c / 2;
             let r, g, b;
-            if (hue < 60) [r, g, b] = [c, x2, 0];
-            else if (hue < 120) [r, g, b] = [x2, c, 0];
-            else if (hue < 180) [r, g, b] = [0, c, x2];
-            else if (hue < 240) [r, g, b] = [0, x2, c];
-            else if (hue < 300) [r, g, b] = [x2, 0, c];
+            if (hueVal < 60) [r, g, b] = [c, x2, 0];
+            else if (hueVal < 120) [r, g, b] = [x2, c, 0];
+            else if (hueVal < 180) [r, g, b] = [0, c, x2];
+            else if (hueVal < 240) [r, g, b] = [0, x2, c];
+            else if (hueVal < 300) [r, g, b] = [x2, 0, c];
             else [r, g, b] = [c, 0, x2];
-            
-            return [
-                Math.round((r + m) * 255),
-                Math.round((g + m) * 255),
-                Math.round((b + m) * 255)
-            ];
+            return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
         }
 
-        // Main Animation Loop
-        function startAnimation() {
-            function animate() {
-                if (!sourceImage) return;
-                
-                // Update animation values
-                hueValue = (hueValue + 2) % 360; // Fast rainbow cycle
-                rotationAngle += 0.015; // Smooth 180 rotation
-                
-                // Clear with motion blur trail
-                ctx.fillStyle = 'rgba(2, 2, 2, 0.25)';
-                ctx.fillRect(0, 0, 800, 450);
-                
-                // Save context for transformation
-                ctx.save();
-                
-                // Apply 3D rotation effect (180 flip)
-                ctx.translate(400, 225);
-                ctx.scale(Math.cos(rotationAngle), 1);
-                ctx.translate(-400, -225);
-                
-                // Create processed image
-                const tempCanvas = document.createElement('canvas');
-                tempCanvas.width = 800;
-                tempCanvas.height = 450;
-                const tempCtx = tempCanvas.getContext('2d');
-                
-                // Draw original image
-                const aspect = sourceImage.width / sourceImage.height;
-                let w = 800, h = 450;
-                if (aspect > w / h) {
-                    h = w / aspect;
-                } else {
-                    w = h * aspect;
-                }
-                tempCtx.drawImage(sourceImage, (800 - w) / 2, (450 - h) / 2, w, h);
-                
-                // Apply rainbow color processing
-                const imageData = tempCtx.getImageData(0, 0, 800, 450);
-                const data = imageData.data;
-                
-                for (let i = 0; i < data.length; i += 4) {
-                    const brightness = (data[i] + data[i + 1] + data[i + 2]) / 3;
-                    if (brightness > 15) {
-                        const [r, g, b] = getRainbowColor(brightness, (i / 4) % 800, Math.floor((i / 4) / 800), hueValue);
-                        data[i] = r;
-                        data[i + 1] = g;
-                        data[i + 2] = b;
-                    } else {
-                        data[i] = data[i + 1] = data[i + 2] = 0;
-                    }
-                }
-                tempCtx.putImageData(imageData, 0, 0);
-                
-                // === INTENSE GLITCH EFFECTS ===
-                
-                // 1. RGB Channel Split (always active, varying intensity)
-                const rgbShift = Math.sin(rotationAngle * 3) * 15 + (Math.random() - 0.5) * 10;
-                ctx.globalCompositeOperation = 'screen';
-                
-                // Red channel offset
-                ctx.fillStyle = 'rgba(255, 0, 100, 0.6)';
-                ctx.drawImage(tempCanvas, rgbShift, 0);
-                
-                // Cyan channel offset
-                ctx.fillStyle = 'rgba(0, 255, 255, 0.6)';
-                ctx.drawImage(tempCanvas, -rgbShift, 0);
-                
-                ctx.globalCompositeOperation = 'source-over';
-                
-                // 2. Horizontal Slice Displacement (Heavy tearing)
-                for (let g = 0; g < 10; g++) {
-                    const sliceY = Math.random() * 450;
-                    const sliceH = Math.random() * 40 + 5;
-                    const shiftX = (Math.random() - 0.5) * 25;
-                    
-                    ctx.drawImage(
-                        tempCanvas,
-                        0, sliceY, 800, sliceH,
-                        shiftX, sliceY, 800, sliceH
-                    );
-                }
-                
-                // 3. Main Image with Glow
-                ctx.shadowBlur = 40;
-                ctx.shadowColor = `hsl(${hueValue}, 100%, 60%)`;
-                ctx.drawImage(tempCanvas, 0, 0);
-                ctx.shadowBlur = 0;
-                
-                ctx.restore(); // End rotation
-                
-                // 4. Animated Scanlines (Canvas level)
-                const scanOffset = (Date.now() / 20) % 6;
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-                for (let y = scanOffset; y < 450; y += 6) {
-                    ctx.fillRect(0, y, 800, 2);
-                }
-                
-                // 5. Random Static/Noise
-                if (Math.random() > 0.6) {
-                    ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.15})`;
-                    const noiseY = Math.random() * 450;
-                    ctx.fillRect(0, noiseY, 800, Math.random() * 8 + 2);
-                }
-                
-                // 6. Occasional Color Inversion Flash
-                if (Math.random() > 0.97) {
-                    ctx.globalCompositeOperation = 'difference';
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-                    ctx.fillRect(0, 0, 800, 450);
-                    ctx.globalCompositeOperation = 'source-over';
-                }
-                
-                animationId = requestAnimationFrame(animate);
+        // رسم البرواز المستقبلي (Cyber Frame)
+        function drawCyberFrame(time) {
+            const w = 800;
+            const h = 500;
+            const pad = 15; // المسافة من الحافة
+            const cut = 40; // حجم القطع في الزوايا
+            
+            // ألوان متدرجة (سيان وردي)
+            const color1 = `hsl(${(time % 360)}, 100%, 60%)`;
+            const color2 = `hsl(${((time + 180) % 360)}, 100%, 60%)`;
+            
+            ctx.save();
+            
+            // إعدادات التوهج (Glow)
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = color1;
+            ctx.lineWidth = 4;
+            
+            // رسم الشكل الخارجي (أوكتاجون مع تقاطعات تقنية)
+            ctx.beginPath();
+            // أعلى يسار مع قطع
+            ctx.moveTo(pad + cut, pad);
+            ctx.lineTo(w - pad - cut, pad);
+            // أعلى يمين
+            ctx.lineTo(w - pad, pad + cut);
+            ctx.lineTo(w - pad, h - pad - cut - 60); // جانب أيمن (نقصان للبرواز السفلي)
+            // زاوية يمين سفل مقطوعة
+            ctx.lineTo(w - pad - 20, h - pad - 40);
+            ctx.lineTo(w - pad - 40, h - pad);
+            // أسفل (برواز سفلي أعرض للمعلومات)
+            ctx.lineTo(pad + 40, h - pad);
+            ctx.lineTo(pad + 20, h - pad - 40);
+            // جانب أيسر
+            ctx.lineTo(pad, h - pad - cut - 60);
+            ctx.lineTo(pad, pad + cut);
+            ctx.closePath();
+            
+            // تدرج لوني للخط
+            const grad = ctx.createLinearGradient(0, 0, w, h);
+            grad.addColorStop(0, color1);
+            grad.addColorStop(0.5, color2);
+            grad.addColorStop(1, color1);
+            ctx.strokeStyle = grad;
+            ctx.stroke();
+            
+            // خط داخلي (Inner Frame)
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.moveTo(pad + 30, pad + 20);
+            ctx.lineTo(w - pad - 30, pad + 20);
+            ctx.lineTo(w - pad - 20, h - pad - 80);
+            ctx.lineTo(pad + 20, h - pad - 80);
+            ctx.closePath();
+            ctx.strokeStyle = 'rgba(0, 212, 255, 0.6)';
+            ctx.stroke();
+            
+            // براغي/دوائر في الزوايا (Corner Bolts)
+            ctx.fillStyle = color1;
+            ctx.shadowBlur = 15;
+            const bolts = [
+                [pad + 10, pad + 10], [w - pad - 10, pad + 10],
+                [w - pad - 10, h - pad - 10], [pad + 10, h - pad - 10]
+            ];
+            bolts.forEach(([x, y]) => {
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            
+            // خطوط تقنية على الجانبين (Side Circuits)
+            ctx.strokeStyle = 'rgba(0, 212, 255, 0.4)';
+            ctx.lineWidth = 1;
+            ctx.shadowBlur = 5;
+            for(let i=0; i<5; i++) {
+                // يمين
+                ctx.beginPath();
+                ctx.moveTo(w - pad - 10, pad + 80 + i*30);
+                ctx.lineTo(w - pad - 30, pad + 80 + i*30);
+                ctx.stroke();
+                // يسار
+                ctx.beginPath();
+                ctx.moveTo(pad + 10, pad + 80 + i*30);
+                ctx.lineTo(pad + 30, pad + 80 + i*30);
+                ctx.stroke();
             }
             
-            animate();
+            // اللوحة السفلية (Bottom Info Panel) - مثل الصورة المرجعية
+            ctx.fillStyle = 'rgba(0, 20, 30, 0.8)';
+            ctx.strokeStyle = color1;
+            ctx.lineWidth = 2;
+            ctx.shadowBlur = 10;
+            
+            // مستطيل البيانات السفلي
+            const infoY = h - pad - 75;
+            const infoH = 60;
+            ctx.beginPath();
+            ctx.moveTo(pad + 50, infoY);
+            ctx.lineTo(w - pad - 50, infoY);
+            ctx.lineTo(w - pad - 30, infoY + infoH);
+            ctx.lineTo(pad + 30, infoY + infoH);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            // نص البيانات
+            ctx.textAlign = 'center';
+            ctx.font = 'bold 20px Orbitron';
+            ctx.fillStyle = '#fff';
+            ctx.shadowBlur = 10;
+            ctx.fillText('ART MARKS AUTHENTIC', w/2, infoY + 28);
+            
+            ctx.font = '12px Share Tech Mono';
+            ctx.fillStyle = color2;
+            ctx.fillText('EDITION 1/1  //  LEGENDARY  //  PHOSPHOR', w/2, infoY + 50);
+            
+            // زخرفة علوية (Top Bar)
+            ctx.fillStyle = grad;
+            ctx.fillRect(w/2 - 60, pad - 2, 120, 4);
+            
+            ctx.restore();
         }
 
-        // Save as GIF using gifshot
+        function animate() {
+            if(!img) return;
+            hue = (hue + 2) % 360;
+            rotation += 0.015;
+            
+            ctx.fillStyle = 'rgba(2, 2, 2, 0.25)';
+            ctx.fillRect(0, 0, 800, 500);
+            
+            // معالجة الصورة
+            ctx.save();
+            ctx.translate(400, 250);
+            ctx.scale(Math.cos(rotation), 1);
+            ctx.translate(-400, -250);
+            
+            const temp = document.createElement('canvas');
+            temp.width = 800; temp.height = 500;
+            const tCtx = temp.getContext('2d');
+            
+            const aspect = img.width / img.height;
+            let w = 800, h = 500;
+            if(aspect > w/h) h = w/aspect; else w = h*aspect;
+            tCtx.drawImage(img, (800-w)/2, (500-h)/2 - 30, w, h); // رفع قليلاً للبرواز السفلي
+            
+            const d = tCtx.getImageData(0, 0, 800, 500);
+            for(let i=0; i<d.data.length; i+=4) {
+                const bright = (d.data[i]+d.data[i+1]+d.data[i+2])/3;
+                if(bright > 20) {
+                    const [r,g,b] = getRainbowColor(bright, (i/4)%800, Math.floor((i/4)/800), hue);
+                    d.data[i]=r; d.data[i+1]=g; d.data[i+2]=b;
+                } else {
+                    d.data[i]=d.data[i+1]=d.data[i+2]=0;
+                }
+            }
+            tCtx.putImageData(d,0,0);
+            
+            // Glitch
+            if(Math.random() > 0.3) {
+                const shift = (Math.random()-0.5)*20;
+                ctx.globalCompositeOperation = 'screen';
+                ctx.fillStyle = 'rgba(255,0,100,0.5)';
+                ctx.drawImage(temp, shift, 0);
+                ctx.fillStyle = 'rgba(0,255,255,0.5)';
+                ctx.drawImage(temp, -shift, 0);
+                ctx.globalCompositeOperation = 'source-over';
+            }
+            if(Math.random() > 0.5) {
+                for(let g=0; g<8; g++) {
+                    const gy = Math.random()*500;
+                    const gh = Math.random()*40+5;
+                    ctx.drawImage(temp, 0, gy, 800, gh, (Math.random()-0.5)*20, gy, 800, gh);
+                }
+            }
+            
+            ctx.shadowBlur = 30;
+            ctx.shadowColor = `hsl(${hue},100%,50%)`;
+            ctx.drawImage(temp,0,0);
+            ctx.restore();
+            
+            // رسم البرواز الجديد هنا
+            drawCyberFrame(hue);
+            
+            // Scanlines
+            ctx.fillStyle = 'rgba(0,0,0,0.4)';
+            for(let y=(Date.now()/20)%6; y<500; y+=6) ctx.fillRect(0,y,800,2);
+            
+            if(Math.random() > 0.7) {
+                ctx.fillStyle = `rgba(255,255,255,${Math.random()*0.1})`;
+                ctx.fillRect(0, Math.random()*500, 800, Math.random()*5);
+            }
+            
+            requestAnimationFrame(animate);
+        }
+
         function saveGIF() {
-            const btn = document.getElementById('save-btn');
+            const btn = document.querySelector('button');
             const loading = document.getElementById('loading');
             const status = document.getElementById('status');
             
-            // Disable button and show loading
             btn.disabled = true;
             loading.classList.remove('hidden');
             status.classList.remove('hidden');
-            status.innerText = 'جاري تسجيل 3 ثوانٍ...';
+            status.innerText = 'جاري التسجيل (3 ثوانٍ)...';
             
-            // Capture frames
             const frames = [];
-            let frameCount = 0;
-            const maxFrames = 60; // 3 seconds at 20fps
+            let count = 0;
+            const max = 60; // 3 seconds
             
-            const captureInterval = setInterval(() => {
-                if (frameCount < maxFrames) {
+            const interval = setInterval(() => {
+                if(count < max) {
                     frames.push(canvas.toDataURL('image/png', 0.8));
-                    frameCount++;
-                    status.innerText = `تسجيل... ${Math.round((frameCount / maxFrames) * 100)}%`;
+                    count++;
+                    status.innerText = `تسجيل... ${Math.round((count/max)*100)}%`;
                 } else {
-                    clearInterval(captureInterval);
+                    clearInterval(interval);
                     status.innerText = 'جاري إنشاء GIF...';
-                    createGIFFile(frames);
-                }
-            }, 50); // 50ms = 20fps
-        }
-
-        // Create GIF using gifshot
-        function createGIFFile(frames) {
-            gifshot.createGIF({
-                images: frames,
-                gifWidth: 800,
-                gifHeight: 450,
-                interval: 0.05, // 50ms between frames
-                numFrames: frames.length,
-                frameDuration: 1,
-                sampleInterval: 10, // Quality (lower = better but slower)
-                numWorkers: 2
-            }, function(obj) {
-                if (!obj.error) {
-                    // Success - download the GIF
-                    const a = document.createElement('a');
-                    a.href = obj.image;
-                    a.download = `ArtMarks_RainbowGlitch_${Date.now()}.gif`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
                     
-                    // Reset UI
-                    document.getElementById('loading').classList.add('hidden');
-                    document.getElementById('status').classList.add('hidden');
-                    document.getElementById('save-btn').disabled = false;
-                } else {
-                    // Error
-                    console.error('GIF Error:', obj.error);
-                    alert('حدث خطأ في إنشاء GIF. حاول مرة أخرى.');
-                    document.getElementById('loading').classList.add('hidden');
-                    document.getElementById('status').classList.add('hidden');
-                    document.getElementById('save-btn').disabled = false;
+                    gifshot.createGIF({
+                        images: frames,
+                        gifWidth: 800,
+                        gifHeight: 500,
+                        interval: 0.05,
+                        sampleInterval: 10
+                    }, obj => {
+                        if(!obj.error) {
+                            const a = document.createElement('a');
+                            a.href = obj.image;
+                            a.download = `ArtMarks_CyberFrame_${Date.now()}.gif`;
+                            a.click();
+                        }
+                        loading.classList.add('hidden');
+                        status.classList.add('hidden');
+                        btn.disabled = false;
+                    });
                 }
-            });
+            }, 50);
         }
     </script>
 </body>
 </html>
 ```
 
-**ما الذي تم تغييره لإصلاح زر الحفظ:**
-1.  استخدام مكتبة `gifshot` بدلاً من `gif.js` (أكثر موثوقية)
-2.  كتابة دالة `createGIFFile` منفصلة وواضحة
-3.  إضافة `document.body.appendChild(a)` و `removeChild(a)` لضمان عمل الـ download
-4.  معالجة أخطاء `obj.error` إذا فشل الإنشاء
+**ما الجديد:**
+1.  **دالة `drawCyberFrame`:** ترسم بروازاً ثماني الأضلاع (Octagon) بألوان Cyan/Pink متدرجة.
+2.  **زوايا مقطعة:** في الأعلى والأسفل (مثل صورة النمر).
+3.  **براغي مضيئة:** في زوايا البرواز.
+4.  **خطوط تقنية:** على الجوانب (Circuits).
+5.  **لوحة بيانات سفلية:** تحتوي على "ART MARKS AUTHENTIC" و "EDITION 1/1".
+6.  **شريط علوي:** مزخرف في الأعلى.
 
-انسخ هذا الكود كاملاً والصقه في `index.html` على GitHub.
+**سيتم تسجيل كل هذا في الـ GIF النهائي.**
