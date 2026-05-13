@@ -371,20 +371,18 @@ function drawGlassCard(time){
   drawCrystalGlassLayer(x,w,h,cornerCut,time);
   drawMetallicFrame(x,w,h,cornerCut,time);
   
-  // ============ التخطيط الجديد المنظم ============
-  // 1. الشريط العلوي - Collection (يسار) + Code (يمين)
-  drawTopBar(x,w,h,time);
+  // ============ التخطيط الجديد - شريط جانبي يسار + شريط سفلي ============
   
-  // 2. شارة Polygon (تحت الشريط مباشرة، عرض كامل)
-  drawPolygonBadgeFullWidth(x,w,h,time);
+  // 1. شريط جانبي يسار العمودي (Collection + Polygon + Token + Code)
+  drawLeftSidebar(x,w,h,time);
   
-  // 3. شريط التقدم البارز (تحت Polygon)
-  drawBigProgressBar(x,w,h,time);
-  
-  // 4. الاسم في الأسفل
+  // 2. الاسم في الأسفل
   drawBottomNameTag(x,w,h,time);
   
-  // 5. الفنان والتحقق (في الأسفل تحت الاسم)
+  // 3. شريط التقدم في الأسفل (تحت الاسم)
+  drawBottomProgressBar(x,w,h,time);
+  
+  // 4. الفنان والتحقق (في أسفل البطاقة)
   drawArtistAndVerified(x,w,h,time);
   
   drawDiamondCrystalShine(x,w,h,cornerCut,time);
@@ -485,126 +483,260 @@ function drawCornerOrnament(x,cx,cy,size,corner,pulse,time){
   x.restore();
 }
 
-// ============ 1. الشريط العلوي - Collection + QR Code ============
-function drawTopBar(x,w,h,time){
+// ============ ✨ الشريط الجانبي العمودي يسار ✨ ============
+function drawLeftSidebar(x,w,h,time){
   const collection=document.getElementById('inpCollection').value;
   const code=document.getElementById('inpCode').value;
+  const tokenNum=document.getElementById('inpTokenNum').value;
+  const totalSupply=document.getElementById('inpTotalSupply').value;
   
-  const barY=40;
-  const barH=44;
+  // أبعاد الشريط الجانبي
+  const sbX=20;       // يبدأ من اليسار
+  const sbY=50;       // يبدأ من الأعلى
+  const sbW=85;       // عرض الشريط
+  const sbH=h-280;    // الارتفاع (يترك مكان للاسم في الأسفل)
   
-  // ===== لوحة COLLECTION (يسار - أكبر وأوضح) =====
-  const colW=w-160;
-  const colX=40;
+  const pulse=.85+Math.sin(time*2)*.15;
   
-  // ظل
+  // ===== خلفية الشريط الجانبي =====
   x.save();
   x.shadowColor='rgba(0,0,0,.6)';
-  x.shadowBlur=10;
-  x.shadowOffsetY=3;
+  x.shadowBlur=12;
+  x.shadowOffsetX=3;
   
-  // خلفية متدرجة
-  const colGrad=x.createLinearGradient(colX,barY,colX,barY+barH);
-  colGrad.addColorStop(0,'rgba(15,30,55,.95)');
-  colGrad.addColorStop(.5,'rgba(8,18,40,.95)');
-  colGrad.addColorStop(1,'rgba(15,30,55,.95)');
-  x.fillStyle=colGrad;
+  // تدرج
+  const sbGrad=x.createLinearGradient(sbX,0,sbX+sbW,0);
+  sbGrad.addColorStop(0,'rgba(15,30,55,.95)');
+  sbGrad.addColorStop(.5,'rgba(8,18,40,.95)');
+  sbGrad.addColorStop(1,'rgba(15,30,55,.85)');
+  x.fillStyle=sbGrad;
   
   // شكل مع زاوية مقطوعة
   x.beginPath();
-  x.moveTo(colX,barY);
-  x.lineTo(colX+colW-12,barY);
-  x.lineTo(colX+colW,barY+12);
-  x.lineTo(colX+colW,barY+barH);
-  x.lineTo(colX+12,barY+barH);
-  x.lineTo(colX,barY+barH-12);
+  x.moveTo(sbX,sbY);
+  x.lineTo(sbX+sbW-15,sbY);
+  x.lineTo(sbX+sbW,sbY+15);
+  x.lineTo(sbX+sbW,sbY+sbH-15);
+  x.lineTo(sbX+sbW-15,sbY+sbH);
+  x.lineTo(sbX,sbY+sbH);
   x.closePath();
   x.fill();
   x.restore();
   
-  // إطار مضيء
-  const pulse=.85+Math.sin(time*2)*.15;
+  // إطار خارجي
   x.strokeStyle=`rgba(0,240,255,${pulse})`;
   x.lineWidth=1.5;
-  x.shadowColor=`rgba(0,240,255,${pulse*.8})`;
+  x.shadowColor='rgba(0,240,255,.6)';
   x.shadowBlur=8;
   x.beginPath();
-  x.moveTo(colX,barY);
-  x.lineTo(colX+colW-12,barY);
-  x.lineTo(colX+colW,barY+12);
-  x.lineTo(colX+colW,barY+barH);
-  x.lineTo(colX+12,barY+barH);
-  x.lineTo(colX,barY+barH-12);
+  x.moveTo(sbX,sbY);
+  x.lineTo(sbX+sbW-15,sbY);
+  x.lineTo(sbX+sbW,sbY+15);
+  x.lineTo(sbX+sbW,sbY+sbH-15);
+  x.lineTo(sbX+sbW-15,sbY+sbH);
+  x.lineTo(sbX,sbY+sbH);
+  x.closePath();
+  x.stroke();
+  
+  // إطار داخلي رفيع
+  x.strokeStyle='rgba(255,255,255,.2)';
+  x.lineWidth=.5;
+  x.shadowBlur=2;
+  x.beginPath();
+  x.moveTo(sbX+3,sbY+3);
+  x.lineTo(sbX+sbW-17,sbY+3);
+  x.lineTo(sbX+sbW-3,sbY+17);
+  x.lineTo(sbX+sbW-3,sbY+sbH-17);
+  x.lineTo(sbX+sbW-17,sbY+sbH-3);
+  x.lineTo(sbX+3,sbY+sbH-3);
   x.closePath();
   x.stroke();
   x.shadowBlur=0;
   
-  // إضاءة علوية
-  const colTopLight=x.createLinearGradient(0,barY,0,barY+barH/2);
-  colTopLight.addColorStop(0,'rgba(255,255,255,.15)');
-  colTopLight.addColorStop(1,'rgba(255,255,255,0)');
-  x.fillStyle=colTopLight;
+  // تقسيم الشريط لأقسام
+  const sectionH=(sbH-20)/4; // 4 أقسام
+  
+  // ============ القسم 1: COLLECTION ============
+  const sec1Y=sbY+15;
+  drawSidebarSection(x,sbX,sec1Y,sbW,sectionH-5,'COLLECTION',collection,'#00f0ff','📁',time);
+  
+  // ============ القسم 2: شعار Polygon ============
+  const sec2Y=sec1Y+sectionH;
+  drawSidebarPolygon(x,sbX,sec2Y,sbW,sectionH-5,time);
+  
+  // ============ القسم 3: TOKEN ID ============
+  const sec3Y=sec2Y+sectionH;
+  drawSidebarToken(x,sbX,sec3Y,sbW,sectionH-5,tokenNum,totalSupply,time);
+  
+  // ============ القسم 4: CODE / QR ============
+  const sec4Y=sec3Y+sectionH;
+  drawSidebarCode(x,sbX,sec4Y,sbW,sectionH-5,code,time);
+}
+
+// ===== قسم في الشريط الجانبي =====
+function drawSidebarSection(x,sx,sy,sw,sh,label,value,color,icon,time){
+  // خط فاصل علوي
+  x.strokeStyle='rgba(0,240,255,.3)';
+  x.lineWidth=.5;
   x.beginPath();
-  x.moveTo(colX,barY);
-  x.lineTo(colX+colW-12,barY);
-  x.lineTo(colX+colW,barY+12);
-  x.lineTo(colX+colW,barY+barH/2);
-  x.lineTo(colX,barY+barH/2);
-  x.closePath();
+  x.moveTo(sx+10,sy);
+  x.lineTo(sx+sw-10,sy);
+  x.stroke();
+  
+  // الأيقونة
+  x.font='18px Segoe UI';
+  x.textAlign='center';
+  x.textBaseline='middle';
+  x.shadowColor=color;
+  x.shadowBlur=6;
+  x.fillStyle=color;
+  x.fillText(icon,sx+sw/2,sy+18);
+  x.shadowBlur=0;
+  
+  // التسمية
+  x.font='bold 8px Segoe UI';
+  x.fillStyle='rgba(180,220,250,.8)';
+  x.shadowColor='rgba(0,240,255,.4)';
+  x.shadowBlur=2;
+  x.fillText(label,sx+sw/2,sy+34);
+  x.shadowBlur=0;
+  
+  // القيمة (عمودية إذا طويلة)
+  x.font='bold 12px Segoe UI';
+  x.fillStyle='#fff';
+  x.shadowColor=color;
+  x.shadowBlur=5;
+  
+  // قص النص إذا طويل
+  let displayValue=value;
+  if(value.length>8)displayValue=value.substring(0,8);
+  
+  x.fillText(displayValue,sx+sw/2,sy+52);
+  x.shadowBlur=0;
+}
+
+// ===== قسم Polygon =====
+function drawSidebarPolygon(x,sx,sy,sw,sh,time){
+  // خط فاصل علوي
+  x.strokeStyle='rgba(184,41,255,.4)';
+  x.lineWidth=.5;
+  x.beginPath();
+  x.moveTo(sx+10,sy);
+  x.lineTo(sx+sw-10,sy);
+  x.stroke();
+  
+  // خلفية بنفسجية خفيفة
+  const pgGrad=x.createLinearGradient(sx,sy,sx,sy+sh);
+  pgGrad.addColorStop(0,'rgba(130,69,201,.15)');
+  pgGrad.addColorStop(.5,'rgba(80,40,140,.1)');
+  pgGrad.addColorStop(1,'rgba(130,69,201,.15)');
+  x.fillStyle=pgGrad;
+  x.fillRect(sx+5,sy+3,sw-10,sh-6);
+  
+  // شعار Polygon (في الوسط)
+  drawPolygonLogo(x,sx+sw/2,sy+22,16,time);
+  
+  // النص "POLYGON"
+  x.font='bold 9px Segoe UI';
+  x.fillStyle='#fff';
+  x.textAlign='center';
+  x.textBaseline='middle';
+  x.shadowColor='rgba(184,41,255,.8)';
+  x.shadowBlur=5;
+  x.fillText('POLYGON',sx+sw/2,sy+45);
+  
+  // النقطة الخضراء + النص
+  const dotPulse=.5+Math.sin(time*4)*.5;
+  x.fillStyle=`rgba(0,255,136,${dotPulse})`;
+  x.shadowColor='rgba(0,255,136,1)';
+  x.shadowBlur=8;
+  x.beginPath();
+  x.arc(sx+sw/2-15,sy+58,2.5,0,Math.PI*2);
   x.fill();
   
-  // أيقونة 📁
-  x.font='20px Segoe UI';
-  x.fillStyle='rgba(0,240,255,.9)';
-  x.textAlign='left';
-  x.textBaseline='middle';
-  x.shadowColor='rgba(0,240,255,.6)';
-  x.shadowBlur=5;
-  x.fillText('📁',colX+15,barY+barH/2);
-  
-  // النص "COLLECTION"
-  x.font='bold 11px Segoe UI';
-  x.fillStyle='rgba(180,220,250,.9)';
-  x.shadowColor='rgba(0,240,255,.5)';
+  x.font='bold 7px Segoe UI';
+  x.fillStyle='rgba(0,255,136,1)';
   x.shadowBlur=3;
-  x.fillText('COLLECTION',colX+45,barY+13);
+  x.fillText('LIVE',sx+sw/2+5,sy+58);
+  x.shadowBlur=0;
+}
+
+// ===== قسم Token ID =====
+function drawSidebarToken(x,sx,sy,sw,sh,tokenNum,totalSupply,time){
+  // خط فاصل علوي
+  x.strokeStyle='rgba(255,215,0,.4)';
+  x.lineWidth=.5;
+  x.beginPath();
+  x.moveTo(sx+10,sy);
+  x.lineTo(sx+sw-10,sy);
+  x.stroke();
   
-  // اسم المجموعة (كبير وواضح)
-  x.font='bold 18px Segoe UI';
+  // خلفية ذهبية خفيفة
+  const tgGrad=x.createLinearGradient(sx,sy,sx,sy+sh);
+  tgGrad.addColorStop(0,'rgba(255,215,0,.1)');
+  tgGrad.addColorStop(.5,'rgba(255,170,0,.05)');
+  tgGrad.addColorStop(1,'rgba(255,215,0,.1)');
+  x.fillStyle=tgGrad;
+  x.fillRect(sx+5,sy+3,sw-10,sh-6);
+  
+  // الأيقونة
+  x.font='16px Segoe UI';
+  x.textAlign='center';
+  x.textBaseline='middle';
+  x.shadowColor='#ffd700';
+  x.shadowBlur=6;
+  x.fillStyle='#ffd700';
+  x.fillText('🔢',sx+sw/2,sy+16);
+  x.shadowBlur=0;
+  
+  // التسمية
+  x.font='bold 7px Segoe UI';
+  x.fillStyle='rgba(255,215,0,.9)';
+  x.shadowColor='rgba(255,215,0,.4)';
+  x.shadowBlur=2;
+  x.fillText('TOKEN ID',sx+sw/2,sy+30);
+  x.shadowBlur=0;
+  
+  // الرقم الكبير
+  x.font='bold 16px monospace';
   x.fillStyle='#fff';
   x.shadowColor='rgba(0,240,255,1)';
   x.shadowBlur=8;
-  x.fillText(collection,colX+45,barY+30);
+  x.fillText('#'+tokenNum.toString().padStart(3,'0'),sx+sw/2,sy+46);
   x.shadowBlur=0;
   
-  // ===== كود QR (يمين) =====
-  drawTopRightCode(x,w,code,time,barY);
+  // OF Total
+  x.font='bold 9px Segoe UI';
+  x.fillStyle='rgba(0,240,255,1)';
+  x.shadowColor='rgba(0,240,255,.6)';
+  x.shadowBlur=4;
+  x.fillText('of '+totalSupply,sx+sw/2,sy+60);
+  x.shadowBlur=0;
 }
 
-function drawTopRightCode(x,w,code,time,barY){
-  const cs=44;
-  const cx=w-100;
-  const cy=barY;
+// ===== قسم QR Code =====
+function drawSidebarCode(x,sx,sy,sw,sh,code,time){
+  // خط فاصل علوي
+  x.strokeStyle='rgba(0,240,255,.4)';
+  x.lineWidth=.5;
+  x.beginPath();
+  x.moveTo(sx+10,sy);
+  x.lineTo(sx+sw-10,sy);
+  x.stroke();
   
-  // ظل
-  x.save();
-  x.shadowColor='rgba(0,0,0,.6)';
-  x.shadowBlur=10;
-  x.shadowOffsetY=3;
+  // QR Code صغير
+  const cs=32;
+  const cx=sx+sw/2-cs/2;
+  const cy=sy+5;
   
-  // خلفية QR
+  // خلفية
   x.fillStyle='rgba(8,18,40,.95)';
   x.fillRect(cx,cy,cs,cs);
-  x.restore();
   
   // إطار
-  const pulse=.85+Math.sin(time*2)*.15;
-  x.strokeStyle=`rgba(0,240,255,${pulse})`;
-  x.lineWidth=1.5;
-  x.shadowColor='rgba(0,240,255,.6)';
-  x.shadowBlur=8;
+  x.strokeStyle='rgba(0,240,255,.7)';
+  x.lineWidth=1;
   x.strokeRect(cx,cy,cs,cs);
-  x.shadowBlur=0;
   
   // QR Pattern
   x.fillStyle='rgba(255,255,255,.85)';
@@ -612,220 +744,31 @@ function drawTopRightCode(x,w,code,time,barY){
     for(let j=0;j<5;j++){
       const r=Math.sin(i*7.3+j*3.1+seed)*.5+.5;
       if(r>.5){
-        x.fillRect(cx+5+i*7,cy+5+j*7,5,5);
+        x.fillRect(cx+3+i*5,cy+3+j*5,4,4);
       }
     }
   }
   
-  // كود تحت QR
-  const codeY=cy+cs+8;
-  
-  // ظل
-  x.save();
-  x.shadowColor='rgba(0,0,0,.6)';
-  x.shadowBlur=8;
-  x.shadowOffsetY=2;
-  x.fillStyle='rgba(8,18,40,.95)';
-  x.fillRect(cx-4,codeY,cs+8,22);
-  x.restore();
-  
-  x.strokeStyle='rgba(0,240,255,.7)';
-  x.lineWidth=1;
-  x.strokeRect(cx-4,codeY,cs+8,22);
-  
-  x.font='bold 12px Segoe UI';
-  x.fillStyle='#fff';
+  // التسمية
+  x.font='bold 7px Segoe UI';
+  x.fillStyle='rgba(180,220,250,.8)';
   x.textAlign='center';
   x.textBaseline='middle';
+  x.shadowColor='rgba(0,240,255,.4)';
+  x.shadowBlur=2;
+  x.fillText('CODE',sx+sw/2,sy+45);
+  x.shadowBlur=0;
+  
+  // الكود
+  x.font='bold 11px Segoe UI';
+  x.fillStyle='#fff';
   x.shadowColor='rgba(0,240,255,.7)';
   x.shadowBlur=4;
-  x.fillText(code,cx+cs/2,codeY+11);
+  x.fillText(code,sx+sw/2,sy+58);
   x.shadowBlur=0;
-}
-
-// ============ 2. شارة Polygon بعرض كامل ============
-function drawPolygonBadgeFullWidth(x,w,h,time){
-  const tokenNum=document.getElementById('inpTokenNum').value;
-  const totalSupply=document.getElementById('inpTotalSupply').value;
-  
-  const py=110;
-  const ph=70;
-  const px=40;
-  const pw=w-80;
-  
-  const pulse=.85+Math.sin(time*2)*.15;
-  
-  // ====== الظل السفلي ======
-  x.save();
-  x.shadowColor='rgba(0,0,0,.7)';
-  x.shadowBlur=15;
-  x.shadowOffsetY=5;
-  x.fillStyle='rgba(0,0,0,.4)';
-  
-  x.beginPath();
-  x.moveTo(px+5,py+5);
-  x.lineTo(px+pw-15,py+5);
-  x.lineTo(px+pw+5,py+15);
-  x.lineTo(px+pw+5,py+ph+5);
-  x.lineTo(px+15,py+ph+5);
-  x.lineTo(px+5,py+ph-5);
-  x.closePath();
-  x.fill();
-  x.restore();
-  
-  // ====== التوهج البنفسجي ======
-  for(let i=0;i<3;i++){
-    x.shadowColor=`rgba(184,41,255,${pulse*(.8-i*.2)})`;
-    x.shadowBlur=(20-i*5)*P.fg;
-    x.strokeStyle=`rgba(184,41,255,${pulse*.7})`;
-    x.lineWidth=2-i*.5;
-    x.beginPath();
-    x.moveTo(px,py);
-    x.lineTo(px+pw-12,py);
-    x.lineTo(px+pw,py+12);
-    x.lineTo(px+pw,py+ph);
-    x.lineTo(px+12,py+ph);
-    x.lineTo(px,py+ph-12);
-    x.closePath();
-    x.stroke();
-  }
-  x.shadowBlur=0;
-  
-  // ====== الخلفية ======
-  const bgDark=x.createLinearGradient(px,py,px,py+ph);
-  bgDark.addColorStop(0,'#3d1f6b');
-  bgDark.addColorStop(.3,'#2a1545');
-  bgDark.addColorStop(.5,'#1a0a30');
-  bgDark.addColorStop(.7,'#2a1545');
-  bgDark.addColorStop(1,'#3d1f6b');
-  x.fillStyle=bgDark;
-  x.beginPath();
-  x.moveTo(px,py);
-  x.lineTo(px+pw-12,py);
-  x.lineTo(px+pw,py+12);
-  x.lineTo(px+pw,py+ph);
-  x.lineTo(px+12,py+ph);
-  x.lineTo(px,py+ph-12);
-  x.closePath();
-  x.fill();
-  
-  // طبقة زجاجية
-  const bgGlass=x.createLinearGradient(px,py,px,py+ph);
-  bgGlass.addColorStop(0,'rgba(180,100,255,.7)');
-  bgGlass.addColorStop(.4,'rgba(130,69,201,.5)');
-  bgGlass.addColorStop(.5,'rgba(80,40,140,.3)');
-  bgGlass.addColorStop(1,'rgba(40,20,80,.6)');
-  x.fillStyle=bgGlass;
-  x.beginPath();
-  x.moveTo(px,py);
-  x.lineTo(px+pw-12,py);
-  x.lineTo(px+pw,py+12);
-  x.lineTo(px+pw,py+ph);
-  x.lineTo(px+12,py+ph);
-  x.lineTo(px,py+ph-12);
-  x.closePath();
-  x.fill();
-  
-  // إضاءة علوية
-  const topLight=x.createLinearGradient(0,py,0,py+ph/2);
-  topLight.addColorStop(0,'rgba(255,255,255,.45)');
-  topLight.addColorStop(1,'rgba(255,255,255,0)');
-  x.fillStyle=topLight;
-  x.beginPath();
-  x.moveTo(px,py);
-  x.lineTo(px+pw-12,py);
-  x.lineTo(px+pw,py+12);
-  x.lineTo(px+pw,py+ph/2);
-  x.lineTo(px,py+ph/2);
-  x.closePath();
-  x.fill();
-  
-  // إطار داخلي
-  x.strokeStyle=`rgba(255,255,255,${pulse*.6})`;
-  x.lineWidth=1;
-  x.beginPath();
-  x.moveTo(px+3,py+3);
-  x.lineTo(px+pw-14,py+3);
-  x.lineTo(px+pw-3,py+14);
-  x.lineTo(px+pw-3,py+ph-3);
-  x.lineTo(px+14,py+ph-3);
-  x.lineTo(px+3,py+ph-14);
-  x.closePath();
-  x.stroke();
-  
-  // ===== شعار Polygon (يسار - كبير) =====
-  drawPolygonLogo(x,px+30,py+ph/2,22,time);
-  
-  // ===== نصوص Polygon =====
-  x.font='bold 16px Segoe UI';
-  x.fillStyle='#fff';
-  x.textAlign='left';
-  x.textBaseline='middle';
-  x.shadowColor='rgba(184,41,255,1)';
-  x.shadowBlur=8;
-  x.fillText('POLYGON',px+65,py+ph/2-12);
-  
-  x.font='bold 11px Segoe UI';
-  x.fillStyle='rgba(200,170,250,1)';
-  x.shadowBlur=4;
-  x.fillText('● MAINNET • PoS Network',px+65,py+ph/2+10);
-  x.shadowBlur=0;
-  
-  // ===== خط فاصل عمودي =====
-  x.strokeStyle='rgba(255,255,255,.3)';
-  x.lineWidth=1;
-  x.beginPath();
-  x.moveTo(px+pw*.55,py+10);
-  x.lineTo(px+pw*.55,py+ph-10);
-  x.stroke();
-  
-  // ===== Token ID (يمين) =====
-  x.font='bold 13px Segoe UI';
-  x.fillStyle='rgba(180,220,250,.9)';
-  x.textAlign='left';
-  x.shadowColor='rgba(0,240,255,.5)';
-  x.shadowBlur=4;
-  x.fillText('TOKEN ID',px+pw*.6,py+ph/2-13);
-  x.shadowBlur=0;
-  
-  x.font='bold 24px monospace';
-  x.fillStyle='#fff';
-  x.shadowColor='rgba(0,240,255,1)';
-  x.shadowBlur=10;
-  x.fillText('#'+tokenNum.toString().padStart(3,'0'),px+pw*.6,py+ph/2+8);
-  x.shadowBlur=0;
-  
-  // ===== Total Supply =====
-  x.font='bold 11px Segoe UI';
-  x.fillStyle='rgba(180,220,250,.7)';
-  x.textAlign='right';
-  x.fillText('OF',px+pw-20,py+ph/2-13);
-  
-  x.font='bold 22px monospace';
-  x.fillStyle='rgba(0,240,255,1)';
-  x.shadowColor='rgba(0,240,255,1)';
-  x.shadowBlur=10;
-  x.fillText(totalSupply,px+pw-20,py+ph/2+8);
-  x.shadowBlur=0;
-  
-  // ===== نقطة Live =====
-  const dotPulse=.5+Math.sin(time*4)*.5;
-  x.fillStyle=`rgba(0,255,136,${dotPulse})`;
-  x.shadowColor='rgba(0,255,136,1)';
-  x.shadowBlur=12;
-  x.beginPath();
-  x.arc(px+pw-15,py+15,4,0,Math.PI*2);
-  x.fill();
-  x.shadowBlur=0;
-  
-  x.font='bold 8px Segoe UI';
-  x.fillStyle='rgba(0,255,136,1)';
-  x.textAlign='right';
-  x.fillText('LIVE',px+pw-25,py+15);
 }
 
 function drawPolygonLogo(x,cx,cy,size,time){
-  // ظل
   x.save();
   x.shadowColor='rgba(0,0,0,.5)';
   x.shadowBlur=8;
@@ -849,7 +792,6 @@ function drawPolygonLogo(x,cx,cy,size,time){
   x.fill();
   x.restore();
   
-  // المثلث الأيسر اللامع
   const leftGrad=x.createLinearGradient(cx-size,cy,cx,cy);
   leftGrad.addColorStop(0,'#a565f5');
   leftGrad.addColorStop(.5,'#8247e5');
@@ -863,7 +805,6 @@ function drawPolygonLogo(x,cx,cy,size,time){
   x.closePath();
   x.fill();
   
-  // المثلث الأيمن اللامع
   const rightGrad=x.createLinearGradient(cx,cy,cx+size,cy);
   rightGrad.addColorStop(0,'#6a35d0');
   rightGrad.addColorStop(.5,'#8247e5');
@@ -877,7 +818,6 @@ function drawPolygonLogo(x,cx,cy,size,time){
   x.closePath();
   x.fill();
   
-  // المثلث السفلي
   const centerGrad=x.createLinearGradient(cx,cy,cx,cy+size);
   centerGrad.addColorStop(0,'#a565f5');
   centerGrad.addColorStop(1,'#5a2ba8');
@@ -891,7 +831,6 @@ function drawPolygonLogo(x,cx,cy,size,time){
   x.closePath();
   x.fill();
   
-  // إطارات بيضاء
   x.strokeStyle='rgba(255,255,255,.5)';
   x.lineWidth=1;
   x.beginPath();
@@ -919,7 +858,6 @@ function drawPolygonLogo(x,cx,cy,size,time){
   x.closePath();
   x.stroke();
   
-  // لمعات
   x.fillStyle='rgba(255,255,255,.7)';
   x.shadowColor='rgba(255,255,255,.8)';
   x.shadowBlur=4;
@@ -929,155 +867,15 @@ function drawPolygonLogo(x,cx,cy,size,time){
   x.shadowBlur=0;
 }
 
-// ============ 3. شريط التقدم البارز والكبير ============
-function drawBigProgressBar(x,w,h,time){
-  const tokenNum=parseInt(document.getElementById('inpTokenNum').value);
-  const totalSupply=parseInt(document.getElementById('inpTotalSupply').value);
-  const progress=Math.min(tokenNum/totalSupply,1);
-  
-  const barY=200;
-  const barH=42;
-  const barX=40;
-  const barW=w-80;
-  
-  // ===== العنوان فوق الشريط =====
-  // خلفية للعنوان
-  const titleY=barY-22;
-  const titleH=18;
-  const titleText='⭐ COLLECTION PROGRESS • UNIQUE 1/1 EDITION ⭐';
-  
-  x.font='bold 12px Segoe UI';
-  const titleW=x.measureText(titleText).width+20;
-  const titleX=w/2-titleW/2;
-  
-  // ظل
-  x.save();
-  x.shadowColor='rgba(255,215,0,.5)';
-  x.shadowBlur=10;
-  x.shadowOffsetY=2;
-  
-  const titleGrad=x.createLinearGradient(titleX,0,titleX+titleW,0);
-  titleGrad.addColorStop(0,'#ffd700');
-  titleGrad.addColorStop(.5,'#ffaa00');
-  titleGrad.addColorStop(1,'#ffd700');
-  x.fillStyle=titleGrad;
-  
-  // شكل اللوحة
-  x.beginPath();
-  x.moveTo(titleX+5,titleY);
-  x.lineTo(titleX+titleW-5,titleY);
-  x.lineTo(titleX+titleW,titleY+titleH/2);
-  x.lineTo(titleX+titleW-5,titleY+titleH);
-  x.lineTo(titleX+5,titleY+titleH);
-  x.lineTo(titleX,titleY+titleH/2);
-  x.closePath();
-  x.fill();
-  x.restore();
-  
-  // إضاءة علوية
-  const tShine=x.createLinearGradient(0,titleY,0,titleY+titleH/2);
-  tShine.addColorStop(0,'rgba(255,255,255,.5)');
-  tShine.addColorStop(1,'rgba(255,255,255,0)');
-  x.fillStyle=tShine;
-  x.beginPath();
-  x.moveTo(titleX+5,titleY);
-  x.lineTo(titleX+titleW-5,titleY);
-  x.lineTo(titleX+titleW,titleY+titleH/2);
-  x.lineTo(titleX,titleY+titleH/2);
-  x.closePath();
-  x.fill();
-  
-  // النص
-  x.font='bold 11px Segoe UI';
-  x.fillStyle='#1a1500';
-  x.textAlign='center';
-  x.textBaseline='middle';
-  x.fillText(titleText,w/2,titleY+titleH/2);
-  
-  // ===== شريط التقدم الكبير =====
-  // ظل
-  x.save();
-  x.shadowColor='rgba(0,0,0,.7)';
-  x.shadowBlur=12;
-  x.shadowOffsetY=4;
-  x.fillStyle='rgba(8,15,35,.98)';
-  x.fillRect(barX,barY,barW,barH);
-  x.restore();
-  
-  // إطار خارجي
-  const pulse=.85+Math.sin(time*2)*.15;
-  x.strokeStyle=`rgba(0,240,255,${pulse})`;
-  x.lineWidth=2;
-  x.shadowColor='rgba(0,240,255,.8)';
-  x.shadowBlur=10;
-  x.strokeRect(barX,barY,barW,barH);
-  x.shadowBlur=0;
-  
-  // إطار داخلي
-  x.strokeStyle='rgba(255,255,255,.3)';
-  x.lineWidth=1;
-  x.strokeRect(barX+3,barY+3,barW-6,barH-6);
-  
-  // ===== شريط التعبئة =====
-  const fillW=(barW-8)*progress;
-  
-  // التدرج
-  const fillGrad=x.createLinearGradient(barX+4,0,barX+4+fillW,0);
-  fillGrad.addColorStop(0,'#00ff88');
-  fillGrad.addColorStop(.3,'#00f0ff');
-  fillGrad.addColorStop(.6,'#0080ff');
-  fillGrad.addColorStop(1,'#b829ff');
-  x.fillStyle=fillGrad;
-  x.shadowColor='rgba(0,240,255,1)';
-  x.shadowBlur=15;
-  x.fillRect(barX+4,barY+4,fillW,barH-8);
-  x.shadowBlur=0;
-  
-  // نمط متحرك
-  x.save();
-  x.beginPath();
-  x.rect(barX+4,barY+4,fillW,barH-8);
-  x.clip();
-  
-  for(let i=0;i<15;i++){
-    const stripeX=(i*40+time*60)%(fillW+40)-40;
-    const stripeGrad=x.createLinearGradient(barX+4+stripeX,0,barX+4+stripeX+20,0);
-    stripeGrad.addColorStop(0,'rgba(255,255,255,0)');
-    stripeGrad.addColorStop(.5,'rgba(255,255,255,.35)');
-    stripeGrad.addColorStop(1,'rgba(255,255,255,0)');
-    x.fillStyle=stripeGrad;
-    x.fillRect(barX+4+stripeX,barY+4,20,barH-8);
-  }
-  x.restore();
-  
-  // إضاءة علوية على الشريط
-  const topShine=x.createLinearGradient(0,barY+4,0,barY+barH/2);
-  topShine.addColorStop(0,'rgba(255,255,255,.5)');
-  topShine.addColorStop(1,'rgba(255,255,255,0)');
-  x.fillStyle=topShine;
-  x.fillRect(barX+4,barY+4,fillW,(barH-8)/2);
-  
-  // ===== النص الكبير على الشريط =====
-  x.font='bold 18px Segoe UI';
-  x.fillStyle='#fff';
-  x.textAlign='center';
-  x.textBaseline='middle';
-  x.shadowColor='rgba(0,0,0,1)';
-  x.shadowBlur=6;
-  
-  const percent=Math.round(progress*100);
-  x.fillText(`${tokenNum} / ${totalSupply}  •  ${percent}%`,barX+barW/2,barY+barH/2);
-  x.shadowBlur=0;
-}
-
+// ============ اسم البطاقة في الأسفل ============
 function drawBottomNameTag(x,w,h,time){
   const name=document.getElementById('inpName').value;
   const subtitle=document.getElementById('inpSubtitle').value;
   
-  const pw=Math.min(w*.55,400);
-  const ph=80;
+  const pw=Math.min(w*.6,420);
+  const ph=70;
   const px=w/2-pw/2;
-  const py=h-ph-65;  // رفعها قليلاً
+  const py=h-200;  // فوق شريط التقدم
   
   x.shadowColor='rgba(0,0,0,.7)';
   x.shadowBlur=15;
@@ -1112,13 +910,13 @@ function drawBottomNameTag(x,w,h,time){
   
   x.shadowBlur=0;
   
-  x.font='bold 32px Segoe UI';
+  x.font='bold 28px Segoe UI';
   x.fillStyle='#fff';
   x.textAlign='center';
   x.textBaseline='middle';
   x.shadowColor='rgba(0,240,255,.5)';
   x.shadowBlur=8;
-  x.fillText(name,px+pw/2,py+30);
+  x.fillText(name,px+pw/2,py+25);
   x.shadowBlur=0;
   
   const lineGrad=x.createLinearGradient(px+pw*.2,0,px+pw*.8,0);
@@ -1128,41 +926,169 @@ function drawBottomNameTag(x,w,h,time){
   x.strokeStyle=lineGrad;
   x.lineWidth=1;
   x.beginPath();
-  x.moveTo(px+pw*.2,py+50);
-  x.lineTo(px+pw*.8,py+50);
+  x.moveTo(px+pw*.2,py+45);
+  x.lineTo(px+pw*.8,py+45);
   x.stroke();
   
-  x.font='600 16px Segoe UI';
+  x.font='600 14px Segoe UI';
   x.fillStyle='rgba(0,240,255,.95)';
   x.shadowColor='rgba(0,240,255,.5)';
   x.shadowBlur=4;
-  x.fillText(subtitle,px+pw/2,py+65);
+  x.fillText(subtitle,px+pw/2,py+58);
   x.shadowBlur=0;
 }
 
-// ============ الفنان والتحقق (في الأسفل) ============
+// ============ شريط التقدم في الأسفل ============
+function drawBottomProgressBar(x,w,h,time){
+  const tokenNum=parseInt(document.getElementById('inpTokenNum').value);
+  const totalSupply=parseInt(document.getElementById('inpTotalSupply').value);
+  const progress=Math.min(tokenNum/totalSupply,1);
+  
+  const barW=Math.min(w*.6,420);
+  const barH=32;
+  const barX=w/2-barW/2;
+  const barY=h-115;  // أسفل اسم البطاقة
+  
+  // ===== العنوان فوق الشريط =====
+  const titleY=barY-18;
+  
+  x.font='bold 10px Segoe UI';
+  const titleText='⭐ COLLECTION PROGRESS • UNIQUE 1/1 ⭐';
+  const titleW=x.measureText(titleText).width+16;
+  const titleX=w/2-titleW/2;
+  
+  x.save();
+  x.shadowColor='rgba(255,215,0,.5)';
+  x.shadowBlur=8;
+  x.shadowOffsetY=2;
+  
+  const titleGrad=x.createLinearGradient(titleX,0,titleX+titleW,0);
+  titleGrad.addColorStop(0,'#ffd700');
+  titleGrad.addColorStop(.5,'#ffaa00');
+  titleGrad.addColorStop(1,'#ffd700');
+  x.fillStyle=titleGrad;
+  
+  x.beginPath();
+  x.moveTo(titleX+5,titleY);
+  x.lineTo(titleX+titleW-5,titleY);
+  x.lineTo(titleX+titleW,titleY+7);
+  x.lineTo(titleX+titleW-5,titleY+14);
+  x.lineTo(titleX+5,titleY+14);
+  x.lineTo(titleX,titleY+7);
+  x.closePath();
+  x.fill();
+  x.restore();
+  
+  const tShine=x.createLinearGradient(0,titleY,0,titleY+7);
+  tShine.addColorStop(0,'rgba(255,255,255,.5)');
+  tShine.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=tShine;
+  x.beginPath();
+  x.moveTo(titleX+5,titleY);
+  x.lineTo(titleX+titleW-5,titleY);
+  x.lineTo(titleX+titleW,titleY+7);
+  x.lineTo(titleX,titleY+7);
+  x.closePath();
+  x.fill();
+  
+  x.font='bold 9px Segoe UI';
+  x.fillStyle='#1a1500';
+  x.textAlign='center';
+  x.textBaseline='middle';
+  x.fillText(titleText,w/2,titleY+7);
+  
+  // ===== شريط التقدم =====
+  x.save();
+  x.shadowColor='rgba(0,0,0,.7)';
+  x.shadowBlur=10;
+  x.shadowOffsetY=3;
+  x.fillStyle='rgba(8,15,35,.98)';
+  x.fillRect(barX,barY,barW,barH);
+  x.restore();
+  
+  const pulse=.85+Math.sin(time*2)*.15;
+  x.strokeStyle=`rgba(0,240,255,${pulse})`;
+  x.lineWidth=1.5;
+  x.shadowColor='rgba(0,240,255,.7)';
+  x.shadowBlur=8;
+  x.strokeRect(barX,barY,barW,barH);
+  x.shadowBlur=0;
+  
+  x.strokeStyle='rgba(255,255,255,.3)';
+  x.lineWidth=.8;
+  x.strokeRect(barX+3,barY+3,barW-6,barH-6);
+  
+  // التعبئة
+  const fillW=(barW-8)*progress;
+  
+  const fillGrad=x.createLinearGradient(barX+4,0,barX+4+fillW,0);
+  fillGrad.addColorStop(0,'#00ff88');
+  fillGrad.addColorStop(.3,'#00f0ff');
+  fillGrad.addColorStop(.6,'#0080ff');
+  fillGrad.addColorStop(1,'#b829ff');
+  x.fillStyle=fillGrad;
+  x.shadowColor='rgba(0,240,255,1)';
+  x.shadowBlur=12;
+  x.fillRect(barX+4,barY+4,fillW,barH-8);
+  x.shadowBlur=0;
+  
+  // النمط المتحرك
+  x.save();
+  x.beginPath();
+  x.rect(barX+4,barY+4,fillW,barH-8);
+  x.clip();
+  
+  for(let i=0;i<15;i++){
+    const stripeX=(i*30+time*50)%(fillW+30)-30;
+    const stripeGrad=x.createLinearGradient(barX+4+stripeX,0,barX+4+stripeX+15,0);
+    stripeGrad.addColorStop(0,'rgba(255,255,255,0)');
+    stripeGrad.addColorStop(.5,'rgba(255,255,255,.3)');
+    stripeGrad.addColorStop(1,'rgba(255,255,255,0)');
+    x.fillStyle=stripeGrad;
+    x.fillRect(barX+4+stripeX,barY+4,15,barH-8);
+  }
+  x.restore();
+  
+  const topShine=x.createLinearGradient(0,barY+4,0,barY+barH/2);
+  topShine.addColorStop(0,'rgba(255,255,255,.5)');
+  topShine.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=topShine;
+  x.fillRect(barX+4,barY+4,fillW,(barH-8)/2);
+  
+  // النص
+  x.font='bold 14px Segoe UI';
+  x.fillStyle='#fff';
+  x.textAlign='center';
+  x.textBaseline='middle';
+  x.shadowColor='rgba(0,0,0,1)';
+  x.shadowBlur=5;
+  
+  const percent=Math.round(progress*100);
+  x.fillText(`${tokenNum} / ${totalSupply}  •  ${percent}%`,barX+barW/2,barY+barH/2);
+  x.shadowBlur=0;
+}
+
 function drawArtistAndVerified(x,w,h,time){
   const artist=document.getElementById('inpArtist').value;
   const tagY=h-35;
   
-  // ===== الفنان (يسار) =====
-  x.font='bold 13px Segoe UI';
+  // الفنان (يسار - بعد الشريط الجانبي)
+  x.font='bold 12px Segoe UI';
   const aw=x.measureText(artist).width+20;
   
-  // ظل
   x.save();
   x.shadowColor='rgba(0,0,0,.6)';
   x.shadowBlur=8;
   x.shadowOffsetY=2;
   x.fillStyle='rgba(8,18,40,.95)';
-  x.fillRect(40,tagY-12,aw,26);
+  x.fillRect(125,tagY-12,aw,26);  // بعد الشريط الجانبي
   x.restore();
   
   x.strokeStyle='rgba(0,240,255,.6)';
   x.lineWidth=1;
   x.shadowColor='rgba(0,240,255,.5)';
   x.shadowBlur=5;
-  x.strokeRect(40,tagY-12,aw,26);
+  x.strokeRect(125,tagY-12,aw,26);
   x.shadowBlur=0;
   
   x.fillStyle='rgba(0,240,255,1)';
@@ -1170,16 +1096,15 @@ function drawArtistAndVerified(x,w,h,time){
   x.textBaseline='middle';
   x.shadowColor='rgba(0,240,255,.6)';
   x.shadowBlur=4;
-  x.fillText(artist,40+aw/2,tagY);
+  x.fillText(artist,125+aw/2,tagY);
   x.shadowBlur=0;
   
-  // ===== Verified (يمين) =====
+  // Verified (يمين)
   const verifyText='Verified ✓';
-  x.font='bold 12px Segoe UI';
+  x.font='bold 11px Segoe UI';
   const vw=x.measureText(verifyText).width+30;
-  const vx=w-vw-40;
+  const vx=w-vw-30;
   
-  // ظل
   x.save();
   x.shadowColor='rgba(0,255,136,.5)';
   x.shadowBlur=10;
@@ -1193,7 +1118,6 @@ function drawArtistAndVerified(x,w,h,time){
   x.fillRect(vx,tagY-12,vw,26);
   x.restore();
   
-  // إطار
   const pulse=.85+Math.sin(time*3)*.15;
   x.strokeStyle=`rgba(0,255,136,${pulse})`;
   x.lineWidth=1.5;
@@ -1202,7 +1126,6 @@ function drawArtistAndVerified(x,w,h,time){
   x.strokeRect(vx,tagY-12,vw,26);
   x.shadowBlur=0;
   
-  // النص
   x.fillStyle='#fff';
   x.textAlign='center';
   x.textBaseline='middle';
@@ -1217,7 +1140,6 @@ function drawDiamondCrystalShine(x,w,h,cut,time){
   cardPath(x,5,5,w-10,h-10,cut);
   x.clip();
   
-  // إضاءة علوية
   const topLight=x.createLinearGradient(0,0,0,h*.5);
   topLight.addColorStop(0,`rgba(255,255,255,${.4*glassShine})`);
   topLight.addColorStop(.2,`rgba(255,255,255,${.22*glassShine})`);
@@ -1226,7 +1148,6 @@ function drawDiamondCrystalShine(x,w,h,cut,time){
   x.fillStyle=topLight;
   x.fillRect(0,0,w,h*.5);
   
-  // بريق قطري كبير
   const shinePos=(time*.18)%2.5-.7;
   const shineX=shinePos*w;
   
@@ -1249,7 +1170,6 @@ function drawDiamondCrystalShine(x,w,h,cut,time){
   
   x.restore();
   
-  // بريق ثانٍ
   const shinePos2=(time*.13+.8)%2.5-.5;
   const shineX2=(1-shinePos2)*w;
   
@@ -1268,7 +1188,6 @@ function drawDiamondCrystalShine(x,w,h,cut,time){
   
   x.restore();
   
-  // لمعات الزوايا
   const cornerShine=x.createRadialGradient(w*.18,h*.15,0,w*.18,h*.15,w*.45);
   cornerShine.addColorStop(0,`rgba(255,255,255,${.55*glassShine})`);
   cornerShine.addColorStop(.2,`rgba(255,255,255,${.3*glassShine})`);
@@ -1284,7 +1203,6 @@ function drawDiamondCrystalShine(x,w,h,cut,time){
   x.fillStyle=cornerShine2;
   x.fillRect(w*.55,0,w*.45,h*.4);
   
-  // ألماسات Sparkle
   for(let i=0;i<6;i++){
     const sparkleAngle=time*.5+i*Math.PI/3;
     const sparkleX=w*.3+Math.cos(sparkleAngle)*w*.2;
@@ -1318,7 +1236,6 @@ function drawDiamondCrystalShine(x,w,h,cut,time){
     }
   }
   
-  // خط بريق على الحافة
   const edgeShinePos=(time*.4)%1;
   const esX=edgeShinePos*w;
   const edgeGrad=x.createLinearGradient(esX-60,0,esX+60,0);
@@ -1328,7 +1245,6 @@ function drawDiamondCrystalShine(x,w,h,cut,time){
   x.fillStyle=edgeGrad;
   x.fillRect(esX-60,3,120,3);
   
-  // خط سفلي
   const edgeShinePos2=(time*.35+.5)%1;
   const esX2=(1-edgeShinePos2)*w;
   const edgeGrad2=x.createLinearGradient(esX2-50,0,esX2+50,0);
@@ -1338,7 +1254,6 @@ function drawDiamondCrystalShine(x,w,h,cut,time){
   x.fillStyle=edgeGrad2;
   x.fillRect(esX2-50,h-6,100,3);
   
-  // نقاط ضوئية
   for(let i=0;i<30;i++){
     const sx=Math.sin(i*1.7+time*.2)*w*.42+w/2;
     const sy=Math.cos(i*2.3+time*.15)*h*.42+h/2;
@@ -1354,7 +1269,6 @@ function drawDiamondCrystalShine(x,w,h,cut,time){
     }
   }
   
-  // قوس قزح
   const rainbowShine=x.createLinearGradient(w*.2,h*.4,w*.8,h*.6);
   rainbowShine.addColorStop(0,'rgba(255,255,255,0)');
   rainbowShine.addColorStop(.2,`rgba(255,200,200,${.05*glassShine})`);
@@ -1365,7 +1279,6 @@ function drawDiamondCrystalShine(x,w,h,cut,time){
   x.fillStyle=rainbowShine;
   x.fillRect(0,h*.3,w,h*.4);
   
-  // Specular Highlight
   const specX=w*.3+Math.sin(time*.5)*w*.1;
   const specY=h*.25+Math.cos(time*.4)*h*.05;
   const specularGrad=x.createRadialGradient(specX,specY,0,specX,specY,w*.15);
@@ -1375,7 +1288,6 @@ function drawDiamondCrystalShine(x,w,h,cut,time){
   x.fillStyle=specularGrad;
   x.fillRect(specX-w*.15,specY-w*.15,w*.3,w*.3);
   
-  // Rim Light
   const rimPos=(time*.25)%1;
   const rimX=rimPos*w;
   const rimGrad=x.createLinearGradient(rimX-30,0,rimX+30,0);
