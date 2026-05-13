@@ -13,75 +13,220 @@ body{background:var(--bg);font-family:'Segoe UI',sans-serif;color:#fff;overflow:
 @keyframes stars{to{background-position:400px 400px}}
 #scene{position:fixed;inset:0;z-index:2;pointer-events:none}
 
-.top-bar{position:fixed;top:0;left:0;right:0;z-index:100;padding:12px 25px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(5,5,16,.95),transparent);pointer-events:none}
-.brand-block{display:flex;align-items:center;gap:10px;pointer-events:auto}
-.brand-mark{width:38px;height:38px;border:2px solid var(--cyan);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:bold;color:var(--cyan);box-shadow:0 0 12px rgba(0,240,255,.5);animation:bp 3s ease-in-out infinite}
+.top-bar{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 28px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(5,5,16,.95),transparent);pointer-events:none}
+.brand-block{display:flex;align-items:center;gap:12px;pointer-events:auto}
+.brand-mark{width:42px;height:42px;border:2px solid var(--cyan);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:bold;color:var(--cyan);box-shadow:0 0 12px rgba(0,240,255,.5);animation:bp 3s ease-in-out infinite}
 @keyframes bp{0%,100%{box-shadow:0 0 12px rgba(0,240,255,.5)}50%{box-shadow:0 0 20px rgba(255,0,234,.6)}}
-.brand-name{font-size:14px;font-weight:600;letter-spacing:3px}
-.brand-sub{font-size:8px;letter-spacing:2px;color:var(--cyan);margin-top:1px}
-.top-right{display:flex;align-items:center;gap:12px;pointer-events:auto}
-.status-item{display:flex;align-items:center;gap:4px;font-size:8px;letter-spacing:1px;color:rgba(255,255,255,.6)}
-.status-dot{width:5px;height:5px;background:var(--cyan);border-radius:50%;box-shadow:0 0 5px var(--cyan);animation:blink 1.5s ease-in-out infinite}
+.brand-name{font-size:16px;font-weight:600;letter-spacing:3px}
+.brand-sub{font-size:9px;letter-spacing:2px;color:var(--cyan);margin-top:2px}
+.top-right{display:flex;align-items:center;gap:14px;pointer-events:auto}
+.status-item{display:flex;align-items:center;gap:5px;font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.7)}
+.status-dot{width:6px;height:6px;background:var(--cyan);border-radius:50%;box-shadow:0 0 5px var(--cyan);animation:blink 1.5s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.wallet-btn{padding:8px 16px;background:linear-gradient(135deg,rgba(255,215,0,.1),rgba(0,240,255,.1));border:1px solid rgba(255,215,0,.4);color:#ffd700;font-size:9px;letter-spacing:1.5px;cursor:pointer;border-radius:20px;font-weight:bold;transition:all .3s}
+.wallet-btn{padding:9px 18px;background:linear-gradient(135deg,rgba(255,215,0,.1),rgba(0,240,255,.1));border:1px solid rgba(255,215,0,.4);color:#ffd700;font-size:11px;letter-spacing:1.5px;cursor:pointer;border-radius:20px;font-weight:bold;transition:all .3s}
 .wallet-btn:hover{box-shadow:0 0 18px rgba(255,215,0,.3)}
 
-.left-panel{position:fixed;top:65px;left:12px;z-index:100;width:280px;max-height:calc(100vh - 80px);overflow-y:auto;padding:14px;background:rgba(10,10,25,.9);border:1px solid rgba(0,240,255,.2);border-radius:12px;backdrop-filter:blur(12px)}
-.left-panel::-webkit-scrollbar{width:3px}
+/* ===== الشريط الجانبي - أكبر وأوضح ===== */
+.left-panel{
+  position:fixed;
+  top:75px;left:15px;
+  z-index:100;
+  width:330px;
+  max-height:calc(100vh - 95px);
+  overflow-y:auto;
+  padding:18px;
+  background:rgba(10,10,25,.92);
+  border:1px solid rgba(0,240,255,.25);
+  border-radius:14px;
+  backdrop-filter:blur(15px);
+}
+.left-panel::-webkit-scrollbar{width:4px}
 .left-panel::-webkit-scrollbar-thumb{background:var(--cyan);border-radius:2px}
-.ptitle{font-size:11px;letter-spacing:3px;color:var(--cyan);margin-bottom:12px;text-shadow:0 0 6px var(--cyan)}
-.stitle{font-size:9px;letter-spacing:2px;color:var(--cyan);margin:14px 0 8px;padding-top:10px;border-top:1px solid rgba(0,240,255,.1);font-weight:bold}
-.sg{margin-bottom:10px}
-.sl{font-size:8px;letter-spacing:1.5px;color:rgba(255,255,255,.7);margin-bottom:4px;display:flex;justify-content:space-between}
-.sv{color:var(--cyan);font-weight:bold}
-input[type=range]{width:100%;-webkit-appearance:none;height:4px;background:linear-gradient(90deg,var(--purple),var(--cyan),var(--pink));border-radius:2px;outline:none}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:#fff;border-radius:50%;cursor:pointer;box-shadow:0 0 8px var(--cyan)}
-.br{display:flex;gap:4px;flex-wrap:wrap}
-.mb{padding:6px 10px;background:rgba(0,240,255,.05);border:1px solid rgba(0,240,255,.25);color:#fff;font-size:8px;letter-spacing:1px;cursor:pointer;border-radius:5px;transition:all .3s}
-.mb:hover{background:rgba(0,240,255,.15)}
-.mb.on{background:rgba(0,240,255,.25);border-color:var(--cyan);box-shadow:0 0 10px var(--cyan)}
-.inf{width:100%;padding:8px 10px;background:rgba(0,240,255,.04);border:1px solid rgba(0,240,255,.2);color:#fff;font-size:10px;border-radius:5px;outline:none;margin-bottom:6px}
-.inf:focus{border-color:var(--cyan);box-shadow:0 0 8px rgba(0,240,255,.2)}
-.tt{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:linear-gradient(90deg,rgba(192,192,192,.08),rgba(0,240,255,.08));border:1px solid rgba(192,192,192,.3);border-radius:6px;margin-bottom:7px;cursor:pointer;transition:all .3s}
-.tt.on{background:linear-gradient(90deg,rgba(192,192,192,.25),rgba(0,240,255,.25));border-color:#fff;box-shadow:0 0 12px rgba(255,255,255,.2)}
-.tn{font-size:10px;font-weight:bold}
-.ts2{font-size:7px;color:var(--cyan);margin-top:2px}
-.tsw{width:32px;height:15px;background:rgba(0,240,255,.2);border-radius:8px;position:relative;transition:all .3s}
-.tsw::after{content:'';position:absolute;width:11px;height:11px;background:#fff;border-radius:50%;top:2px;left:2px;transition:all .3s}
-.tt.on .tsw{background:linear-gradient(90deg,#c0c0c0,var(--cyan))}
-.tt.on .tsw::after{left:19px}
 
-.ebtn{width:100%;margin-top:6px;padding:10px;border:none;color:#fff;font-size:9px;letter-spacing:2px;cursor:pointer;border-radius:5px;font-weight:bold;transition:all .3s}
-.ebtn:hover{transform:translateY(-1px)}
+.ptitle{
+  font-size:14px;
+  letter-spacing:3px;
+  color:var(--cyan);
+  margin-bottom:16px;
+  text-shadow:0 0 8px var(--cyan);
+  font-weight:bold;
+  text-align:center;
+}
+
+.stitle{
+  font-size:11px;
+  letter-spacing:2px;
+  color:var(--cyan);
+  margin:18px 0 10px;
+  padding-top:12px;
+  border-top:1px solid rgba(0,240,255,.15);
+  font-weight:bold;
+}
+
+.sg{margin-bottom:13px}
+.sl{
+  font-size:10px;
+  letter-spacing:1px;
+  color:rgba(255,255,255,.85);
+  margin-bottom:6px;
+  display:flex;
+  justify-content:space-between;
+  font-weight:500;
+}
+.sv{
+  color:var(--cyan);
+  font-weight:bold;
+  font-size:11px;
+}
+
+input[type=range]{
+  width:100%;
+  -webkit-appearance:none;
+  height:5px;
+  background:linear-gradient(90deg,var(--purple),var(--cyan),var(--pink));
+  border-radius:3px;
+  outline:none;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:16px;height:16px;
+  background:#fff;
+  border-radius:50%;
+  cursor:pointer;
+  box-shadow:0 0 8px var(--cyan);
+}
+
+.br{display:flex;gap:5px;flex-wrap:wrap}
+.mb{
+  padding:8px 12px;
+  background:rgba(0,240,255,.05);
+  border:1px solid rgba(0,240,255,.3);
+  color:#fff;
+  font-size:10px;
+  letter-spacing:1px;
+  cursor:pointer;
+  border-radius:6px;
+  transition:all .3s;
+  font-weight:600;
+}
+.mb:hover{background:rgba(0,240,255,.15)}
+.mb.on{
+  background:rgba(0,240,255,.25);
+  border-color:var(--cyan);
+  box-shadow:0 0 10px var(--cyan);
+}
+
+.inf{
+  width:100%;
+  padding:10px 12px;
+  background:rgba(0,240,255,.05);
+  border:1px solid rgba(0,240,255,.25);
+  color:#fff;
+  font-size:12px;
+  border-radius:6px;
+  outline:none;
+  margin-bottom:8px;
+  transition:all .3s;
+}
+.inf:focus{
+  border-color:var(--cyan);
+  box-shadow:0 0 10px rgba(0,240,255,.3);
+  background:rgba(0,240,255,.08);
+}
+
+/* تسميات الحقول */
+.field-label{
+  font-size:10px;
+  letter-spacing:1.5px;
+  color:rgba(0,240,255,.8);
+  margin-bottom:5px;
+  margin-top:5px;
+  font-weight:bold;
+}
+
+.tt{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:11px 14px;
+  background:linear-gradient(90deg,rgba(192,192,192,.1),rgba(0,240,255,.1));
+  border:1px solid rgba(192,192,192,.35);
+  border-radius:8px;
+  margin-bottom:10px;
+  cursor:pointer;
+  transition:all .3s;
+}
+.tt.on{
+  background:linear-gradient(90deg,rgba(192,192,192,.25),rgba(0,240,255,.25));
+  border-color:#fff;
+  box-shadow:0 0 12px rgba(255,255,255,.2);
+}
+.tn{font-size:12px;font-weight:bold}
+.ts2{font-size:9px;color:var(--cyan);margin-top:3px;letter-spacing:1px}
+.tsw{
+  width:36px;
+  height:18px;
+  background:rgba(0,240,255,.2);
+  border-radius:9px;
+  position:relative;
+  transition:all .3s;
+}
+.tsw::after{
+  content:'';
+  position:absolute;
+  width:14px;
+  height:14px;
+  background:#fff;
+  border-radius:50%;
+  top:2px;left:2px;
+  transition:all .3s;
+}
+.tt.on .tsw{background:linear-gradient(90deg,#c0c0c0,var(--cyan))}
+.tt.on .tsw::after{left:20px}
+
+.ebtn{
+  width:100%;
+  margin-top:8px;
+  padding:13px;
+  border:none;
+  color:#fff;
+  font-size:11px;
+  letter-spacing:2px;
+  cursor:pointer;
+  border-radius:7px;
+  font-weight:bold;
+  transition:all .3s;
+}
+.ebtn:hover{transform:translateY(-2px)}
 .e1{background:linear-gradient(90deg,var(--purple),var(--cyan));box-shadow:0 0 15px rgba(0,240,255,.3)}
 .e2{background:linear-gradient(90deg,#ff00ea,#b829ff);box-shadow:0 0 15px rgba(255,0,234,.3)}
 .e3{background:linear-gradient(90deg,#ff8800,#ff0066);box-shadow:0 0 15px rgba(255,136,0,.3)}
-.e4{background:linear-gradient(90deg,#ffd700,#ff8800);box-shadow:0 0 15px rgba(255,215,0,.3);margin-top:10px}
+.e4{background:linear-gradient(90deg,#ffd700,#ff8800);box-shadow:0 0 15px rgba(255,215,0,.3);margin-top:12px}
 
-.side-controls{position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:10px;pointer-events:auto}
-.side-btn{width:48px;height:48px;background:rgba(10,10,25,.85);border:1px solid rgba(0,240,255,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--cyan);transition:all .3s;position:relative;backdrop-filter:blur(10px);box-shadow:0 0 15px rgba(0,240,255,.15)}
+.side-controls{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:11px;pointer-events:auto}
+.side-btn{width:52px;height:52px;background:rgba(10,10,25,.85);border:1px solid rgba(0,240,255,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;color:var(--cyan);transition:all .3s;position:relative;backdrop-filter:blur(10px);box-shadow:0 0 15px rgba(0,240,255,.15)}
 .side-btn:hover{background:rgba(0,240,255,.2);box-shadow:0 0 20px rgba(0,240,255,.5);transform:scale(1.1)}
 .side-btn.active{background:rgba(0,240,255,.3);border-color:var(--cyan);box-shadow:0 0 20px var(--cyan)}
-.side-btn-tooltip{position:absolute;right:60px;top:50%;transform:translateY(-50%);background:rgba(10,10,25,.95);border:1px solid rgba(0,240,255,.3);padding:6px 12px;border-radius:6px;font-size:9px;letter-spacing:1.5px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .3s}
+.side-btn-tooltip{position:absolute;right:65px;top:50%;transform:translateY(-50%);background:rgba(10,10,25,.95);border:1px solid rgba(0,240,255,.3);padding:7px 13px;border-radius:6px;font-size:10px;letter-spacing:1.5px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .3s;font-weight:bold}
 .side-btn:hover .side-btn-tooltip{opacity:1}
 
 .upload-zone{position:fixed;top:50%;left:55%;transform:translate(-50%,-50%);z-index:200;width:340px;height:200px;border:2px dashed var(--cyan);border-radius:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;background:rgba(0,240,255,.04);backdrop-filter:blur(8px);transition:all .3s}
 .upload-zone:hover{box-shadow:0 0 30px var(--cyan);background:rgba(0,240,255,.08)}
 .upload-zone.gone{display:none}
-.uz-icon{font-size:36px;margin-bottom:8px;color:var(--cyan);pointer-events:none}
-.uz-text{font-size:11px;letter-spacing:3px;pointer-events:none}
-.uz-hint{font-size:8px;opacity:.4;margin-top:4px;pointer-events:none}
+.uz-icon{font-size:38px;margin-bottom:10px;color:var(--cyan);pointer-events:none}
+.uz-text{font-size:13px;letter-spacing:3px;pointer-events:none;font-weight:bold}
+.uz-hint{font-size:10px;opacity:.5;margin-top:6px;pointer-events:none}
 #fileInput{display:none}
 
 .loader{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1000;text-align:center;display:none;pointer-events:none}
 .loader.on{display:block}
-.spin{width:45px;height:45px;border:2px solid transparent;border-top-color:var(--cyan);border-right-color:var(--pink);border-radius:50%;margin:0 auto;animation:sp 1s linear infinite}
+.spin{width:50px;height:50px;border:2px solid transparent;border-top-color:var(--cyan);border-right-color:var(--pink);border-radius:50%;margin:0 auto;animation:sp 1s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
-.ltxt{font-size:11px;letter-spacing:3px;color:var(--cyan);margin-top:12px}
+.ltxt{font-size:13px;letter-spacing:3px;color:var(--cyan);margin-top:14px;font-weight:bold}
 
-.fps{position:fixed;bottom:12px;right:12px;z-index:100;padding:6px 12px;background:rgba(10,10,25,.8);border:1px solid rgba(0,240,255,.15);border-radius:6px;font-size:7px;letter-spacing:2px;pointer-events:none}
+.fps{position:fixed;bottom:14px;right:14px;z-index:100;padding:8px 14px;background:rgba(10,10,25,.85);border:1px solid rgba(0,240,255,.2);border-radius:7px;font-size:9px;letter-spacing:2px;pointer-events:none;font-weight:bold}
 
-.toast{position:fixed;bottom:50px;left:50%;transform:translateX(-50%) translateY(70px);z-index:600;padding:10px 22px;background:rgba(10,10,25,.93);border:1px solid var(--cyan);border-radius:7px;font-size:9px;letter-spacing:2px;color:var(--cyan);box-shadow:0 0 15px rgba(0,240,255,.25);transition:transform .4s ease;pointer-events:none}
+.toast{position:fixed;bottom:55px;left:50%;transform:translateX(-50%) translateY(80px);z-index:600;padding:12px 26px;background:rgba(10,10,25,.95);border:1px solid var(--cyan);border-radius:8px;font-size:11px;letter-spacing:2px;color:var(--cyan);box-shadow:0 0 18px rgba(0,240,255,.3);transition:transform .4s ease;pointer-events:none;font-weight:bold}
 .toast.on{transform:translateX(-50%) translateY(0)}
 
 canvas#expCv{display:none}
@@ -98,7 +243,7 @@ canvas#expCv{display:none}
     <div class="brand-text"><div class="brand-name">ART MARKS</div><div class="brand-sub">HOLOGRAPHIC NFT STUDIO</div></div>
   </div>
   <div class="top-right">
-    <div style="display:flex;gap:12px">
+    <div style="display:flex;gap:14px">
       <div class="status-item"><div class="status-dot"></div>LIVE</div>
       <div class="status-item">POLYGON</div>
     </div>
@@ -107,32 +252,47 @@ canvas#expCv{display:none}
 </div>
 
 <div class="left-panel">
-  <div class="ptitle">NFT CARD STUDIO</div>
-  <input type="text" class="inf" id="inpName" value="LEOPARD">
-  <input type="text" class="inf" id="inpSubtitle" value="PROFILE #004">
-  <input type="text" class="inf" id="inpCollection" value="PREDS">
-  <input type="text" class="inf" id="inpCode" value="F120M">
-  <input type="text" class="inf" id="inpArtist" value="@ArtMarksKSA">
+  <div class="ptitle">🎴 NFT CARD STUDIO</div>
+  
+  <div class="stitle">📝 CARD INFO</div>
+  
+  <div class="field-label">NAME / TITLE</div>
+  <input type="text" class="inf" id="inpName" value="LEOPARD" placeholder="Card Name">
+  
+  <div class="field-label">SUBTITLE / PROFILE</div>
+  <input type="text" class="inf" id="inpSubtitle" value="PROFILE #004" placeholder="Subtitle">
+  
+  <div class="field-label">COLLECTION</div>
+  <input type="text" class="inf" id="inpCollection" value="PREDS" placeholder="Collection Name">
+  
+  <div class="field-label">CODE / SERIAL</div>
+  <input type="text" class="inf" id="inpCode" value="F120M" placeholder="Code">
+  
+  <div class="field-label">🔢 TOKEN ID</div>
+  <input type="text" class="inf" id="inpTokenId" value="#00472" placeholder="Token ID">
+  
+  <div class="field-label">👤 ARTIST</div>
+  <input type="text" class="inf" id="inpArtist" value="@ArtMarksKSA" placeholder="@artist_name">
 
   <div class="tt on" id="chrTT">
     <div><div class="tn">⬢ Chrome Effect</div><div class="ts2" id="chrSt">ACTIVE</div></div>
     <div class="tsw"></div>
   </div>
 
-  <div class="stitle">CHROME</div>
+  <div class="stitle">✨ CHROME</div>
   <div class="sg"><div class="sl"><span>METALLIC</span><span class="sv" id="vm">100%</span></div><input type="range" id="sm" min="0" max="200" value="100"></div>
   <div class="sg"><div class="sl"><span>SHIMMER</span><span class="sv" id="vs">70%</span></div><input type="range" id="ss" min="10" max="200" value="70"></div>
   <div class="sg"><div class="sl"><span>IRIDESCENT</span><span class="sv" id="vi">85%</span></div><input type="range" id="si" min="0" max="100" value="85"></div>
   <div class="sg"><div class="sl"><span>GLITTER</span><span class="sv" id="vg">60%</span></div><input type="range" id="sg2" min="0" max="100" value="60"></div>
 
-  <div class="stitle">CARD</div>
+  <div class="stitle">🎴 CARD SETTINGS</div>
   <div class="sg"><div class="sl"><span>🔄 ROTATION</span><span class="sv" id="vr">40%</span></div><input type="range" id="sr" min="0" max="200" value="40"></div>
-  <div class="sg"><div class="sl"><span>🎴 THICKNESS</span><span class="sv" id="vt">25%</span></div><input type="range" id="st2" min="10" max="100" value="25"></div>
+  <div class="sg"><div class="sl"><span>📏 THICKNESS</span><span class="sv" id="vt">25%</span></div><input type="range" id="st2" min="10" max="100" value="25"></div>
   <div class="sg"><div class="sl"><span>💡 FRAME GLOW</span><span class="sv" id="vfg">100%</span></div><input type="range" id="sfg" min="0" max="200" value="100"></div>
   <div class="sg"><div class="sl"><span>🪟 GLASS OPACITY</span><span class="sv" id="vgo">15%</span></div><input type="range" id="sgo" min="5" max="50" value="15"></div>
   <div class="sg"><div class="sl"><span>✨ GLASS SHINE</span><span class="sv" id="vgs">80%</span></div><input type="range" id="sgs" min="0" max="150" value="80"></div>
 
-  <div class="stitle">RARITY</div>
+  <div class="stitle">💎 RARITY</div>
   <div class="br">
     <button class="mb" data-rt="COMMON">COMMON</button>
     <button class="mb" data-rt="RARE">RARE</button>
@@ -140,6 +300,7 @@ canvas#expCv{display:none}
     <button class="mb on" data-rt="LEGENDARY">LEGEND</button>
   </div>
 
+  <div class="stitle">💾 EXPORT</div>
   <button class="ebtn e1" id="btnPNG">🖼 SAVE PNG</button>
   <button class="ebtn e2" id="btnVID">🎬 SAVE VIDEO</button>
   <button class="ebtn e3" id="btnGIF">🎞 SAVE GIF</button>
@@ -244,17 +405,13 @@ function buildScene(tex,pw,ph){
   cardH=ph;
   const depth=.04+P.thk*.18;
 
-  // ====== الصورة تملأ البطاقة كاملة (الواجهة الأمامية) ======
-  // الصورة بنفس حجم البطاقة بالضبط
   const imgGeo=new THREE.PlaneGeometry(pw,ph);
   
-  // الصورة الأمامية
   const imgMatFront=new THREE.MeshBasicMaterial({map:tex,side:THREE.FrontSide});
   imageFrontMesh=new THREE.Mesh(imgGeo,imgMatFront);
   imageFrontMesh.position.z=-.005;
   cardGroup.add(imageFrontMesh);
   
-  // Chrome على الواجهة الأمامية
   const cMat=new THREE.ShaderMaterial({
     uniforms:{uT:{value:tex},uTime:{value:0},uMet:{value:P.met},uShm:{value:P.shm},uIri:{value:P.iri},uGlt:{value:P.glt},uMs:{value:new THREE.Vector2()},uSd:{value:seed},uHL:{value:hlM}},
     vertexShader:VS,fragmentShader:FS,transparent:true,side:THREE.FrontSide
@@ -264,14 +421,12 @@ function buildScene(tex,pw,ph){
   chromeFront.visible=chrOn;
   cardGroup.add(chromeFront);
 
-  // ====== الصورة على الواجهة الخلفية (لتظهر عند الدوران) ======
   const imgMatBack=new THREE.MeshBasicMaterial({map:tex,side:THREE.FrontSide});
   imageBackMesh=new THREE.Mesh(imgGeo.clone(),imgMatBack);
   imageBackMesh.position.z=-depth+.005;
   imageBackMesh.rotation.y=Math.PI;
   cardGroup.add(imageBackMesh);
   
-  // Chrome على الواجهة الخلفية
   const cMat2=new THREE.ShaderMaterial({
     uniforms:{uT:{value:tex},uTime:{value:0},uMet:{value:P.met},uShm:{value:P.shm},uIri:{value:P.iri},uGlt:{value:P.glt},uMs:{value:new THREE.Vector2()},uSd:{value:seed},uHL:{value:hlM}},
     vertexShader:VS,fragmentShader:FS,transparent:true,side:THREE.FrontSide
@@ -282,7 +437,6 @@ function buildScene(tex,pw,ph){
   chromeBack.visible=chrOn;
   cardGroup.add(chromeBack);
 
-  // ====== البطاقة الزجاجية (إطار + زجاج) ======
   const fScale=900;
   const fcW=Math.floor(fScale);
   const fcH=Math.floor(fScale*(ph/pw));
@@ -297,7 +451,6 @@ function buildScene(tex,pw,ph){
   frameTexture=new THREE.CanvasTexture(frameCanvas);
   frameTexture.needsUpdate=true;
 
-  // الزجاج الأمامي (نفس حجم الصورة بالضبط)
   glassFrontMesh=new THREE.Mesh(
     new THREE.PlaneGeometry(pw,ph),
     new THREE.MeshBasicMaterial({map:frameTexture,transparent:true,side:THREE.FrontSide,depthWrite:false})
@@ -305,7 +458,6 @@ function buildScene(tex,pw,ph){
   glassFrontMesh.position.z=.005;
   cardGroup.add(glassFrontMesh);
 
-  // الزجاج الخلفي
   glassBackMesh=new THREE.Mesh(
     new THREE.PlaneGeometry(pw,ph),
     new THREE.MeshBasicMaterial({map:frameTexture,transparent:true,side:THREE.FrontSide,depthWrite:false})
@@ -314,24 +466,18 @@ function buildScene(tex,pw,ph){
   glassBackMesh.rotation.y=Math.PI;
   cardGroup.add(glassBackMesh);
 
-  // ====== الحواف الزجاجية الجانبية (سمك البطاقة) ======
   const edgeColor=new THREE.Color(0x1a4a6a);
   const edgeMat=new THREE.MeshBasicMaterial({color:edgeColor,transparent:true,opacity:.6,side:THREE.DoubleSide});
   
-  // علوي
   const topE=new THREE.Mesh(new THREE.PlaneGeometry(pw,depth),edgeMat);
   topE.position.set(0,ph/2,-depth/2);topE.rotation.x=Math.PI/2;cardGroup.add(topE);
-  // سفلي
   const botE=new THREE.Mesh(new THREE.PlaneGeometry(pw,depth),edgeMat);
   botE.position.set(0,-ph/2,-depth/2);botE.rotation.x=-Math.PI/2;cardGroup.add(botE);
-  // يساري
   const lftE=new THREE.Mesh(new THREE.PlaneGeometry(depth,ph),edgeMat);
   lftE.position.set(-pw/2,0,-depth/2);lftE.rotation.y=Math.PI/2;cardGroup.add(lftE);
-  // يميني
   const rgtE=new THREE.Mesh(new THREE.PlaneGeometry(depth,ph),edgeMat);
   rgtE.position.set(pw/2,0,-depth/2);rgtE.rotation.y=-Math.PI/2;cardGroup.add(rgtE);
 
-  // خطوط توهج على الحواف
   const glowMat=new THREE.MeshBasicMaterial({color:0x00f0ff,transparent:true,opacity:.7,side:THREE.DoubleSide,blending:THREE.AdditiveBlending});
   
   cardGroup.add(makeGlow(pw,.006,0,ph/2,.006,glowMat));
@@ -349,7 +495,6 @@ function makeGlow(w,h,x,y,z,mat){
   return m;
 }
 
-// ============ رسم البطاقة الزجاجية ============
 function drawGlassCard(time){
   if(!frameCtx)return;
   const w=frameCanvas.width,h=frameCanvas.height;
@@ -358,22 +503,11 @@ function drawGlassCard(time){
   
   const cornerCut=Math.min(w,h)*.045;
   
-  // 1. الزجاج الشفاف (طبقة شفافة فوق الصورة)
   drawGlassLayer(x,w,h,cornerCut,time);
-  
-  // 2. الإطار المعدني
   drawMetallicFrame(x,w,h,cornerCut,time);
-  
-  // 3. التفاصيل العلوية
   drawTopSection(x,w,h,time);
-  
-  // 4. اسم البطاقة في الأسفل
   drawBottomNameTag(x,w,h,time);
-  
-  // 5. التفاصيل الجانبية
   drawSideDetails(x,w,h,time);
-  
-  // 6. ✨ البريق الزجاجي القوي والواقعي ✨
   drawRealisticGlassShine(x,w,h,cornerCut,time);
   
   if(frameTexture)frameTexture.needsUpdate=true;
@@ -393,7 +527,6 @@ function cardPath(ctx,xx,yy,w,h,cut){
 }
 
 function drawGlassLayer(x,w,h,cut,time){
-  // طبقة الزجاج الشفافة الخفيفة جداً (تترك الصورة واضحة)
   const glassGrad=x.createLinearGradient(0,0,w,h);
   glassGrad.addColorStop(0,`rgba(100,180,220,${glassOpacity*.8})`);
   glassGrad.addColorStop(.5,`rgba(40,80,120,${glassOpacity*.4})`);
@@ -407,7 +540,6 @@ function drawGlassLayer(x,w,h,cut,time){
 function drawMetallicFrame(x,w,h,cut,time){
   const pulse=.85+Math.sin(time*1.5)*.15;
   
-  // الإطار الخارجي السيان
   x.shadowColor=`rgba(0,240,255,${pulse*.6})`;
   x.shadowBlur=20*P.fg;
   x.strokeStyle=`rgba(0,240,255,${pulse*.9})`;
@@ -415,7 +547,6 @@ function drawMetallicFrame(x,w,h,cut,time){
   cardPath(x,5,5,w-10,h-10,cut);
   x.stroke();
   
-  // خط داخلي رفيع أبيض
   x.shadowBlur=8*P.fg;
   x.strokeStyle='rgba(220,250,255,.7)';
   x.lineWidth=.8;
@@ -424,7 +555,6 @@ function drawMetallicFrame(x,w,h,cut,time){
   
   x.shadowBlur=0;
   
-  // زوايا تقنية
   drawCornerDecorations(x,w,h,cut,time);
 }
 
@@ -450,7 +580,6 @@ function drawCornerOrnament(x,cx,cy,size,corner,pulse,time){
   x.strokeStyle=`rgba(0,240,255,${pulse*.95})`;
   x.lineWidth=2;
   
-  // قوس الزاوية
   x.beginPath();
   x.moveTo(0,size);
   x.lineTo(0,8);
@@ -458,7 +587,6 @@ function drawCornerOrnament(x,cx,cy,size,corner,pulse,time){
   x.lineTo(size,0);
   x.stroke();
   
-  // خط داخلي
   x.strokeStyle='rgba(255,255,255,.6)';
   x.lineWidth=1;
   x.beginPath();
@@ -468,7 +596,6 @@ function drawCornerOrnament(x,cx,cy,size,corner,pulse,time){
   x.lineTo(size-2,5);
   x.stroke();
   
-  // نقطة في الزاوية
   x.shadowBlur=8;
   x.fillStyle='rgba(255,255,255,1)';
   x.beginPath();x.arc(0,0,3,0,Math.PI*2);x.fill();
@@ -480,8 +607,9 @@ function drawCornerOrnament(x,cx,cy,size,corner,pulse,time){
 function drawTopSection(x,w,h,time){
   const collection=document.getElementById('inpCollection').value;
   const code=document.getElementById('inpCode').value;
+  const tokenId=document.getElementById('inpTokenId').value;
   
-  // COLLECTION
+  // COLLECTION (يسار علوي)
   x.font='bold 14px Segoe UI';
   x.fillStyle='rgba(255,255,255,.95)';
   x.textAlign='left';
@@ -491,15 +619,140 @@ function drawTopSection(x,w,h,time){
   x.fillText('COLLECTION: '+collection,40,38);
   x.shadowBlur=0;
   
+  // ====== ✨ TOKEN ID + BLOCKCHAIN (شارة جديدة احترافية) ======
+  drawTokenIdBadge(x,40,62,tokenId,time);
+  
   // لوحة بيانات صغيرة
-  drawDataPanel(x,40,68,120,80,time);
+  drawDataPanel(x,40,108,120,80,time);
   
   // كود QR في الأعلى يمين
   drawTopRightCode(x,w,code,time);
 }
 
+function drawTokenIdBadge(x,px,py,tokenId,time){
+  // ====== شارة Token ID + Polygon ======
+  const badgeW=200;
+  const badgeH=38;
+  const pulse=.85+Math.sin(time*2)*.15;
+  
+  // خلفية الشارة بتدرج
+  const bg=x.createLinearGradient(px,py,px+badgeW,py);
+  bg.addColorStop(0,'rgba(130,69,201,.85)');  // Polygon Purple
+  bg.addColorStop(.5,'rgba(80,40,160,.75)');
+  bg.addColorStop(1,'rgba(40,20,80,.65)');
+  x.fillStyle=bg;
+  
+  // رسم شكل الشارة (مع زاوية مقطوعة)
+  x.beginPath();
+  x.moveTo(px,py);
+  x.lineTo(px+badgeW-10,py);
+  x.lineTo(px+badgeW,py+10);
+  x.lineTo(px+badgeW,py+badgeH);
+  x.lineTo(px+10,py+badgeH);
+  x.lineTo(px,py+badgeH-10);
+  x.closePath();
+  x.fill();
+  
+  // إطار الشارة
+  x.shadowColor=`rgba(184,41,255,${pulse})`;
+  x.shadowBlur=10;
+  x.strokeStyle=`rgba(184,41,255,${pulse})`;
+  x.lineWidth=1.5;
+  x.stroke();
+  x.shadowBlur=0;
+  
+  // ===== أيقونة Polygon (مثلث) =====
+  const iconX=px+12;
+  const iconY=py+badgeH/2;
+  
+  // المثلث الخارجي
+  x.shadowColor='rgba(184,41,255,.8)';
+  x.shadowBlur=8;
+  x.fillStyle='#8247E5';
+  x.beginPath();
+  x.moveTo(iconX,iconY-8);
+  x.lineTo(iconX+9,iconY-3);
+  x.lineTo(iconX+9,iconY+3);
+  x.lineTo(iconX,iconY+8);
+  x.lineTo(iconX-9,iconY+3);
+  x.lineTo(iconX-9,iconY-3);
+  x.closePath();
+  x.fill();
+  
+  // المثلث الداخلي (أبيض شفاف)
+  x.fillStyle='rgba(255,255,255,.4)';
+  x.beginPath();
+  x.moveTo(iconX,iconY-5);
+  x.lineTo(iconX+5,iconY-2);
+  x.lineTo(iconX+5,iconY+2);
+  x.lineTo(iconX,iconY+5);
+  x.lineTo(iconX-5,iconY+2);
+  x.lineTo(iconX-5,iconY-2);
+  x.closePath();
+  x.fill();
+  
+  x.shadowBlur=0;
+  
+  // ===== نص "POLYGON" =====
+  x.font='bold 9px Segoe UI';
+  x.fillStyle='rgba(255,255,255,.95)';
+  x.textAlign='left';
+  x.textBaseline='middle';
+  x.shadowColor='rgba(0,0,0,.5)';
+  x.shadowBlur=3;
+  x.fillText('POLYGON',iconX+15,iconY-7);
+  
+  // ===== Token ID =====
+  x.font='bold 13px monospace';
+  x.fillStyle='#fff';
+  x.shadowColor='rgba(0,240,255,.7)';
+  x.shadowBlur=5;
+  x.fillText(tokenId,iconX+15,iconY+6);
+  x.shadowBlur=0;
+  
+  // ===== خط فاصل عمودي صغير =====
+  x.strokeStyle='rgba(255,255,255,.3)';
+  x.lineWidth=.8;
+  x.beginPath();
+  x.moveTo(iconX+72,py+8);
+  x.lineTo(iconX+72,py+badgeH-8);
+  x.stroke();
+  
+  // ===== أيقونة CHAIN صغيرة على اليمين =====
+  const linkX=px+badgeW-20;
+  const linkY=py+badgeH/2;
+  
+  x.strokeStyle='rgba(0,240,255,.8)';
+  x.lineWidth=1.5;
+  x.shadowColor='rgba(0,240,255,.6)';
+  x.shadowBlur=6;
+  
+  // رسم رمز السلسلة
+  x.beginPath();
+  x.arc(linkX-5,linkY,4,0,Math.PI*2);
+  x.stroke();
+  x.beginPath();
+  x.arc(linkX+5,linkY,4,0,Math.PI*2);
+  x.stroke();
+  x.beginPath();
+  x.moveTo(linkX-2,linkY);
+  x.lineTo(linkX+2,linkY);
+  x.stroke();
+  
+  x.shadowBlur=0;
+  
+  // ===== نقطة ضوء صغيرة (مؤشر Live) =====
+  const dotPulse=.5+Math.sin(time*4)*.5;
+  x.fillStyle=`rgba(0,255,136,${dotPulse})`;
+  x.shadowColor='rgba(0,255,136,.8)';
+  x.shadowBlur=8;
+  x.beginPath();
+  x.arc(iconX+90,py+8,2.5,0,Math.PI*2);
+  x.fill();
+  x.shadowBlur=0;
+}
+
 function drawDataPanel(x,px,py,pw,ph,time){
-  // إطار اللوحة
   x.shadowColor='rgba(0,240,255,.4)';
   x.shadowBlur=6;
   x.strokeStyle='rgba(0,240,255,.6)';
@@ -507,7 +760,6 @@ function drawDataPanel(x,px,py,pw,ph,time){
   x.strokeRect(px,py,pw,ph);
   x.shadowBlur=0;
   
-  // خلفية شفافة
   x.fillStyle='rgba(0,30,60,.3)';
   x.fillRect(px,py,pw,ph);
   
@@ -520,7 +772,6 @@ function drawDataPanel(x,px,py,pw,ph,time){
     x.fillText(line,px+5,py+10+i*8);
   });
   
-  // رسم بياني صغير
   x.strokeStyle='rgba(0,240,255,.7)';
   x.lineWidth=.8;
   x.beginPath();
@@ -537,18 +788,15 @@ function drawTopRightCode(x,w,code,time){
   const cy=68;
   const cs=50;
   
-  // خلفية شفافة للكود
   x.fillStyle='rgba(0,30,60,.3)';
   x.fillRect(cx,cy,cs,cs);
   
-  // إطار الكود
   x.strokeStyle='rgba(0,240,255,.7)';
   x.lineWidth=1.5;
   x.shadowColor='rgba(0,240,255,.6)';
   x.shadowBlur=8;
   x.strokeRect(cx,cy,cs,cs);
   
-  // QR-like pattern
   x.shadowBlur=0;
   x.fillStyle='rgba(255,255,255,.7)';
   for(let i=0;i<6;i++){
@@ -560,7 +808,6 @@ function drawTopRightCode(x,w,code,time){
     }
   }
   
-  // النص
   x.font='bold 11px Segoe UI';
   x.fillStyle='#fff';
   x.textAlign='center';
@@ -579,12 +826,10 @@ function drawBottomNameTag(x,w,h,time){
   const px=w/2-pw/2;
   const py=h-ph-40;
   
-  // ظل
   x.shadowColor='rgba(0,0,0,.7)';
   x.shadowBlur=15;
   x.shadowOffsetY=5;
   
-  // تدرج معدني
   const tagGrad=x.createLinearGradient(0,py,0,py+ph);
   tagGrad.addColorStop(0,'rgba(60,90,120,.95)');
   tagGrad.addColorStop(.5,'rgba(30,55,80,.95)');
@@ -614,7 +859,6 @@ function drawBottomNameTag(x,w,h,time){
   
   x.shadowBlur=0;
   
-  // الاسم
   x.font='bold 32px Segoe UI';
   x.fillStyle='#fff';
   x.textAlign='center';
@@ -624,7 +868,6 @@ function drawBottomNameTag(x,w,h,time){
   x.fillText(name,px+pw/2,py+30);
   x.shadowBlur=0;
   
-  // خط فاصل
   const lineGrad=x.createLinearGradient(px+pw*.2,0,px+pw*.8,0);
   lineGrad.addColorStop(0,'transparent');
   lineGrad.addColorStop(.5,'rgba(0,240,255,.6)');
@@ -636,7 +879,6 @@ function drawBottomNameTag(x,w,h,time){
   x.lineTo(px+pw*.8,py+50);
   x.stroke();
   
-  // العنوان الفرعي
   x.font='600 16px Segoe UI';
   x.fillStyle='rgba(0,240,255,.95)';
   x.shadowColor='rgba(0,240,255,.5)';
@@ -659,14 +901,11 @@ function drawSideDetails(x,w,h,time){
   x.shadowBlur=0;
 }
 
-// ====== ✨ البريق الزجاجي الواقعي القوي ✨ ======
 function drawRealisticGlassShine(x,w,h,cut,time){
-  // قص المنطقة لشكل البطاقة
   x.save();
   cardPath(x,5,5,w-10,h-10,cut);
   x.clip();
   
-  // === 1. الإضاءة العامة (top highlight) ===
   const topLight=x.createLinearGradient(0,0,0,h*.5);
   topLight.addColorStop(0,`rgba(255,255,255,${.18*glassShine})`);
   topLight.addColorStop(.3,`rgba(255,255,255,${.06*glassShine})`);
@@ -674,7 +913,6 @@ function drawRealisticGlassShine(x,w,h,cut,time){
   x.fillStyle=topLight;
   x.fillRect(0,0,w,h*.5);
   
-  // === 2. البريق القطري الكبير المتحرك ===
   const shinePos=(time*.15)%2-.5;
   const shineX=shinePos*w;
   
@@ -695,7 +933,6 @@ function drawRealisticGlassShine(x,w,h,cut,time){
   
   x.restore();
   
-  // === 3. بريق قطري ثانٍ معاكس ===
   const shinePos2=(time*.12+.6)%2-.5;
   const shineX2=(1-shinePos2)*w;
   
@@ -714,7 +951,6 @@ function drawRealisticGlassShine(x,w,h,cut,time){
   
   x.restore();
   
-  // === 4. لمعة قوية في الزاوية العلوية اليسرى (مثل الزجاج الحقيقي) ===
   const cornerShine=x.createRadialGradient(w*.2,h*.15,0,w*.2,h*.15,w*.4);
   cornerShine.addColorStop(0,`rgba(255,255,255,${.25*glassShine})`);
   cornerShine.addColorStop(.3,`rgba(255,255,255,${.1*glassShine})`);
@@ -722,21 +958,18 @@ function drawRealisticGlassShine(x,w,h,cut,time){
   x.fillStyle=cornerShine;
   x.fillRect(0,0,w*.6,h*.5);
   
-  // === 5. لمعة في الزاوية العلوية اليمنى ===
   const cornerShine2=x.createRadialGradient(w*.85,h*.2,0,w*.85,h*.2,w*.3);
   cornerShine2.addColorStop(0,`rgba(200,230,255,${.2*glassShine})`);
   cornerShine2.addColorStop(1,'rgba(200,230,255,0)');
   x.fillStyle=cornerShine2;
   x.fillRect(w*.6,0,w*.4,h*.4);
   
-  // === 6. إضاءة سفلية خفيفة ===
   const bottomLight=x.createLinearGradient(0,h*.7,0,h);
   bottomLight.addColorStop(0,'rgba(0,240,255,0)');
   bottomLight.addColorStop(1,`rgba(0,240,255,${.08*glassShine})`);
   x.fillStyle=bottomLight;
   x.fillRect(0,h*.7,w,h*.3);
   
-  // === 7. خط بريق رفيع متحرك على الحافة العلوية ===
   const edgeShinePos=(time*.3)%1;
   const esX=edgeShinePos*w;
   const edgeGrad=x.createLinearGradient(esX-50,0,esX+50,0);
@@ -746,7 +979,6 @@ function drawRealisticGlassShine(x,w,h,cut,time){
   x.fillStyle=edgeGrad;
   x.fillRect(esX-50,5,100,2);
   
-  // === 8. نقاط ضوئية صغيرة (مثل غبار على الزجاج) ===
   for(let i=0;i<15;i++){
     const sx=Math.sin(i*1.7+time*.2)*w*.4+w/2;
     const sy=Math.cos(i*2.3+time*.15)*h*.4+h/2;
@@ -761,7 +993,6 @@ function drawRealisticGlassShine(x,w,h,cut,time){
     }
   }
   
-  // === 9. تأثير "Frosted Glass" خفيف جداً على الحواف ===
   const edgeFrost=x.createLinearGradient(0,0,0,h);
   edgeFrost.addColorStop(0,`rgba(150,200,230,${.05*glassShine})`);
   edgeFrost.addColorStop(.1,'rgba(150,200,230,0)');
@@ -789,22 +1020,17 @@ function processImage(dataUrl){
     tex.minFilter=THREE.LinearFilter;tex.magFilter=THREE.LinearFilter;tex.needsUpdate=true;
     artTex=tex;
 
-    // ====== التكيف مع الصور الطولية والعرضية ======
     const aspect=aw/ah;
     let pw2,ph2;
     
-    // حساب أبعاد البطاقة بناءً على نسبة الصورة
     if(aspect>=1){
-      // صورة عرضية أو مربعة
       pw2=3.5;
       ph2=3.5/aspect;
     }else{
-      // صورة طولية
       ph2=3.5;
       pw2=3.5*aspect;
     }
     
-    // التأكد من أن البطاقة لا تكون كبيرة جداً
     const maxDim=4;
     if(pw2>maxDim){pw2=maxDim;ph2=maxDim/aspect;}
     if(ph2>maxDim){ph2=maxDim;pw2=maxDim*aspect;}
@@ -890,7 +1116,6 @@ function setupUI(){
     });
   });
   
-  // Thickness
   document.getElementById('st2').addEventListener('input',e=>{
     P.thk=e.target.value*.01;
     document.getElementById('vt').textContent=e.target.value+'%';
@@ -904,13 +1129,11 @@ function setupUI(){
     }
   });
   
-  // Glass opacity
   document.getElementById('sgo').addEventListener('input',e=>{
     glassOpacity=e.target.value*.01;
     document.getElementById('vgo').textContent=e.target.value+'%';
   });
   
-  // Glass shine
   document.getElementById('sgs').addEventListener('input',e=>{
     glassShine=e.target.value*.01;
     document.getElementById('vgs').textContent=e.target.value+'%';
