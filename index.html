@@ -11,7 +11,6 @@ body{background:var(--bg);font-family:'Segoe UI',sans-serif;color:#fff;overflow:
 
 .space-bg{position:fixed;inset:0;background:radial-gradient(2px 2px at 20% 30%,rgba(255,255,255,.8),transparent),radial-gradient(1px 1px at 60% 70%,rgba(0,240,255,.6),transparent),radial-gradient(1.5px 1.5px at 80% 20%,rgba(255,0,234,.5),transparent),radial-gradient(1px 1px at 40% 80%,rgba(255,255,255,.7),transparent),#050510;background-size:400px 400px;z-index:1;animation:stars 20s linear infinite;pointer-events:none}
 @keyframes stars{to{background-position:400px 400px}}
-
 #scene{position:fixed;inset:0;z-index:2;pointer-events:none}
 
 .top-bar{position:fixed;top:0;left:0;right:0;z-index:100;padding:12px 25px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(5,5,16,.95),transparent);pointer-events:none}
@@ -93,7 +92,6 @@ canvas#expCv{display:none}
 </style>
 </head>
 <body>
-
 <div class="space-bg"></div>
 <div id="scene"></div>
 <canvas id="expCv"></canvas>
@@ -139,7 +137,7 @@ canvas#expCv{display:none}
 
   <div class="stitle">CARD</div>
   <div class="sg"><div class="sl"><span>🔄 ROTATION</span><span class="sv" id="vr">30%</span></div><input type="range" id="sr" min="0" max="100" value="30"></div>
-  <div class="sg"><div class="sl"><span>🎴 THICKNESS</span><span class="sv" id="vt">70%</span></div><input type="range" id="st" min="20" max="100" value="70"></div>
+  <div class="sg"><div class="sl"><span>🎴 THICKNESS</span><span class="sv" id="vt">70%</span></div><input type="range" id="st2" min="20" max="100" value="70"></div>
 
   <div class="stitle">HIGHLIGHTS</div>
   <div class="br">
@@ -185,12 +183,11 @@ canvas#expCv{display:none}
 <div class="toast" id="toastEl"></div>
 
 <script>
-let sc,cam,rend,cardGrp,chromeM,particles;
+let sc,cam,rend,cardGrp,chromeM,frameOverlay,infoOverlay,particles;
 let mx=0,my=0,smx=0,smy=0,t=0,ry=0;
 let chrOn=true,seed=Math.random()*1000;
 let artTex=null,aw=0,ah=0;
 let wOk=false,hlM=0,rar='LEGENDARY';
-let maxTilt=0.12; // حد أقصى للدوران حتى لا تخرج عن الإطار
 
 const P={met:1,shm:.7,iri:.85,glt:.6,rot:.3,thk:.7,lop:1,lwd:.5,lct:6,lan:45,lsh:.7};
 
@@ -234,6 +231,7 @@ function init(){
   rend.setPixelRatio(Math.min(devicePixelRatio,2));
   document.getElementById('scene').appendChild(rend.domElement);
 
+  // Particles
   const n=300,geo=new THREE.BufferGeometry(),pos=new Float32Array(n*3),col=new Float32Array(n*3);
   for(let i=0;i<n;i++){pos[i*3]=(Math.random()-.5)*22;pos[i*3+1]=(Math.random()-.5)*16;pos[i*3+2]=(Math.random()-.5)*8;const r=Math.random();col[i*3]=r>.5?1:0;col[i*3+1]=r>.5?1:.94;col[i*3+2]=1;}
   geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
@@ -247,20 +245,22 @@ function init(){
   loop();
 }
 
-// ======== بناء البطاقة المجسمة ========
+// ======== بناء البطاقة: الصورة سميكة + البرواز إطار شفاف فوقها ========
 function buildCard(tex,pw,ph){
   if(cardGrp)sc.remove(cardGrp);
   cardGrp=new THREE.Group();
 
-  const depth=.05+P.thk*.22; // سمك حقيقي واضح
+  const depth=.06+P.thk*.25; // سمك الصورة الفعلي
 
-  // ======= الوجه الأمامي =======
+  // ========= الصورة المجسمة (سميكة) =========
+
+  // الوجه الأمامي - الصورة الأصلية
   const frontMat=new THREE.MeshBasicMaterial({map:tex,side:THREE.FrontSide});
   const front=new THREE.Mesh(new THREE.PlaneGeometry(pw,ph),frontMat);
   front.position.z=depth/2;
   cardGrp.add(front);
 
-  // ======= Chrome Overlay =======
+  // Chrome Overlay على الوجه الأمامي
   const cMat=new THREE.ShaderMaterial({
     uniforms:{uT:{value:tex},uTime:{value:0},uMet:{value:P.met},uShm:{value:P.shm},uIri:{value:P.iri},uGlt:{value:P.glt},uMs:{value:new THREE.Vector2()},uSd:{value:seed},uHL:{value:hlM},uLop:{value:P.lop},uLwd:{value:P.lwd},uLct:{value:P.lct},uLan:{value:P.lan},uLsh:{value:P.lsh}},
     vertexShader:VS,fragmentShader:FS,transparent:true,side:THREE.FrontSide
@@ -270,228 +270,301 @@ function buildCard(tex,pw,ph){
   chromeM.visible=chrOn;
   cardGrp.add(chromeM);
 
-  // ======= الوجه الخلفي =======
-  const backTex=makeMetalTex(512,Math.floor(512*(ph/pw)));
-  const back=new THREE.Mesh(new THREE.PlaneGeometry(pw,ph),new THREE.MeshBasicMaterial({map:backTex,side:THREE.FrontSide}));
-  back.position.z=-depth/2;back.rotation.y=Math.PI;
+  // الوجه الخلفي - نفس الصورة (معكوسة)
+  const backMat=new THREE.MeshBasicMaterial({map:tex,side:THREE.FrontSide});
+  const back=new THREE.Mesh(new THREE.PlaneGeometry(pw,ph),backMat);
+  back.position.z=-depth/2;
+  back.rotation.y=Math.PI;
   cardGrp.add(back);
 
-  // ======= الحواف السميكة (معدنية) =======
-  const edgeTex=makeEdgeTex(256,128);
-  const eMat=new THREE.MeshBasicMaterial({map:edgeTex,side:THREE.DoubleSide});
+  // Chrome على الخلف أيضاً
+  const cMat2=new THREE.ShaderMaterial({
+    uniforms:{uT:{value:tex},uTime:{value:0},uMet:{value:P.met},uShm:{value:P.shm},uIri:{value:P.iri},uGlt:{value:P.glt},uMs:{value:new THREE.Vector2()},uSd:{value:seed},uHL:{value:hlM},uLop:{value:P.lop},uLwd:{value:P.lwd},uLct:{value:P.lct},uLan:{value:P.lan},uLsh:{value:P.lsh}},
+    vertexShader:VS,fragmentShader:FS,transparent:true,side:THREE.FrontSide
+  });
+  const chromeBack=new THREE.Mesh(new THREE.PlaneGeometry(pw,ph),cMat2);
+  chromeBack.position.z=-depth/2-.003;
+  chromeBack.rotation.y=Math.PI;
+  chromeBack.visible=chrOn;
+  cardGrp.add(chromeBack);
 
-  // حافة علوية
-  const tG=new THREE.PlaneGeometry(pw,depth);
-  const tE=new THREE.Mesh(tG,eMat);tE.position.y=ph/2;tE.rotation.x=Math.PI/2;cardGrp.add(tE);
-  // حافة سفلية
-  const bE=new THREE.Mesh(new THREE.PlaneGeometry(pw,depth),eMat);bE.position.y=-ph/2;bE.rotation.x=-Math.PI/2;cardGrp.add(bE);
-  // حافة يسارية
-  const lE=new THREE.Mesh(new THREE.PlaneGeometry(depth,ph),eMat);lE.position.x=-pw/2;lE.rotation.y=Math.PI/2;cardGrp.add(lE);
-  // حافة يمينية
-  const rE=new THREE.Mesh(new THREE.PlaneGeometry(depth,ph),eMat);rE.position.x=pw/2;rE.rotation.y=-Math.PI/2;cardGrp.add(rE);
+  // ========= حواف الصورة (السمك المرئي) =========
+  // حواف بنفس ألوان الصورة - تكستشر معدني/صورة
+  const edgeTex=makeImageEdgeTex(tex,pw,ph);
 
-  // ======= خطوط توهج على حواف الوجه الأمامي =======
-  const glowMat=new THREE.MeshBasicMaterial({color:0x00f0ff,transparent:true,opacity:.5,side:THREE.DoubleSide});
-  const glowW=.006;
-  // علوي
-  cardGrp.add(Object.assign(new THREE.Mesh(new THREE.PlaneGeometry(pw,glowW),glowMat),{position:new THREE.Vector3(0,ph/2,depth/2+.001)}));
-  // سفلي
-  cardGrp.add(Object.assign(new THREE.Mesh(new THREE.PlaneGeometry(pw,glowW),glowMat),{position:new THREE.Vector3(0,-ph/2,depth/2+.001)}));
-  // يساري
-  cardGrp.add(Object.assign(new THREE.Mesh(new THREE.PlaneGeometry(glowW,ph),glowMat),{position:new THREE.Vector3(-pw/2,0,depth/2+.001)}));
-  // يميني
-  cardGrp.add(Object.assign(new THREE.Mesh(new THREE.PlaneGeometry(glowW,ph),glowMat),{position:new THREE.Vector3(pw/2,0,depth/2+.001)}));
+  // الحافة العلوية
+  const topEdge=new THREE.Mesh(new THREE.PlaneGeometry(pw,depth),new THREE.MeshBasicMaterial({map:edgeTex.top,side:THREE.DoubleSide}));
+  topEdge.position.y=ph/2;topEdge.rotation.x=Math.PI/2;
+  cardGrp.add(topEdge);
 
-  // ======= الإطار المعدني المبهر (texture على الوجه الأمامي) =======
+  // الحافة السفلية
+  const botEdge=new THREE.Mesh(new THREE.PlaneGeometry(pw,depth),new THREE.MeshBasicMaterial({map:edgeTex.bot,side:THREE.DoubleSide}));
+  botEdge.position.y=-ph/2;botEdge.rotation.x=-Math.PI/2;
+  cardGrp.add(botEdge);
+
+  // الحافة اليسارية
+  const leftEdge=new THREE.Mesh(new THREE.PlaneGeometry(depth,ph),new THREE.MeshBasicMaterial({map:edgeTex.left,side:THREE.DoubleSide}));
+  leftEdge.position.x=-pw/2;leftEdge.rotation.y=Math.PI/2;
+  cardGrp.add(leftEdge);
+
+  // الحافة اليمينية
+  const rightEdge=new THREE.Mesh(new THREE.PlaneGeometry(depth,ph),new THREE.MeshBasicMaterial({map:edgeTex.right,side:THREE.DoubleSide}));
+  rightEdge.position.x=pw/2;rightEdge.rotation.y=-Math.PI/2;
+  cardGrp.add(rightEdge);
+
+  // ========= خطوط توهج على الحواف =========
+  const glowMat=new THREE.MeshBasicMaterial({color:0x00f0ff,transparent:true,opacity:.4,side:THREE.DoubleSide});
+  const gw=.005;
+  // أمامية
+  cardGrp.add(makeGlowLine(pw,gw,0,ph/2,depth/2+.001));
+  cardGrp.add(makeGlowLine(pw,gw,0,-ph/2,depth/2+.001));
+  cardGrp.add(makeGlowLine(gw,ph,-pw/2,0,depth/2+.001));
+  cardGrp.add(makeGlowLine(gw,ph,pw/2,0,depth/2+.001));
+  // خلفية
+  cardGrp.add(makeGlowLine(pw,gw,0,ph/2,-depth/2-.001));
+  cardGrp.add(makeGlowLine(pw,gw,0,-ph/2,-depth/2-.001));
+  cardGrp.add(makeGlowLine(gw,ph,-pw/2,0,-depth/2-.001));
+  cardGrp.add(makeGlowLine(gw,ph,pw/2,0,-depth/2-.001));
+
+  // ========= الإطار المعدني (شفاف - يظهر الصورة خلفه) =========
   const frameTex=makeFrameTex(pw,ph);
-  const frameM=new THREE.Mesh(new THREE.PlaneGeometry(pw*1.15,ph*1.15),new THREE.MeshBasicMaterial({map:frameTex,transparent:true,side:THREE.FrontSide}));
-  frameM.position.z=depth/2+.006;
-  cardGrp.add(frameM);
+  frameOverlay=new THREE.Mesh(
+    new THREE.PlaneGeometry(pw*1.15,ph*1.15),
+    new THREE.MeshBasicMaterial({map:frameTex,transparent:true,side:THREE.DoubleSide,depthWrite:false})
+  );
+  frameOverlay.position.z=depth/2+.008;
+  cardGrp.add(frameOverlay);
 
-  // ======= معلومات البطاقة (overlay) =======
+  // إطار خلفي أيضاً
+  const frameBack=new THREE.Mesh(
+    new THREE.PlaneGeometry(pw*1.15,ph*1.15),
+    new THREE.MeshBasicMaterial({map:frameTex,transparent:true,side:THREE.DoubleSide,depthWrite:false})
+  );
+  frameBack.position.z=-depth/2-.008;
+  frameBack.rotation.y=Math.PI;
+  cardGrp.add(frameBack);
+
+  // ========= معلومات البطاقة =========
   const infoTex=makeInfoTex(pw,ph);
-  const infoM=new THREE.Mesh(new THREE.PlaneGeometry(pw,ph),new THREE.MeshBasicMaterial({map:infoTex,transparent:true,side:THREE.FrontSide}));
-  infoM.position.z=depth/2+.009;
-  cardGrp.add(infoM);
+  infoOverlay=new THREE.Mesh(
+    new THREE.PlaneGeometry(pw,ph),
+    new THREE.MeshBasicMaterial({map:infoTex,transparent:true,side:THREE.DoubleSide,depthWrite:false})
+  );
+  infoOverlay.position.z=depth/2+.012;
+  cardGrp.add(infoOverlay);
+
+  // معلومات خلفية
+  const infoBack=new THREE.Mesh(
+    new THREE.PlaneGeometry(pw,ph),
+    new THREE.MeshBasicMaterial({map:infoTex,transparent:true,side:THREE.DoubleSide,depthWrite:false})
+  );
+  infoBack.position.z=-depth/2-.012;
+  infoBack.rotation.y=Math.PI;
+  cardGrp.add(infoBack);
 
   cardGrp.position.y=.08;
   sc.add(cardGrp);
 }
 
-// ======== تكستشرات معدنية ========
-function makeMetalTex(w,h){
-  const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');
-  const g=x.createLinearGradient(0,0,w,h);
-  g.addColorStop(0,'#151525');g.addColorStop(.3,'#252535');g.addColorStop(.5,'#353545');g.addColorStop(.7,'#252535');g.addColorStop(1,'#151525');
-  x.fillStyle=g;x.fillRect(0,0,w,h);
-  for(let i=0;i<40;i++){x.strokeStyle=`rgba(${160+Math.random()*95},${160+Math.random()*95},${180+Math.random()*75},${.04+Math.random()*.08})`;x.lineWidth=.5+Math.random()*2;x.beginPath();x.moveTo(Math.random()*w,0);x.lineTo(Math.random()*w,h);x.stroke();}
-  x.strokeStyle='rgba(0,240,255,.12)';x.lineWidth=1.5;x.beginPath();x.moveTo(0,h/2);x.lineTo(w,h/2);x.stroke();
-  const tx=new THREE.CanvasTexture(c);tx.needsUpdate=true;return tx;
+function makeGlowLine(w,h,x,y,z){
+  const m=new THREE.Mesh(
+    new THREE.PlaneGeometry(w,h),
+    new THREE.MeshBasicMaterial({color:0x00f0ff,transparent:true,opacity:.4,side:THREE.DoubleSide})
+  );
+  m.position.set(x,y,z);return m;
 }
 
-function makeEdgeTex(w,h){
-  const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');
-  // تدرج معدني للحافة
-  const g=x.createLinearGradient(0,0,0,h);
-  g.addColorStop(0,'#404058');g.addColorStop(.15,'#707088');g.addColorStop(.3,'#a0a0b8');
-  g.addColorStop(.5,'#c8c8d8');g.addColorStop(.7,'#a0a0b8');g.addColorStop(.85,'#707088');g.addColorStop(1,'#404058');
-  x.fillStyle=g;x.fillRect(0,0,w,h);
-  // خطوط الفرشاة المعدنية
-  for(let i=0;i<60;i++){x.strokeStyle=`rgba(255,255,255,${.02+Math.random()*.06})`;x.lineWidth=.5+Math.random();x.beginPath();x.moveTo(0,Math.random()*h);x.lineTo(w,Math.random()*h);x.stroke();}
-  // خط سيان في المنتصف
-  x.strokeStyle='rgba(0,240,255,.25)';x.lineWidth=2;x.beginPath();x.moveTo(0,h*.5);x.lineTo(w,h*.5);x.stroke();
-  // خط بنفسجي
-  x.strokeStyle='rgba(184,41,255,.15)';x.lineWidth=1;x.beginPath();x.moveTo(0,h*.3);x.lineTo(w,h*.3);x.stroke();
-  x.beginPath();x.moveTo(0,h*.7);x.lineTo(w,h*.7);x.stroke();
-  const tx=new THREE.CanvasTexture(c);tx.needsUpdate=true;return tx;
+// ======== حواف الصورة - تكستشر متدرج معدني ========
+function makeImageEdgeTex(tex,pw,ph){
+  // نستخرج ألوان من حواف الصورة + تدرج معدني
+  function makeEdge(w,h,isHorizontal){
+    const c=document.createElement('canvas');c.width=256;c.height=64;
+    const x=c.getContext('2d');
+    // تدرج معدني فضي مع لمعة
+    const g=x.createLinearGradient(0,0,0,64);
+    g.addColorStop(0,'#2a2a3a');g.addColorStop(.2,'#4a4a5a');
+    g.addColorStop(.35,'#8a8a9a');g.addColorStop(.5,'#b0b0c0');
+    g.addColorStop(.65,'#8a8a9a');g.addColorStop(.8,'#4a4a5a');
+    g.addColorStop(1,'#2a2a3a');
+    x.fillStyle=g;x.fillRect(0,0,256,64);
+    // خطوط فرشاة
+    for(let i=0;i<40;i++){
+      x.strokeStyle=`rgba(255,255,255,${.02+Math.random()*.05})`;
+      x.lineWidth=.5+Math.random();
+      x.beginPath();
+      if(isHorizontal){x.moveTo(0,Math.random()*64);x.lineTo(256,Math.random()*64);}
+      else{x.moveTo(Math.random()*256,0);x.lineTo(Math.random()*256,64);}
+      x.stroke();
+    }
+    // خط سيان
+    x.strokeStyle='rgba(0,240,255,.2)';x.lineWidth=1.5;
+    x.beginPath();x.moveTo(0,32);x.lineTo(256,32);x.stroke();
+    const tx=new THREE.CanvasTexture(c);tx.needsUpdate=true;return tx;
+  }
+  return{
+    top:makeEdge(256,64,true),
+    bot:makeEdge(256,64,true),
+    left:makeEdge(64,256,false),
+    right:makeEdge(64,256,false)
+  };
 }
 
+// ======== الإطار المعدني المبهر (شفاف من الداخل) ========
 function makeFrameTex(pw,ph){
   const s=500;
   const w=Math.floor(s*1.15);
   const h=Math.floor(s*(ph/pw)*1.15);
-  const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');
-  x.clearRect(0,0,w,h);
+  const c=document.createElement('canvas');c.width=w;c.height=h;
+  const x=c.getContext('2d');
+  x.clearRect(0,0,w,h); // شفاف بالكامل
 
   const bw=w*.055;
-  const imgL=bw,imgT=bw,imgW=w-bw*2,imgH=h-bw*2;
 
-  // ====== الإطار المعدني الخارجي ======
-  // تدرج معدني فضي
+  // ====== الإطار المعدني - 4 جوانب فقط ======
   for(let side=0;side<4;side++){
-    x.save();
     let grd;
     if(side===0){// علوي
       grd=x.createLinearGradient(0,0,0,bw);
-      grd.addColorStop(0,'rgba(180,180,200,.95)');grd.addColorStop(.3,'rgba(220,220,235,.98)');
-      grd.addColorStop(.5,'rgba(255,255,255,1)');grd.addColorStop(.7,'rgba(200,200,215,.95)');grd.addColorStop(1,'rgba(140,140,160,.9)');
+      grd.addColorStop(0,'rgba(160,165,180,.92)');grd.addColorStop(.2,'rgba(200,205,220,.96)');
+      grd.addColorStop(.4,'rgba(235,238,245,.98)');grd.addColorStop(.6,'rgba(255,255,255,1)');
+      grd.addColorStop(.8,'rgba(210,215,225,.95)');grd.addColorStop(1,'rgba(150,155,170,.85)');
       x.fillStyle=grd;x.fillRect(0,0,w,bw);
     }else if(side===1){// سفلي
       grd=x.createLinearGradient(0,h-bw,0,h);
-      grd.addColorStop(0,'rgba(140,140,160,.9)');grd.addColorStop(.3,'rgba(200,200,215,.95)');
-      grd.addColorStop(.5,'rgba(240,240,250,1)');grd.addColorStop(.7,'rgba(200,200,215,.95)');grd.addColorStop(1,'rgba(160,160,180,.9)');
+      grd.addColorStop(0,'rgba(150,155,170,.85)');grd.addColorStop(.2,'rgba(200,205,220,.93)');
+      grd.addColorStop(.4,'rgba(230,233,240,.97)');grd.addColorStop(.6,'rgba(250,252,255,1)');
+      grd.addColorStop(.8,'rgba(210,215,225,.95)');grd.addColorStop(1,'rgba(160,165,180,.9)');
       x.fillStyle=grd;x.fillRect(0,h-bw,w,bw);
     }else if(side===2){// يساري
       grd=x.createLinearGradient(0,0,bw,0);
-      grd.addColorStop(0,'rgba(180,180,200,.95)');grd.addColorStop(.3,'rgba(210,210,225,.98)');
-      grd.addColorStop(.5,'rgba(245,245,255,1)');grd.addColorStop(.7,'rgba(200,200,215,.95)');grd.addColorStop(1,'rgba(140,140,160,.9)');
+      grd.addColorStop(0,'rgba(160,165,180,.92)');grd.addColorStop(.3,'rgba(220,225,235,.97)');
+      grd.addColorStop(.5,'rgba(248,250,255,1)');grd.addColorStop(.7,'rgba(210,215,225,.95)');
+      grd.addColorStop(1,'rgba(150,155,170,.85)');
       x.fillStyle=grd;x.fillRect(0,bw,bw,h-bw*2);
     }else{// يميني
       grd=x.createLinearGradient(w-bw,0,w,0);
-      grd.addColorStop(0,'rgba(140,140,160,.9)');grd.addColorStop(.3,'rgba(200,200,215,.95)');
-      grd.addColorStop(.5,'rgba(245,245,255,1)');grd.addColorStop(.7,'rgba(210,210,225,.98)');grd.addColorStop(1,'rgba(180,180,200,.95)');
+      grd.addColorStop(0,'rgba(150,155,170,.85)');grd.addColorStop(.3,'rgba(210,215,225,.95)');
+      grd.addColorStop(.5,'rgba(248,250,255,1)');grd.addColorStop(.7,'rgba(220,225,235,.97)');
+      grd.addColorStop(1,'rgba(160,165,180,.92)');
       x.fillStyle=grd;x.fillRect(w-bw,bw,bw,h-bw*2);
     }
-    x.restore();
   }
 
-  // مسح داخل الإطار (شفاف)
-  x.clearRect(imgL,imgT,imgW,imgH);
+  // ====== الداخل شفاف تماماً ======
+  x.clearRect(bw,bw,w-bw*2,h-bw*2);
 
   // ====== خطوط الفرشاة المعدنية ======
-  for(let i=0;i<150;i++){
-    x.strokeStyle=`rgba(255,255,255,${.02+Math.random()*.07})`;
+  for(let i=0;i<200;i++){
+    x.strokeStyle=`rgba(255,255,255,${.015+Math.random()*.06})`;
     x.lineWidth=.3+Math.random()*1.2;
     x.beginPath();
-    const side=Math.floor(Math.random()*4);
-    if(side===0){x.moveTo(Math.random()*w,Math.random()*bw);x.lineTo(Math.random()*w,Math.random()*bw);}
-    else if(side===1){x.moveTo(Math.random()*w,h-bw+Math.random()*bw);x.lineTo(Math.random()*w,h-bw+Math.random()*bw);}
-    else if(side===2){x.moveTo(Math.random()*bw,bw+Math.random()*(h-bw*2));x.lineTo(Math.random()*bw,bw+Math.random()*(h-bw*2));}
-    else{x.moveTo(w-bw+Math.random()*bw,bw+Math.random()*(h-bw*2));x.lineTo(w-bw+Math.random()*bw,bw+Math.random()*(h-bw*2));}
+    const sd=Math.floor(Math.random()*4);
+    if(sd===0){const y1=Math.random()*bw;x.moveTo(Math.random()*w,y1);x.lineTo(Math.random()*w,y1+Math.random()*3-1.5);}
+    else if(sd===1){const y1=h-bw+Math.random()*bw;x.moveTo(Math.random()*w,y1);x.lineTo(Math.random()*w,y1+Math.random()*3-1.5);}
+    else if(sd===2){const x1=Math.random()*bw;x.moveTo(x1,bw+Math.random()*(h-bw*2));x.lineTo(x1+Math.random()*3-1.5,bw+Math.random()*(h-bw*2));}
+    else{const x1=w-bw+Math.random()*bw;x.moveTo(x1,bw+Math.random()*(h-bw*2));x.lineTo(x1+Math.random()*3-1.5,bw+Math.random()*(h-bw*2));}
     x.stroke();
   }
 
-  // ====== إطار داخلي متوهج ======
-  x.shadowColor='rgba(0,240,255,.6)';x.shadowBlur=8;
-  x.strokeStyle='rgba(0,240,255,.5)';x.lineWidth=2;
-  x.strokeRect(imgL-1,imgT-1,imgW+2,imgH+2);
+  // ====== انعكاسات لامعة ======
+  for(let i=0;i<30;i++){
+    const sx=Math.random()*w,sy=Math.random()*h;
+    // فقط على البرواز
+    if(sx>bw&&sx<w-bw&&sy>bw&&sy<h-bw)continue;
+    const rg=x.createRadialGradient(sx,sy,0,sx,sy,bw*.4);
+    rg.addColorStop(0,'rgba(255,255,255,.08)');rg.addColorStop(1,'transparent');
+    x.fillStyle=rg;x.fillRect(sx-bw*.4,sy-bw*.4,bw*.8,bw*.8);
+  }
 
-  // إطار ثانٍ بنفسجي
-  x.shadowColor='rgba(184,41,255,.4)';x.shadowBlur=6;
-  x.strokeStyle='rgba(184,41,255,.3)';x.lineWidth=1;
-  x.strokeRect(imgL-4,imgT-4,imgW+8,imgH+8);
+  // ====== إطار داخلي متوهج ======
+  x.shadowColor='rgba(0,240,255,.7)';x.shadowBlur=10;
+  x.strokeStyle='rgba(0,240,255,.6)';x.lineWidth=2.5;
+  x.strokeRect(bw-1,bw-1,w-bw*2+2,h-bw*2+2);
+
+  // إطار بنفسجي ثاني
+  x.shadowColor='rgba(184,41,255,.5)';x.shadowBlur=7;
+  x.strokeStyle='rgba(184,41,255,.35)';x.lineWidth=1;
+  x.strokeRect(bw-5,bw-5,w-bw*2+10,h-bw*2+10);
 
   x.shadowBlur=0;
 
   // ====== زوايا فاخرة ======
-  const cs=bw*1.8;
-  x.strokeStyle='rgba(0,240,255,.8)';x.lineWidth=3;
-  x.shadowColor='rgba(0,240,255,.8)';x.shadowBlur=12;
-  // TL
+  const cs=bw*2;
+  x.strokeStyle='rgba(0,240,255,.9)';x.lineWidth=3;
+  x.shadowColor='rgba(0,240,255,.9)';x.shadowBlur=15;
   x.beginPath();x.moveTo(3,cs);x.lineTo(3,3);x.lineTo(cs,3);x.stroke();
-  // TR
   x.beginPath();x.moveTo(w-cs,3);x.lineTo(w-3,3);x.lineTo(w-3,cs);x.stroke();
-  // BL
   x.beginPath();x.moveTo(3,h-cs);x.lineTo(3,h-3);x.lineTo(cs,h-3);x.stroke();
-  // BR
   x.beginPath();x.moveTo(w-cs,h-3);x.lineTo(w-3,h-3);x.lineTo(w-3,h-cs);x.stroke();
 
-  // نقاط الزوايا
-  x.fillStyle='#00f0ff';x.shadowBlur=15;
-  [[5,5],[w-5,5],[5,h-5],[w-5,h-5]].forEach(([px,py])=>{x.beginPath();x.arc(px,py,5,0,Math.PI*2);x.fill();});
-  
-  // ألماسات
-  x.shadowColor='rgba(255,0,234,.7)';x.shadowBlur=8;x.strokeStyle='rgba(255,0,234,.7)';x.lineWidth=1.5;
-  const dd=bw*.55;
+  // نقاط زوايا كبيرة
+  x.fillStyle='#00f0ff';x.shadowBlur=18;
+  [[5,5],[w-5,5],[5,h-5],[w-5,h-5]].forEach(([px,py])=>{x.beginPath();x.arc(px,py,6,0,Math.PI*2);x.fill();});
+
+  // نقاط صغيرة إضافية
+  x.shadowBlur=10;
+  [[cs*.5,3],[w-cs*.5,3],[cs*.5,h-3],[w-cs*.5,h-3],[3,cs*.5],[w-3,cs*.5],[3,h-cs*.5],[w-3,h-cs*.5]].forEach(([px,py])=>{x.beginPath();x.arc(px,py,3,0,Math.PI*2);x.fill();});
+
+  // ألماسات وردية
+  x.shadowColor='rgba(255,0,234,.8)';x.shadowBlur=10;x.strokeStyle='rgba(255,0,234,.8)';x.lineWidth=1.5;
+  const dd=bw*.6;
   [[bw*.5,bw*.5],[w-bw*.5,bw*.5],[bw*.5,h-bw*.5],[w-bw*.5,h-bw*.5]].forEach(([px,py])=>{
     x.save();x.translate(px,py);x.rotate(Math.PI/4);x.strokeRect(-dd/2,-dd/2,dd,dd);x.restore();
   });
 
   // ====== خطوط زخرفية ======
-  x.shadowBlur=4;x.shadowColor='rgba(0,240,255,.4)';
-  const tLG=x.createLinearGradient(w*.15,0,w*.85,0);
-  tLG.addColorStop(0,'transparent');tLG.addColorStop(.5,'rgba(0,240,255,.7)');tLG.addColorStop(1,'transparent');
-  x.strokeStyle=tLG;x.lineWidth=1.5;
-  x.beginPath();x.moveTo(w*.15,bw*.35);x.lineTo(w*.85,bw*.35);x.stroke();
+  x.shadowColor='rgba(0,240,255,.5)';x.shadowBlur=5;
+  let lg=x.createLinearGradient(w*.12,0,w*.88,0);
+  lg.addColorStop(0,'transparent');lg.addColorStop(.3,'rgba(0,240,255,.6)');lg.addColorStop(.5,'rgba(255,255,255,.8)');lg.addColorStop(.7,'rgba(0,240,255,.6)');lg.addColorStop(1,'transparent');
+  x.strokeStyle=lg;x.lineWidth=1.5;
+  x.beginPath();x.moveTo(w*.12,bw*.35);x.lineTo(w*.88,bw*.35);x.stroke();
 
-  const bLG=x.createLinearGradient(w*.25,0,w*.75,0);
-  bLG.addColorStop(0,'transparent');bLG.addColorStop(.5,'rgba(184,41,255,.6)');bLG.addColorStop(1,'transparent');
-  x.strokeStyle=bLG;
-  x.beginPath();x.moveTo(w*.25,h-bw*.35);x.lineTo(w*.75,h-bw*.35);x.stroke();
+  lg=x.createLinearGradient(w*.2,0,w*.8,0);
+  lg.addColorStop(0,'transparent');lg.addColorStop(.5,'rgba(184,41,255,.7)');lg.addColorStop(1,'transparent');
+  x.strokeStyle=lg;
+  x.beginPath();x.moveTo(w*.2,h-bw*.35);x.lineTo(w*.8,h-bw*.35);x.stroke();
 
-  // نقاط زخرفية علوية
-  x.fillStyle='#00f0ff';x.shadowBlur=5;
-  for(let i=0;i<5;i++){x.beginPath();x.arc(w*.38+i*(w*.06),bw*.6,2,0,Math.PI*2);x.fill();}
+  // نقاط زخرفية أعلى
+  x.fillStyle='#00f0ff';x.shadowBlur=6;
+  for(let i=0;i<7;i++){x.beginPath();x.arc(w*.35+i*(w*.05),bw*.6,2,0,Math.PI*2);x.fill();}
 
   // علامات تقنية جانبية
-  x.shadowBlur=3;x.fillStyle='rgba(0,240,255,.4)';
+  x.shadowBlur=3;
   for(let i=0;i<9;i++){
     const y=h*.28+i*(h*.05);
-    const mw=[16,10,19,7,15,11,17,6,14][i];
+    const mw=[18,11,20,8,16,12,18,7,15][i];
     x.globalAlpha=[1,.6,1,.4,.8,.5,.9,.3,.7][i];
-    x.fillRect(bw*.15,y,mw,1.5);
-    x.fillRect(w-bw*.15-mw,y,mw,1.5);
+    x.fillStyle='rgba(0,240,255,.5)';
+    x.fillRect(bw*.12,y,mw,1.5);
+    x.fillRect(w-bw*.12-mw,y,mw,1.5);
   }
   x.globalAlpha=1;x.shadowBlur=0;
 
   const tx=new THREE.CanvasTexture(c);tx.needsUpdate=true;return tx;
 }
 
+// ======== معلومات البطاقة ========
 function makeInfoTex(pw,ph){
   const w=512,h=Math.floor(512*(ph/pw));
-  const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');
-  x.clearRect(0,0,w,h);
+  const c=document.createElement('canvas');c.width=w;c.height=h;
+  const x=c.getContext('2d');x.clearRect(0,0,w,h);
 
   const name=document.getElementById('inpName').value;
   const artist=document.getElementById('inpArtist').value;
   const edition=document.getElementById('inpEdition').value;
   const col=document.getElementById('inpCol').value;
 
-  // Header
   x.font='bold 11px Segoe UI';x.fillStyle='rgba(0,240,255,.8)';x.textAlign='left';
   x.shadowColor='rgba(0,240,255,.4)';x.shadowBlur=5;
   x.fillText('ART MARKS',w*.07,h*.055);
   x.shadowBlur=0;x.fillStyle='rgba(255,255,255,.35)';x.font='9px monospace';x.textAlign='right';
   x.fillText('0x'+Math.random().toString(16).substr(2,4).toUpperCase()+'...'+Math.random().toString(16).substr(2,4).toUpperCase(),w*.93,h*.055);
 
-  // Artist
   x.textAlign='left';x.font='10px Segoe UI';x.fillStyle='rgba(0,240,255,.75)';
   x.shadowColor='rgba(0,240,255,.4)';x.shadowBlur=4;
   x.fillText(artist,w*.07,h*.77);
-  x.textAlign='right';x.fillText('● VERIFIED',w*.93,h*.77);
-  x.shadowBlur=0;
+  x.textAlign='right';x.fillText('● VERIFIED',w*.93,h*.77);x.shadowBlur=0;
 
-  // Info panel
   const py=h*.8,pH=h*.18;
   const pg=x.createLinearGradient(0,py,w,py+pH);
   pg.addColorStop(0,'rgba(0,240,255,.06)');pg.addColorStop(.5,'rgba(5,5,16,.88)');pg.addColorStop(1,'rgba(184,41,255,.04)');
@@ -531,7 +604,7 @@ function makeInfoTex(pw,ph){
 
 function rr(x,rx,ry,rw,rh,r){x.beginPath();x.moveTo(rx+r,ry);x.lineTo(rx+rw-r,ry);x.quadraticCurveTo(rx+rw,ry,rx+rw,ry+r);x.lineTo(rx+rw,ry+rh-r);x.quadraticCurveTo(rx+rw,ry+rh,rx+rw-r,ry+rh);x.lineTo(rx+r,ry+rh);x.quadraticCurveTo(rx,ry+rh,rx,ry+rh-r);x.lineTo(rx,ry+r);x.quadraticCurveTo(rx,ry,rx+r,ry);x.closePath();}
 
-// ======== رفع الصورة ========
+// ======== معالجة الصورة ========
 function processImage(dataUrl){
   const img=new Image();
   img.crossOrigin='anonymous';
@@ -540,33 +613,26 @@ function processImage(dataUrl){
     let w2=img.width,h2=img.height;const mx2=1024;
     if(w2>h2){if(w2>mx2){h2=h2*mx2/w2;w2=mx2;}}else{if(h2>mx2){w2=w2*mx2/h2;h2=mx2;}}
     cv.width=Math.floor(w2);cv.height=Math.floor(h2);
-    const ctx=cv.getContext('2d');
-    ctx.drawImage(img,0,0,cv.width,cv.height);
+    cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
     aw=cv.width;ah=cv.height;
 
     const tex=new THREE.CanvasTexture(cv);
-    tex.minFilter=THREE.LinearFilter;
-    tex.magFilter=THREE.LinearFilter;
-    tex.needsUpdate=true;
+    tex.minFilter=THREE.LinearFilter;tex.magFilter=THREE.LinearFilter;tex.needsUpdate=true;
     artTex=tex;
 
     const aspect=aw/ah;let pw2,ph2;const ts=2.8;
     if(aspect>=1){pw2=ts;ph2=ts/aspect;}else{ph2=ts;pw2=ts*aspect;}
 
     buildCard(tex,pw2,ph2);
-
     document.getElementById('loader').classList.remove('on');
     document.getElementById('upZone').classList.add('gone');
     toast('✅ ARTWORK LOADED');
   };
-  img.onerror=function(){
-    document.getElementById('loader').classList.remove('on');
-    toast('❌ FAILED TO LOAD IMAGE');
-  };
+  img.onerror=function(){document.getElementById('loader').classList.remove('on');toast('❌ LOAD FAILED');};
   img.src=dataUrl;
 }
 
-// ======== الحركة ========
+// ======== Animation Loop ========
 let lt=performance.now(),fc=0,ft=performance.now();
 function loop(){
   requestAnimationFrame(loop);
@@ -574,21 +640,23 @@ function loop(){
   if(now-ft>500){document.getElementById('fpsV').textContent=Math.round(fc*1000/(now-ft));fc=0;ft=now;}
 
   smx+=(mx-smx)*.04;smy+=(my-smy)*.04;
-
-  // دوران محدود حتى لا تخرج الصورة عن الإطار
   ry+=dt*P.rot*.8;
 
   if(cardGrp){
-    cardGrp.position.y=.08+Math.sin(t*.4)*.025;
-    // تحديد الدوران: أقصى ±15 درجة (0.26 راديان) حول Y
-    // مع اهتزاز خفيف بدل دوران كامل
-    const maxSwing=0.22; // ≈12.5 درجة
-    cardGrp.rotation.y=Math.sin(ry)*maxSwing;
+    cardGrp.position.y=.08+Math.sin(t*.4)*.02;
+    // اهتزاز محدود
+    const swing=0.22;
+    cardGrp.rotation.y=Math.sin(ry)*swing;
     cardGrp.rotation.x=smy*.06;
   }
   if(chromeM&&chromeM.visible){
-    const u=chromeM.material.uniforms;
-    u.uTime.value=t;u.uMs.value.set(smx,smy);
+    chromeM.material.uniforms.uTime.value=t;
+    chromeM.material.uniforms.uMs.value.set(smx,smy);
+    // تحديث Chrome الخلفي أيضاً
+    if(cardGrp&&cardGrp.children[3]&&cardGrp.children[3].material&&cardGrp.children[3].material.uniforms){
+      cardGrp.children[3].material.uniforms.uTime.value=t;
+      cardGrp.children[3].material.uniforms.uMs.value.set(smx,smy);
+    }
   }
   if(particles){
     particles.rotation.y+=.0002;
@@ -604,12 +672,14 @@ function togChrome(){
   document.getElementById('chromeTT').classList.toggle('on');
   document.getElementById('chrSt').textContent=chrOn?'ACTIVE':'OFF';
   if(chromeM)chromeM.visible=chrOn;
+  // الخلفي
+  if(cardGrp&&cardGrp.children[3])cardGrp.children[3].visible=chrOn;
 }
 
 function setupUI(){
   const map={
     'sm':['met','vm'],'ss':['shm','vs'],'si':['iri','vi'],'sg2':['glt','vg'],
-    'sr':['rot','vr'],'st':['thk','vt'],
+    'sr':['rot','vr'],'st2':['thk','vt'],
     'slo':['lop','vlo'],'slw':['lwd','vlw'],'sls':['lsh','vls']
   };
   Object.keys(map).forEach(id=>{
@@ -620,7 +690,11 @@ function setupUI(){
       document.getElementById(vid).textContent=e.target.value+'%';
       if(chromeM){
         const um={met:'uMet',shm:'uShm',iri:'uIri',glt:'uGlt',lop:'uLop',lwd:'uLwd',lsh:'uLsh'};
-        if(um[k])chromeM.material.uniforms[um[k]].value=P[k];
+        if(um[k]){
+          chromeM.material.uniforms[um[k]].value=P[k];
+          if(cardGrp&&cardGrp.children[3]&&cardGrp.children[3].material.uniforms&&cardGrp.children[3].material.uniforms[um[k]])
+            cardGrp.children[3].material.uniforms[um[k]].value=P[k];
+        }
       }
       if(k==='thk'&&artTex){
         const asp=aw/ah;let pw3,ph3;const ts2=2.8;
@@ -631,29 +705,28 @@ function setupUI(){
   });
   document.getElementById('slc').addEventListener('input',e=>{
     P.lct=parseFloat(e.target.value);document.getElementById('vlc').textContent=e.target.value;
-    if(chromeM)chromeM.material.uniforms.uLct.value=P.lct;
+    if(chromeM){chromeM.material.uniforms.uLct.value=P.lct;if(cardGrp&&cardGrp.children[3]&&cardGrp.children[3].material.uniforms)cardGrp.children[3].material.uniforms.uLct.value=P.lct;}
   });
   document.getElementById('sla').addEventListener('input',e=>{
     P.lan=parseFloat(e.target.value);document.getElementById('vla').textContent=e.target.value+'°';
-    if(chromeM)chromeM.material.uniforms.uLan.value=P.lan;
+    if(chromeM){chromeM.material.uniforms.uLan.value=P.lan;if(cardGrp&&cardGrp.children[3]&&cardGrp.children[3].material.uniforms)cardGrp.children[3].material.uniforms.uLan.value=P.lan;}
   });
   document.querySelectorAll('[data-hl]').forEach(b=>{b.addEventListener('click',()=>{
     document.querySelectorAll('[data-hl]').forEach(x2=>x2.classList.remove('on'));b.classList.add('on');
-    hlM=parseInt(b.dataset.hl);if(chromeM)chromeM.material.uniforms.uHL.value=hlM;
+    hlM=parseInt(b.dataset.hl);
+    if(chromeM){chromeM.material.uniforms.uHL.value=hlM;if(cardGrp&&cardGrp.children[3]&&cardGrp.children[3].material.uniforms)cardGrp.children[3].material.uniforms.uHL.value=hlM;}
   });});
   document.querySelectorAll('[data-rt]').forEach(b=>{b.addEventListener('click',()=>{
-    document.querySelectorAll('[data-rt]').forEach(x2=>x2.classList.remove('on'));b.classList.add('on');
-    rar=b.dataset.rt;
+    document.querySelectorAll('[data-rt]').forEach(x2=>x2.classList.remove('on'));b.classList.add('on');rar=b.dataset.rt;
   });});
 }
 
 // ============ حفظ PNG ============
 function savePNG(){
-  if(!cardGrp){toast('⚠️ UPLOAD ARTWORK FIRST');return;}
+  if(!cardGrp){toast('⚠️ UPLOAD FIRST');return;}
   showL('RENDERING...');
 
-  const savedRY=cardGrp.rotation.y;
-  const savedRX=cardGrp.rotation.x;
+  const savedRY=cardGrp.rotation.y,savedRX=cardGrp.rotation.x;
   cardGrp.rotation.y=0;cardGrp.rotation.x=0;
 
   setTimeout(()=>{
@@ -671,16 +744,13 @@ function savePNG(){
     const ctx2=cv2.getContext('2d');
     ctx2.fillStyle='#050510';ctx2.fillRect(0,0,eW,eH);
     ctx2.drawImage(tR.domElement,0,0,eW,eH);
-
-    tR.dispose();
-    tR.forceContextLoss();
+    tR.dispose();tR.forceContextLoss();
 
     cv2.toBlob(blob=>{
-      if(!blob){hideL();toast('❌ EXPORT FAILED');return;}
+      if(!blob){hideL();toast('❌ FAILED');return;}
       const url=URL.createObjectURL(blob);
       const a=document.createElement('a');a.download='ArtMarks-'+Date.now()+'.png';a.href=url;
-      document.body.appendChild(a);a.click();document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
       cardGrp.rotation.y=savedRY;cardGrp.rotation.x=savedRX;
       hideL();toast('✅ PNG SAVED!');
     },'image/png',1);
@@ -689,7 +759,7 @@ function savePNG(){
 
 // ============ حفظ فيديو ============
 function saveVID(){
-  if(!cardGrp){toast('⚠️ UPLOAD ARTWORK FIRST');return;}
+  if(!cardGrp){toast('⚠️ UPLOAD FIRST');return;}
   showL('RECORDING 0%');
 
   const asp=aw/ah;let pw5,ph5;const ts4=2.8;
@@ -702,8 +772,8 @@ function saveVID(){
 
   const recCv=document.createElement('canvas');recCv.width=vW;recCv.height=vH;
   const recCtx=recCv.getContext('2d');
-
   const dur=5000;
+
   let mime='video/webm;codecs=vp9';
   if(!MediaRecorder.isTypeSupported(mime))mime='video/webm;codecs=vp8';
   if(!MediaRecorder.isTypeSupported(mime))mime='video/webm';
@@ -716,19 +786,15 @@ function saveVID(){
     const blob=new Blob(chunks,{type:'video/webm'});
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');a.download='ArtMarks-'+Date.now()+'.webm';a.href=url;
-    document.body.appendChild(a);a.click();document.body.removeChild(a);
-    URL.revokeObjectURL(url);tR.dispose();tR.forceContextLoss();
-    hideL();toast('🎬 VIDEO SAVED!');
+    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+    tR.dispose();tR.forceContextLoss();hideL();toast('🎬 VIDEO SAVED!');
   };
 
   rec.start();const st2=performance.now();
-
   function vFrame(){
-    const el=performance.now()-st2;
-    const prog=Math.min(el/dur,1);
+    const el=performance.now()-st2;const prog=Math.min(el/dur,1);
     document.getElementById('ltxt').textContent='RECORDING '+Math.round(prog*100)+'%';
-    tR.render(sc,tC);
-    recCtx.drawImage(tR.domElement,0,0,vW,vH);
+    tR.render(sc,tC);recCtx.drawImage(tR.domElement,0,0,vW,vH);
     if(el<dur)requestAnimationFrame(vFrame);else rec.stop();
   }
   vFrame();
@@ -736,13 +802,12 @@ function saveVID(){
 
 // ============ حفظ GIF ============
 function saveGIF(){
-  if(!cardGrp){toast('⚠️ UPLOAD ARTWORK FIRST');return;}
+  if(!cardGrp){toast('⚠️ UPLOAD FIRST');return;}
   if(typeof GIF==='undefined'){
     toast('⏳ LOADING GIF...');
     const s2=document.createElement('script');
     s2.src='https://cdn.jsdelivr.net/gh/jnordberg/gif.js@0.2.0/dist/gif.js';
-    s2.onload=()=>setTimeout(saveGIF,500);
-    document.head.appendChild(s2);return;
+    s2.onload=()=>setTimeout(saveGIF,500);document.head.appendChild(s2);return;
   }
   showL('GIF 0%');
 
@@ -754,33 +819,30 @@ function saveGIF(){
   tR.setClearColor(0x050510,1);tR.setSize(gW,gH);tR.setPixelRatio(1);
   const tC=new THREE.PerspectiveCamera(45,gW/gH,.1,1000);tC.position.set(0,0,6);
 
-  const totalF=28;const gif=new GIF({workers:2,quality:10,width:gW,height:gH,
+  const totalF=28;
+  const gif=new GIF({workers:2,quality:10,width:gW,height:gH,
     workerScript:'https://cdn.jsdelivr.net/gh/jnordberg/gif.js@0.2.0/dist/gif.worker.js',repeat:0});
   gif.on('progress',p=>{document.getElementById('ltxt').textContent='ENCODING '+Math.round(p*100)+'%';});
   gif.on('finished',blob=>{
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');a.download='ArtMarks-'+Date.now()+'.gif';a.href=url;
-    document.body.appendChild(a);a.click();document.body.removeChild(a);
-    URL.revokeObjectURL(url);tR.dispose();tR.forceContextLoss();
-    hideL();toast('🎞 GIF SAVED!');
+    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+    tR.dispose();tR.forceContextLoss();hideL();toast('🎞 GIF SAVED!');
   });
 
   let cap2=0;
   function gFrame(){
-    // اهتزاز بسيط كل فريم
-    const angle=Math.sin((cap2/totalF)*Math.PI*2)*0.22;
+    const angle=Math.sin((cap2/totalF)*Math.PI*2)*.22;
     if(cardGrp){cardGrp.rotation.y=angle;cardGrp.rotation.x=0;}
     if(chromeM&&chromeM.visible){chromeM.material.uniforms.uTime.value=(cap2/totalF)*4;}
-
     tR.render(sc,tC);
     const tc2=document.createElement('canvas');tc2.width=gW;tc2.height=gH;
     tc2.getContext('2d').drawImage(tR.domElement,0,0);
     gif.addFrame(tc2,{delay:80,copy:true});
-
     cap2++;
     document.getElementById('ltxt').textContent='CAPTURING '+Math.round((cap2/totalF)*100)+'%';
     if(cap2<totalF)setTimeout(gFrame,30);
-    else{document.getElementById('ltxt').textContent='ENCODING GIF...';gif.render();}
+    else{document.getElementById('ltxt').textContent='ENCODING...';gif.render();}
   }
   gFrame();
 }
@@ -809,58 +871,26 @@ function showL(txt){document.getElementById('loader').classList.add('on');docume
 function hideL(){document.getElementById('loader').classList.remove('on');}
 function toast(m){const te=document.getElementById('toastEl');te.textContent=m;te.classList.add('on');setTimeout(()=>te.classList.remove('on'),3000);}
 
-// ======== Upload Events ========
-const upZ=document.getElementById('upZone');
-const fIn=document.getElementById('fileInput');
-
-upZ.addEventListener('click',function(e){
-  e.preventDefault();
-  e.stopPropagation();
-  fIn.value=''; // مسح القيمة السابقة
-  fIn.click();
+// ======== Upload ========
+const upZ=document.getElementById('upZone'),fIn=document.getElementById('fileInput');
+upZ.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();fIn.value='';fIn.click();});
+fIn.addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  if(!f.type.startsWith('image/')){toast('❌ NOT IMAGE');return;}
+  showL('LOADING...');seed=Math.random()*1000;
+  const r=new FileReader();
+  r.onload=ev=>setTimeout(()=>processImage(ev.target.result),100);
+  r.onerror=()=>{hideL();toast('❌ READ ERROR');};
+  r.readAsDataURL(f);
 });
-
-fIn.addEventListener('change',function(e){
-  const f=e.target.files[0];
-  if(!f)return;
-  if(!f.type.startsWith('image/')){toast('❌ NOT AN IMAGE');return;}
-  showL('LOADING...');
-  seed=Math.random()*1000;
-  const reader=new FileReader();
-  reader.onload=function(ev){
-    setTimeout(()=>processImage(ev.target.result),100);
-  };
-  reader.onerror=function(){
-    hideL();toast('❌ FILE READ ERROR');
-  };
-  reader.readAsDataURL(f);
-});
-
-upZ.addEventListener('dragover',function(e){
-  e.preventDefault();e.stopPropagation();
-  upZ.style.background='rgba(0,240,255,.15)';
-  upZ.style.borderColor='#fff';
-});
-upZ.addEventListener('dragleave',function(e){
-  e.preventDefault();e.stopPropagation();
-  upZ.style.background='rgba(0,240,255,.04)';
-  upZ.style.borderColor='';
-});
-upZ.addEventListener('drop',function(e){
-  e.preventDefault();e.stopPropagation();
-  upZ.style.background='rgba(0,240,255,.04)';
-  upZ.style.borderColor='';
+upZ.addEventListener('dragover',e=>{e.preventDefault();e.stopPropagation();upZ.style.background='rgba(0,240,255,.15)';});
+upZ.addEventListener('dragleave',e=>{e.preventDefault();e.stopPropagation();upZ.style.background='rgba(0,240,255,.04)';});
+upZ.addEventListener('drop',e=>{
+  e.preventDefault();e.stopPropagation();upZ.style.background='rgba(0,240,255,.04)';
   const f=e.dataTransfer.files[0];
-  if(f&&f.type.startsWith('image/')){
-    showL('LOADING...');seed=Math.random()*1000;
-    const reader=new FileReader();
-    reader.onload=function(ev){setTimeout(()=>processImage(ev.target.result),100);};
-    reader.onerror=function(){hideL();toast('❌ READ ERROR');};
-    reader.readAsDataURL(f);
-  }
+  if(f&&f.type.startsWith('image/')){showL('LOADING...');seed=Math.random()*1000;const r=new FileReader();r.onload=ev=>setTimeout(()=>processImage(ev.target.result),100);r.onerror=()=>{hideL();toast('❌ READ ERROR');};r.readAsDataURL(f);}
 });
-
-document.getElementById('wModal').addEventListener('click',function(e){if(e.target===document.getElementById('wModal'))closeW();});
+document.getElementById('wModal').addEventListener('click',e=>{if(e.target===document.getElementById('wModal'))closeW();});
 
 init();
 </script>
