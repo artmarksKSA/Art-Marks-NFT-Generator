@@ -1,1 +1,1070 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>Art Marks // Holographic NFT Card</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+:root{--cyan:#00f0ff;--pink:#ff00ea;--purple:#b829ff;--gold:#ffd700;--bg:#050510}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);font-family:'Segoe UI',sans-serif;color:#fff;overflow:hidden;height:100vh}
 
+.space-bg{position:fixed;inset:0;background:radial-gradient(2px 2px at 20% 30%,rgba(255,255,255,.8),transparent),radial-gradient(1px 1px at 60% 70%,rgba(0,240,255,.6),transparent),radial-gradient(1.5px 1.5px at 80% 20%,rgba(255,0,234,.5),transparent),radial-gradient(1px 1px at 40% 80%,rgba(255,255,255,.7),transparent),#050510;background-size:400px 400px;z-index:1;animation:stars 20s linear infinite;pointer-events:none}
+@keyframes stars{to{background-position:400px 400px}}
+#scene{position:fixed;inset:0;z-index:2;pointer-events:none}
+
+.top-bar{position:fixed;top:0;left:0;right:0;z-index:100;padding:12px 25px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(5,5,16,.95),transparent);pointer-events:none}
+.brand-block{display:flex;align-items:center;gap:10px;pointer-events:auto}
+.brand-mark{width:38px;height:38px;border:2px solid var(--cyan);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:bold;color:var(--cyan);box-shadow:0 0 12px rgba(0,240,255,.5);animation:bp 3s ease-in-out infinite}
+@keyframes bp{0%,100%{box-shadow:0 0 12px rgba(0,240,255,.5)}50%{box-shadow:0 0 20px rgba(255,0,234,.6)}}
+.brand-name{font-size:14px;font-weight:600;letter-spacing:3px}
+.brand-sub{font-size:8px;letter-spacing:2px;color:var(--cyan);margin-top:1px}
+.top-right{display:flex;align-items:center;gap:12px;pointer-events:auto}
+.status-item{display:flex;align-items:center;gap:4px;font-size:8px;letter-spacing:1px;color:rgba(255,255,255,.6)}
+.status-dot{width:5px;height:5px;background:var(--cyan);border-radius:50%;box-shadow:0 0 5px var(--cyan);animation:blink 1.5s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.wallet-btn{padding:8px 16px;background:linear-gradient(135deg,rgba(255,215,0,.1),rgba(0,240,255,.1));border:1px solid rgba(255,215,0,.4);color:#ffd700;font-size:9px;letter-spacing:1.5px;cursor:pointer;border-radius:20px;font-weight:bold;transition:all .3s}
+.wallet-btn:hover{box-shadow:0 0 18px rgba(255,215,0,.3)}
+.wallet-btn.on{border-color:#0f8;color:#0f8}
+
+.left-panel{position:fixed;top:65px;left:12px;z-index:100;width:280px;max-height:calc(100vh - 80px);overflow-y:auto;padding:14px;background:rgba(10,10,25,.9);border:1px solid rgba(0,240,255,.2);border-radius:12px;backdrop-filter:blur(12px)}
+.left-panel::-webkit-scrollbar{width:3px}
+.left-panel::-webkit-scrollbar-thumb{background:var(--cyan);border-radius:2px}
+.ptitle{font-size:11px;letter-spacing:3px;color:var(--cyan);margin-bottom:12px;text-shadow:0 0 6px var(--cyan)}
+.stitle{font-size:9px;letter-spacing:2px;color:var(--cyan);margin:14px 0 8px;padding-top:10px;border-top:1px solid rgba(0,240,255,.1);font-weight:bold}
+.sg{margin-bottom:10px}
+.sl{font-size:8px;letter-spacing:1.5px;color:rgba(255,255,255,.7);margin-bottom:4px;display:flex;justify-content:space-between}
+.sv{color:var(--cyan);font-weight:bold}
+input[type=range]{width:100%;-webkit-appearance:none;height:4px;background:linear-gradient(90deg,var(--purple),var(--cyan),var(--pink));border-radius:2px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:#fff;border-radius:50%;cursor:pointer;box-shadow:0 0 8px var(--cyan)}
+.br{display:flex;gap:4px;flex-wrap:wrap}
+.mb{padding:6px 10px;background:rgba(0,240,255,.05);border:1px solid rgba(0,240,255,.25);color:#fff;font-size:8px;letter-spacing:1px;cursor:pointer;border-radius:5px;transition:all .3s}
+.mb:hover{background:rgba(0,240,255,.15)}
+.mb.on{background:rgba(0,240,255,.25);border-color:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+.inf{width:100%;padding:8px 10px;background:rgba(0,240,255,.04);border:1px solid rgba(0,240,255,.2);color:#fff;font-size:10px;border-radius:5px;outline:none;margin-bottom:6px}
+.inf:focus{border-color:var(--cyan);box-shadow:0 0 8px rgba(0,240,255,.2)}
+.tt{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:linear-gradient(90deg,rgba(192,192,192,.08),rgba(0,240,255,.08));border:1px solid rgba(192,192,192,.3);border-radius:6px;margin-bottom:7px;cursor:pointer;transition:all .3s}
+.tt.on{background:linear-gradient(90deg,rgba(192,192,192,.25),rgba(0,240,255,.25));border-color:#fff;box-shadow:0 0 12px rgba(255,255,255,.2)}
+.tn{font-size:10px;font-weight:bold}
+.ts2{font-size:7px;color:var(--cyan);margin-top:2px}
+.tsw{width:32px;height:15px;background:rgba(0,240,255,.2);border-radius:8px;position:relative;transition:all .3s}
+.tsw::after{content:'';position:absolute;width:11px;height:11px;background:#fff;border-radius:50%;top:2px;left:2px;transition:all .3s}
+.tt.on .tsw{background:linear-gradient(90deg,#c0c0c0,var(--cyan))}
+.tt.on .tsw::after{left:19px}
+
+.ebtn{width:100%;margin-top:6px;padding:10px;border:none;color:#fff;font-size:9px;letter-spacing:2px;cursor:pointer;border-radius:5px;font-weight:bold;transition:all .3s}
+.ebtn:hover{transform:translateY(-1px)}
+.e1{background:linear-gradient(90deg,var(--purple),var(--cyan));box-shadow:0 0 15px rgba(0,240,255,.3)}
+.e2{background:linear-gradient(90deg,#ff00ea,#b829ff);box-shadow:0 0 15px rgba(255,0,234,.3)}
+.e3{background:linear-gradient(90deg,#ff8800,#ff0066);box-shadow:0 0 15px rgba(255,136,0,.3)}
+.e4{background:linear-gradient(90deg,#ffd700,#ff8800);box-shadow:0 0 15px rgba(255,215,0,.3);margin-top:10px}
+
+.side-controls{position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:100;display:flex;flex-direction:column;gap:10px;pointer-events:auto}
+.side-btn{width:48px;height:48px;background:rgba(10,10,25,.85);border:1px solid rgba(0,240,255,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--cyan);transition:all .3s;position:relative;backdrop-filter:blur(10px);box-shadow:0 0 15px rgba(0,240,255,.15)}
+.side-btn:hover{background:rgba(0,240,255,.2);box-shadow:0 0 20px rgba(0,240,255,.5);transform:scale(1.1)}
+.side-btn.active{background:rgba(0,240,255,.3);border-color:var(--cyan);box-shadow:0 0 20px var(--cyan)}
+.side-btn-tooltip{position:absolute;right:60px;top:50%;transform:translateY(-50%);background:rgba(10,10,25,.95);border:1px solid rgba(0,240,255,.3);padding:6px 12px;border-radius:6px;font-size:9px;letter-spacing:1.5px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .3s}
+.side-btn:hover .side-btn-tooltip{opacity:1}
+
+.upload-zone{position:fixed;top:50%;left:55%;transform:translate(-50%,-50%);z-index:200;width:340px;height:200px;border:2px dashed var(--cyan);border-radius:12px;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;background:rgba(0,240,255,.04);backdrop-filter:blur(8px);transition:all .3s}
+.upload-zone:hover{box-shadow:0 0 30px var(--cyan);background:rgba(0,240,255,.08)}
+.upload-zone.gone{display:none}
+.uz-icon{font-size:36px;margin-bottom:8px;color:var(--cyan);pointer-events:none}
+.uz-text{font-size:11px;letter-spacing:3px;pointer-events:none}
+.uz-hint{font-size:8px;opacity:.4;margin-top:4px;pointer-events:none}
+#fileInput{display:none}
+
+.loader{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1000;text-align:center;display:none;pointer-events:none}
+.loader.on{display:block}
+.spin{width:45px;height:45px;border:2px solid transparent;border-top-color:var(--cyan);border-right-color:var(--pink);border-radius:50%;margin:0 auto;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ltxt{font-size:11px;letter-spacing:3px;color:var(--cyan);margin-top:12px}
+
+.fps{position:fixed;bottom:12px;right:12px;z-index:100;padding:6px 12px;background:rgba(10,10,25,.8);border:1px solid rgba(0,240,255,.15);border-radius:6px;font-size:7px;letter-spacing:2px;pointer-events:none}
+
+.toast{position:fixed;bottom:50px;left:50%;transform:translateX(-50%) translateY(70px);z-index:600;padding:10px 22px;background:rgba(10,10,25,.93);border:1px solid var(--cyan);border-radius:7px;font-size:9px;letter-spacing:2px;color:var(--cyan);box-shadow:0 0 15px rgba(0,240,255,.25);transition:transform .4s ease;pointer-events:none}
+.toast.on{transform:translateX(-50%) translateY(0)}
+
+canvas#expCv{display:none}
+</style>
+</head>
+<body>
+<div class="space-bg"></div>
+<div id="scene"></div>
+<canvas id="expCv"></canvas>
+
+<div class="top-bar">
+  <div class="brand-block">
+    <div class="brand-mark">A</div>
+    <div class="brand-text"><div class="brand-name">ART MARKS</div><div class="brand-sub">HOLOGRAPHIC NFT STUDIO</div></div>
+  </div>
+  <div class="top-right">
+    <div style="display:flex;gap:12px">
+      <div class="status-item"><div class="status-dot"></div>LIVE</div>
+      <div class="status-item">POLYGON</div>
+    </div>
+    <button class="wallet-btn" id="wBtn">🔗 CONNECT</button>
+  </div>
+</div>
+
+<div class="left-panel">
+  <div class="ptitle">NFT CARD STUDIO</div>
+  <input type="text" class="inf" id="inpName" value="LEOPARD">
+  <input type="text" class="inf" id="inpSubtitle" value="PROFILE #004">
+  <input type="text" class="inf" id="inpCollection" value="PREDS">
+  <input type="text" class="inf" id="inpCode" value="F120M">
+  <input type="text" class="inf" id="inpArtist" value="@ArtMarksKSA">
+
+  <div class="tt on" id="chrTT">
+    <div><div class="tn">⬢ Chrome Effect</div><div class="ts2" id="chrSt">ACTIVE</div></div>
+    <div class="tsw"></div>
+  </div>
+
+  <div class="stitle">CHROME</div>
+  <div class="sg"><div class="sl"><span>METALLIC</span><span class="sv" id="vm">100%</span></div><input type="range" id="sm" min="0" max="200" value="100"></div>
+  <div class="sg"><div class="sl"><span>SHIMMER</span><span class="sv" id="vs">70%</span></div><input type="range" id="ss" min="10" max="200" value="70"></div>
+  <div class="sg"><div class="sl"><span>IRIDESCENT</span><span class="sv" id="vi">85%</span></div><input type="range" id="si" min="0" max="100" value="85"></div>
+  <div class="sg"><div class="sl"><span>GLITTER</span><span class="sv" id="vg">60%</span></div><input type="range" id="sg2" min="0" max="100" value="60"></div>
+
+  <div class="stitle">CARD</div>
+  <div class="sg"><div class="sl"><span>🔄 ROTATION</span><span class="sv" id="vr">40%</span></div><input type="range" id="sr" min="0" max="200" value="40"></div>
+  <div class="sg"><div class="sl"><span>🎴 THICKNESS</span><span class="sv" id="vt">25%</span></div><input type="range" id="st2" min="10" max="100" value="25"></div>
+  <div class="sg"><div class="sl"><span>💡 FRAME GLOW</span><span class="sv" id="vfg">100%</span></div><input type="range" id="sfg" min="0" max="200" value="100"></div>
+  <div class="sg"><div class="sl"><span>🪟 GLASS OPACITY</span><span class="sv" id="vgo">15%</span></div><input type="range" id="sgo" min="5" max="50" value="15"></div>
+
+  <div class="stitle">RARITY</div>
+  <div class="br">
+    <button class="mb" data-rt="COMMON">COMMON</button>
+    <button class="mb" data-rt="RARE">RARE</button>
+    <button class="mb" data-rt="EPIC">EPIC</button>
+    <button class="mb on" data-rt="LEGENDARY">LEGEND</button>
+  </div>
+
+  <button class="ebtn e1" id="btnPNG">🖼 SAVE PNG</button>
+  <button class="ebtn e2" id="btnVID">🎬 SAVE VIDEO</button>
+  <button class="ebtn e3" id="btnGIF">🎞 SAVE GIF</button>
+  <button class="ebtn e4" id="btnMint">⛓ MINT NFT</button>
+</div>
+
+<div class="side-controls">
+  <button class="side-btn" id="sbRotL" title="Rotate Left">⏪<div class="side-btn-tooltip">ROTATE LEFT</div></button>
+  <button class="side-btn active" id="sbAuto" title="Auto Rotate">🔄<div class="side-btn-tooltip">AUTO ROTATE</div></button>
+  <button class="side-btn" id="sbRotR" title="Rotate Right">⏩<div class="side-btn-tooltip">ROTATE RIGHT</div></button>
+  <button class="side-btn" id="sbReset" title="Reset">🎯<div class="side-btn-tooltip">RESET VIEW</div></button>
+</div>
+
+<div class="upload-zone" id="upZone">
+  <div class="uz-icon">⬆</div>
+  <div class="uz-text">UPLOAD ARTWORK</div>
+  <div class="uz-hint">CLICK OR DRAG</div>
+</div>
+<input type="file" id="fileInput" accept="image/*">
+
+<div class="loader" id="loader"><div class="spin"></div><div class="ltxt" id="ltxt">PROCESSING...</div></div>
+<div class="fps">FPS <span style="color:var(--cyan);font-weight:bold" id="fpsV">60</span></div>
+<div class="toast" id="toastEl"></div>
+
+<script>
+let sc,cam,rend,particles;
+let cardGroup;
+let chromeM,chromeBackM;
+let frameCanvas,frameCtx,frameTexture,frameMesh,frameBackMesh;
+let glassFrontMesh,glassBackMesh;
+let mx=0,my=0,smx=0,smy=0,t=0,ry=0;
+let chrOn=true,seed=Math.random()*1000;
+let artTex=null,aw=0,ah=0,artImage=null;
+let hlM=0,rar='LEGENDARY';
+let autoRotate=true;
+let manualRotation=0;
+let glassOpacity=0.15;
+
+const P={met:1,shm:.7,iri:.85,glt:.6,rot:.4,thk:.25,fg:1};
+
+const VS=`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`;
+const FS=`
+uniform sampler2D uT;uniform float uTime,uMet,uShm,uIri,uGlt;
+uniform vec2 uMs;uniform float uSd;uniform int uHL;varying vec2 vUv;
+vec3 hv(vec3 c){vec4 K=vec4(1.,2./3.,1./3.,3.);vec3 p=abs(fract(c.xxx+K.xyz)*6.-K.www);return c.z*mix(K.xxx,clamp(p-K.xxx,0.,1.),c.y);}
+float rn(vec2 s){return fract(sin(dot(s,vec2(12.9898,78.233))+uSd)*43758.5453);}
+void main(){
+  vec4 bs=texture2D(uT,vUv);float lm=dot(bs.rgb,vec3(.299,.587,.114));
+  vec3 ch=vec3(.78,.82,.86);ch=mix(ch*.4,ch*1.2,lm);
+  float sc2=vUv.x+vUv.y;
+  float s1=sin(sc2*8.-uTime*uShm*2.);
+  float lb=smoothstep(.7,.95,s1)*.5;
+  float ih=sc2*2.+uTime*.15+lm*.3;vec3 ir=hv(vec3(ih,.7,1.));
+  vec3 hl;
+  if(uHL==0){hl=vec3(.95,.97,1.);hl=mix(hl,ir,.3*uIri);}
+  else if(uHL==1){hl=vec3(1,.85,.4);hl=mix(hl,ir,.2*uIri);}
+  else if(uHL==2){hl=ir;}
+  else{hl=vec3(.4,.9,1.);hl=mix(hl,ir,.4*uIri);}
+  vec3 m=ch;m=mix(m,hl,lb*.8);m+=ir*uIri*.25;
+  float gr=rn(floor(vUv*300.));
+  float gf=pow(sin(uTime*4.+gr*100.+uSd)*.5+.5,12.);
+  if(gr>.97)m+=vec3(1)*gf*uGlt*1.8;
+  vec3 ov;for(int i=0;i<3;i++){if(bs[i]<.5)ov[i]=2.*bs[i]*m[i];else ov[i]=1.-2.*(1.-bs[i])*(1.-m[i]);}
+  gl_FragColor=vec4(mix(bs.rgb,ov,uMet),bs.a);
+}`;
+
+function init(){
+  sc=new THREE.Scene();
+  sc.background=new THREE.Color(0x050510);
+  cam=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,.1,1000);
+  cam.position.set(0,0,6);
+  
+  rend=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true});
+  rend.setClearColor(0x050510,1);
+  rend.setSize(innerWidth,innerHeight);
+  rend.setPixelRatio(Math.min(devicePixelRatio,2));
+  document.getElementById('scene').appendChild(rend.domElement);
+
+  const n=300,geo=new THREE.BufferGeometry(),pos=new Float32Array(n*3),col=new Float32Array(n*3);
+  for(let i=0;i<n;i++){pos[i*3]=(Math.random()-.5)*22;pos[i*3+1]=(Math.random()-.5)*16;pos[i*3+2]=(Math.random()-.5)*8;const r=Math.random();col[i*3]=r>.5?1:0;col[i*3+1]=r>.5?1:.94;col[i*3+2]=1;}
+  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+  particles=new THREE.Points(geo,new THREE.PointsMaterial({size:.04,vertexColors:true,transparent:true,opacity:.5,blending:THREE.AdditiveBlending}));
+  sc.add(particles);
+
+  addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();rend.setSize(innerWidth,innerHeight);});
+  addEventListener('mousemove',e=>{mx=(e.clientX/innerWidth)*2-1;my=-(e.clientY/innerHeight)*2+1;});
+  setupUI();
+  loop();
+}
+
+function buildScene(tex,pw,ph){
+  if(cardGroup){
+    sc.remove(cardGroup);
+    cardGroup.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(o.material.map&&o.material.map!==tex)o.material.map.dispose();o.material.dispose();}});
+  }
+
+  cardGroup=new THREE.Group();
+  const depth=.04+P.thk*.18;
+
+  // ====== الطبقة 1: الصورة في الخلف ======
+  // الوجه الأمامي للصورة
+  const front=new THREE.Mesh(new THREE.PlaneGeometry(pw*.92,ph*.78),new THREE.MeshBasicMaterial({map:tex,side:THREE.FrontSide}));
+  front.position.z=-.005;
+  front.position.y=ph*.04;
+  cardGroup.add(front);
+
+  // Chrome على الصورة
+  const cMat=new THREE.ShaderMaterial({
+    uniforms:{uT:{value:tex},uTime:{value:0},uMet:{value:P.met},uShm:{value:P.shm},uIri:{value:P.iri},uGlt:{value:P.glt},uMs:{value:new THREE.Vector2()},uSd:{value:seed},uHL:{value:hlM}},
+    vertexShader:VS,fragmentShader:FS,transparent:true,side:THREE.FrontSide
+  });
+  chromeM=new THREE.Mesh(new THREE.PlaneGeometry(pw*.92,ph*.78),cMat);
+  chromeM.position.z=0;
+  chromeM.position.y=ph*.04;
+  chromeM.visible=chrOn;
+  cardGroup.add(chromeM);
+
+  // ====== الطبقة 2: البطاقة الزجاجية الكاملة ======
+  // إنشاء تكستشر البطاقة
+  const fScale=900;
+  const fm=1.18;
+  const cardW=Math.floor(fScale*fm);
+  const cardH=Math.floor(fScale*(ph/pw)*fm);
+  
+  frameCanvas=document.createElement('canvas');
+  frameCanvas.width=cardW;
+  frameCanvas.height=cardH;
+  frameCtx=frameCanvas.getContext('2d');
+  
+  drawGlassCard(0);
+  
+  frameTexture=new THREE.CanvasTexture(frameCanvas);
+  frameTexture.needsUpdate=true;
+
+  // الوجه الأمامي للبطاقة الزجاجية
+  glassFrontMesh=new THREE.Mesh(
+    new THREE.PlaneGeometry(pw*fm,ph*fm),
+    new THREE.MeshBasicMaterial({map:frameTexture,transparent:true,side:THREE.FrontSide,depthWrite:false})
+  );
+  glassFrontMesh.position.z=depth/2;
+  cardGroup.add(glassFrontMesh);
+
+  // الوجه الخلفي للبطاقة الزجاجية
+  glassBackMesh=new THREE.Mesh(
+    new THREE.PlaneGeometry(pw*fm,ph*fm),
+    new THREE.MeshBasicMaterial({map:frameTexture,transparent:true,side:THREE.FrontSide,depthWrite:false})
+  );
+  glassBackMesh.position.z=-depth/2;
+  glassBackMesh.rotation.y=Math.PI;
+  cardGroup.add(glassBackMesh);
+
+  // ====== الطبقة 3: الحواف الزجاجية الجانبية ======
+  // حواف معدنية شفافة
+  const edgeColor=new THREE.Color(0x1a4a6a);
+  const edgeMat=new THREE.MeshBasicMaterial({color:edgeColor,transparent:true,opacity:.7,side:THREE.DoubleSide});
+  
+  // علوي
+  const topE=new THREE.Mesh(new THREE.PlaneGeometry(pw*fm,depth),edgeMat);
+  topE.position.y=ph*fm/2;topE.rotation.x=Math.PI/2;cardGroup.add(topE);
+  // سفلي
+  const botE=new THREE.Mesh(new THREE.PlaneGeometry(pw*fm,depth),edgeMat);
+  botE.position.y=-ph*fm/2;botE.rotation.x=-Math.PI/2;cardGroup.add(botE);
+  // يساري
+  const lftE=new THREE.Mesh(new THREE.PlaneGeometry(depth,ph*fm),edgeMat);
+  lftE.position.x=-pw*fm/2;lftE.rotation.y=Math.PI/2;cardGroup.add(lftE);
+  // يميني
+  const rgtE=new THREE.Mesh(new THREE.PlaneGeometry(depth,ph*fm),edgeMat);
+  rgtE.position.x=pw*fm/2;rgtE.rotation.y=-Math.PI/2;cardGroup.add(rgtE);
+
+  // خطوط توهج على الحواف
+  const glowMat=new THREE.MeshBasicMaterial({color:0x00f0ff,transparent:true,opacity:.6,side:THREE.DoubleSide,blending:THREE.AdditiveBlending});
+  
+  cardGroup.add(makeEdgeGlow(pw*fm,.005,0,ph*fm/2,depth/2+.001,glowMat));
+  cardGroup.add(makeEdgeGlow(pw*fm,.005,0,-ph*fm/2,depth/2+.001,glowMat));
+  cardGroup.add(makeEdgeGlow(.005,ph*fm,-pw*fm/2,0,depth/2+.001,glowMat));
+  cardGroup.add(makeEdgeGlow(.005,ph*fm,pw*fm/2,0,depth/2+.001,glowMat));
+
+  cardGroup.position.y=.05;
+  sc.add(cardGroup);
+}
+
+function makeEdgeGlow(w,h,x,y,z,mat){
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),mat);
+  m.position.set(x,y,z);
+  return m;
+}
+
+// ============ رسم البطاقة الزجاجية مثل الصورة المرجعية ============
+function drawGlassCard(time){
+  if(!frameCtx)return;
+  const w=frameCanvas.width,h=frameCanvas.height;
+  const x=frameCtx;
+  x.clearRect(0,0,w,h);
+  
+  // ====== المسار المتعرج للبطاقة (مع الزوايا المقطوعة) ======
+  const cornerCut=Math.min(w,h)*.04;
+  
+  // ====== الطبقة 1: الزجاج الشفاف الأزرق ======
+  drawGlassBackground(x,w,h,cornerCut,time);
+  
+  // ====== الطبقة 2: الإطار المعدني الفاخر ======
+  drawMetallicFrame(x,w,h,cornerCut,time);
+  
+  // ====== الطبقة 3: الزخارف العلوية - COLLECTION ======
+  drawTopSection(x,w,h,time);
+  
+  // ====== الطبقة 4: الزخارف السفلية - الاسم ======
+  drawBottomNameTag(x,w,h,time);
+  
+  // ====== الطبقة 5: التفاصيل الجانبية ======
+  drawSideDetails(x,w,h,time);
+  
+  // ====== الطبقة 6: انعكاسات الزجاج ======
+  drawGlassReflections(x,w,h,time);
+  
+  if(frameTexture)frameTexture.needsUpdate=true;
+}
+
+function cardPath(ctx,xx,yy,w,h,cut){
+  ctx.beginPath();
+  ctx.moveTo(xx+cut,yy);
+  ctx.lineTo(xx+w-cut,yy);
+  ctx.lineTo(xx+w,yy+cut);
+  ctx.lineTo(xx+w,yy+h-cut);
+  ctx.lineTo(xx+w-cut,yy+h);
+  ctx.lineTo(xx+cut,yy+h);
+  ctx.lineTo(xx,yy+h-cut);
+  ctx.lineTo(xx,yy+cut);
+  ctx.closePath();
+}
+
+function drawGlassBackground(x,w,h,cut,time){
+  // الزجاج الشفاف بلون أزرق فاتح
+  const glassGrad=x.createLinearGradient(0,0,w,h);
+  glassGrad.addColorStop(0,`rgba(80,150,200,${glassOpacity*1.2})`);
+  glassGrad.addColorStop(.3,`rgba(40,90,140,${glassOpacity})`);
+  glassGrad.addColorStop(.5,`rgba(20,60,100,${glassOpacity*.8})`);
+  glassGrad.addColorStop(.7,`rgba(40,90,140,${glassOpacity})`);
+  glassGrad.addColorStop(1,`rgba(80,150,200,${glassOpacity*1.2})`);
+  
+  x.fillStyle=glassGrad;
+  cardPath(x,15,15,w-30,h-30,cut);
+  x.fill();
+  
+  // طبقة Frosted (ضباب زجاجي)
+  x.fillStyle=`rgba(150,200,230,${glassOpacity*.3})`;
+  cardPath(x,15,15,w-30,h-30,cut);
+  x.fill();
+}
+
+function drawMetallicFrame(x,w,h,cut,time){
+  const pulse=.85+Math.sin(time*1.5)*.15;
+  
+  // ====== الإطار الخارجي - خط معدني فاخر ======
+  // ظل خارجي
+  x.shadowColor=`rgba(0,240,255,${pulse*.5})`;
+  x.shadowBlur=20*P.fg;
+  
+  // الخط الخارجي - معدني سيان
+  x.strokeStyle=`rgba(0,240,255,${pulse*.85})`;
+  x.lineWidth=2.5;
+  cardPath(x,15,15,w-30,h-30,cut);
+  x.stroke();
+  
+  // خط داخلي رفيع أبيض
+  x.shadowBlur=8*P.fg;
+  x.strokeStyle='rgba(220,250,255,.7)';
+  x.lineWidth=.8;
+  cardPath(x,18,18,w-36,h-36,cut-2);
+  x.stroke();
+  
+  x.shadowBlur=0;
+  
+  // ====== الإطار الثاني المعدني الفاخر ======
+  // تدرج معدني للإطار الداخلي
+  const fGrad=x.createLinearGradient(0,0,0,h);
+  fGrad.addColorStop(0,'rgba(140,170,200,.6)');
+  fGrad.addColorStop(.3,'rgba(80,110,150,.5)');
+  fGrad.addColorStop(.5,'rgba(50,80,120,.4)');
+  fGrad.addColorStop(.7,'rgba(80,110,150,.5)');
+  fGrad.addColorStop(1,'rgba(140,170,200,.6)');
+  x.strokeStyle=fGrad;
+  x.lineWidth=8;
+  cardPath(x,28,28,w-56,h-56,cut-4);
+  x.stroke();
+  
+  // خط لامع داخل الإطار المعدني
+  x.strokeStyle='rgba(255,255,255,.4)';
+  x.lineWidth=1;
+  cardPath(x,26,26,w-52,h-52,cut-3);
+  x.stroke();
+  
+  // ====== زوايا تقنية مزخرفة ======
+  drawCornerDecorations(x,w,h,cut,time);
+  
+  // ====== خطوط زخرفية على الجوانب ======
+  drawSideLines(x,w,h,cut,time);
+}
+
+function drawCornerDecorations(x,w,h,cut,time){
+  const pulse=.7+Math.sin(time*2)*.3;
+  
+  // زوايا متعددة الطبقات (مثل الصورة)
+  // TL
+  drawCornerOrnament(x,40,40,30,'tl',pulse,time);
+  // TR
+  drawCornerOrnament(x,w-40,40,30,'tr',pulse,time);
+  // BL
+  drawCornerOrnament(x,40,h-40,30,'bl',pulse,time);
+  // BR
+  drawCornerOrnament(x,w-40,h-40,30,'br',pulse,time);
+}
+
+function drawCornerOrnament(x,cx,cy,size,corner,pulse,time){
+  x.save();
+  x.translate(cx,cy);
+  
+  // تدوير حسب الزاوية
+  if(corner==='tr')x.rotate(Math.PI/2);
+  else if(corner==='br')x.rotate(Math.PI);
+  else if(corner==='bl')x.rotate(-Math.PI/2);
+  
+  x.shadowColor=`rgba(0,240,255,${pulse})`;
+  x.shadowBlur=10*P.fg;
+  x.strokeStyle=`rgba(0,240,255,${pulse*.9})`;
+  x.lineWidth=2;
+  
+  // قوس الزاوية الرئيسي
+  x.beginPath();
+  x.moveTo(0,size);
+  x.lineTo(0,8);
+  x.quadraticCurveTo(0,0,8,0);
+  x.lineTo(size,0);
+  x.stroke();
+  
+  // خط داخلي ثاني
+  x.strokeStyle='rgba(255,255,255,.5)';
+  x.lineWidth=1;
+  x.beginPath();
+  x.moveTo(5,size-2);
+  x.lineTo(5,12);
+  x.quadraticCurveTo(5,5,12,5);
+  x.lineTo(size-2,5);
+  x.stroke();
+  
+  // نقطة في الزاوية
+  x.shadowBlur=8;
+  x.fillStyle='rgba(255,255,255,1)';
+  x.beginPath();x.arc(0,0,3,0,Math.PI*2);x.fill();
+  
+  x.shadowBlur=0;
+  x.restore();
+}
+
+function drawSideLines(x,w,h,cut,time){
+  // خطوط زخرفية على الجوانب الأربعة (مثل الصورة)
+  const lineLen=80;
+  const lineY=30;
+  const pulse=.6+Math.sin(time*2)*.3;
+  
+  // علوي - يسار ويمين
+  x.shadowColor=`rgba(0,240,255,${pulse*.5})`;
+  x.shadowBlur=4;
+  x.strokeStyle=`rgba(0,240,255,${pulse*.6})`;
+  x.lineWidth=1;
+  x.beginPath();
+  x.moveTo(80,lineY);x.lineTo(80+lineLen,lineY);
+  x.stroke();
+  x.beginPath();
+  x.moveTo(w-80-lineLen,lineY);x.lineTo(w-80,lineY);
+  x.stroke();
+  
+  // سفلي
+  x.beginPath();
+  x.moveTo(80,h-lineY);x.lineTo(80+lineLen,h-lineY);
+  x.stroke();
+  x.beginPath();
+  x.moveTo(w-80-lineLen,h-lineY);x.lineTo(w-80,h-lineY);
+  x.stroke();
+  
+  x.shadowBlur=0;
+}
+
+function drawTopSection(x,w,h,time){
+  // ====== Collection: PREDS (في الأعلى يسار) ======
+  const collection=document.getElementById('inpCollection').value;
+  const code=document.getElementById('inpCode').value;
+  
+  x.font='600 16px Segoe UI';
+  x.fillStyle='rgba(255,255,255,.95)';
+  x.textAlign='left';
+  x.textBaseline='top';
+  x.shadowColor='rgba(0,0,0,.5)';
+  x.shadowBlur=4;
+  x.fillText('COLLECTION: '+collection,55,55);
+  x.shadowBlur=0;
+  
+  // ====== لوحة بيانات صغيرة تحت Collection (مثل الصورة) ======
+  drawDataPanel(x,55,90,140,90,time);
+  
+  // ====== كود QR/F120M في الأعلى يمين ======
+  drawTopRightCode(x,w,code,time);
+}
+
+function drawDataPanel(x,px,py,pw,ph,time){
+  // إطار اللوحة
+  x.shadowColor='rgba(0,240,255,.3)';
+  x.shadowBlur=6;
+  x.strokeStyle='rgba(0,240,255,.5)';
+  x.lineWidth=1;
+  x.strokeRect(px,py,pw,ph);
+  x.shadowBlur=0;
+  
+  // أسطر بيانات
+  x.font='6px monospace';
+  x.fillStyle='rgba(255,255,255,.5)';
+  x.textAlign='left';
+  
+  const lines=['STATS:','WS75% K-D:5.5%','TT.RUNS:7','RPRS:12','TR.TIME:25min','PRS:55%','RR.RUS:23.45'];
+  lines.forEach((line,i)=>{
+    x.fillText(line,px+5,py+10+i*8);
+  });
+  
+  // قسم سفلي
+  x.fillStyle='rgba(0,240,255,.4)';
+  x.fillRect(px+5,py+ph-30,pw-10,1);
+  x.font='5px monospace';
+  x.fillText('SPEED',px+5,py+ph-22);
+  x.fillText('TAK.DOWN',px+5,py+ph-15);
+  x.fillText('JUMP',px+5,py+ph-8);
+  
+  // رسم بياني صغير
+  x.strokeStyle='rgba(0,240,255,.5)';
+  x.lineWidth=.8;
+  x.beginPath();
+  for(let i=0;i<8;i++){
+    const xx=px+50+i*8;
+    const yy=py+ph-15-Math.sin(i+time)*8-5;
+    if(i===0)x.moveTo(xx,yy);else x.lineTo(xx,yy);
+  }
+  x.stroke();
+}
+
+function drawTopRightCode(x,w,code,time){
+  const cx=w-100;
+  const cy=80;
+  const cs=50;
+  
+  // إطار الكود
+  x.strokeStyle='rgba(0,240,255,.6)';
+  x.lineWidth=1.5;
+  x.shadowColor='rgba(0,240,255,.5)';
+  x.shadowBlur=8;
+  x.strokeRect(cx,cy,cs,cs);
+  
+  // QR-like pattern داخلي
+  x.shadowBlur=0;
+  x.fillStyle='rgba(255,255,255,.6)';
+  for(let i=0;i<6;i++){
+    for(let j=0;j<6;j++){
+      if(Math.random()>.5){
+        x.fillRect(cx+5+i*7,cy+5+j*7,5,5);
+      }
+    }
+  }
+  
+  // النص أسفل الكود
+  x.font='bold 11px Segoe UI';
+  x.fillStyle='#fff';
+  x.textAlign='center';
+  x.shadowColor='rgba(0,240,255,.5)';
+  x.shadowBlur=4;
+  x.fillText(code,cx+cs/2,cy+cs+15);
+  x.shadowBlur=0;
+  
+  // نصوص صغيرة تحت الكود
+  x.font='7px monospace';
+  x.fillStyle='rgba(255,255,255,.5)';
+  x.textAlign='right';
+  x.fillText('LEOPARDOS',cx+cs,cy+cs+30);
+  x.fillText('PROFILE.305',cx+cs,cy+cs+40);
+}
+
+function drawBottomNameTag(x,w,h,time){
+  // ====== لوحة الاسم السفلية (مثل الصورة) ======
+  const name=document.getElementById('inpName').value;
+  const subtitle=document.getElementById('inpSubtitle').value;
+  
+  // أبعاد اللوحة
+  const pw=Math.min(w*.55,400);
+  const ph=80;
+  const px=w/2-pw/2;
+  const py=h-ph-50;
+  
+  // ===== خلفية اللوحة المعدنية =====
+  // ظل
+  x.shadowColor='rgba(0,0,0,.6)';
+  x.shadowBlur=15;
+  x.shadowOffsetY=5;
+  
+  // تدرج معدني
+  const tagGrad=x.createLinearGradient(0,py,0,py+ph);
+  tagGrad.addColorStop(0,'rgba(60,90,120,.95)');
+  tagGrad.addColorStop(.5,'rgba(30,55,80,.95)');
+  tagGrad.addColorStop(1,'rgba(20,40,60,.95)');
+  x.fillStyle=tagGrad;
+  
+  // شكل اللوحة مع زوايا مقطوعة
+  const tagCut=10;
+  cardPath(x,px,py,pw,ph,tagCut);
+  x.fill();
+  
+  x.shadowBlur=0;
+  x.shadowOffsetY=0;
+  
+  // ===== إطار اللوحة =====
+  const pulse=.85+Math.sin(time*2)*.15;
+  x.shadowColor=`rgba(0,240,255,${pulse})`;
+  x.shadowBlur=12*P.fg;
+  x.strokeStyle=`rgba(0,240,255,${pulse})`;
+  x.lineWidth=2;
+  cardPath(x,px,py,pw,ph,tagCut);
+  x.stroke();
+  
+  // خط أبيض داخلي
+  x.shadowBlur=4;
+  x.strokeStyle='rgba(255,255,255,.5)';
+  x.lineWidth=.8;
+  cardPath(x,px+3,py+3,pw-6,ph-6,tagCut-2);
+  x.stroke();
+  
+  x.shadowBlur=0;
+  
+  // ===== الاسم الكبير =====
+  x.font='bold 32px Segoe UI';
+  x.fillStyle='#fff';
+  x.textAlign='center';
+  x.textBaseline='middle';
+  x.shadowColor='rgba(0,240,255,.5)';
+  x.shadowBlur=8;
+  x.fillText(name,px+pw/2,py+30);
+  x.shadowBlur=0;
+  
+  // ===== خط فاصل =====
+  const lineGrad=x.createLinearGradient(px+pw*.2,0,px+pw*.8,0);
+  lineGrad.addColorStop(0,'transparent');
+  lineGrad.addColorStop(.5,'rgba(0,240,255,.6)');
+  lineGrad.addColorStop(1,'transparent');
+  x.strokeStyle=lineGrad;
+  x.lineWidth=1;
+  x.beginPath();
+  x.moveTo(px+pw*.2,py+50);
+  x.lineTo(px+pw*.8,py+50);
+  x.stroke();
+  
+  // ===== العنوان الفرعي =====
+  x.font='600 16px Segoe UI';
+  x.fillStyle='rgba(0,240,255,.9)';
+  x.shadowColor='rgba(0,240,255,.5)';
+  x.shadowBlur=4;
+  x.fillText(subtitle,px+pw/2,py+65);
+  x.shadowBlur=0;
+  
+  // ===== زاويتان معدنيتان على جانبي اللوحة =====
+  drawTagSideDecorations(x,px,py,pw,ph,time);
+}
+
+function drawTagSideDecorations(x,px,py,pw,ph,time){
+  const pulse=.7+Math.sin(time*3)*.3;
+  
+  // يسار اللوحة
+  x.shadowColor=`rgba(0,240,255,${pulse})`;
+  x.shadowBlur=8;
+  x.fillStyle=`rgba(0,240,255,${pulse})`;
+  
+  // مربع صغير يسار
+  x.fillRect(px-15,py+ph/2-3,8,6);
+  
+  // مربع صغير يمين
+  x.fillRect(px+pw+7,py+ph/2-3,8,6);
+  
+  x.shadowBlur=0;
+}
+
+function drawSideDetails(x,w,h,time){
+  // تفاصيل صغيرة على الجوانب (مثل الصورة)
+  const pulse=.6+Math.sin(time*2)*.3;
+  
+  // نقاط زخرفية
+  x.fillStyle=`rgba(0,240,255,${pulse*.5})`;
+  x.shadowColor='rgba(0,240,255,.4)';
+  x.shadowBlur=3;
+  
+  // خط عمودي يسار
+  for(let i=0;i<5;i++){
+    x.fillRect(45,h*.4+i*15,3,3);
+  }
+  // خط عمودي يمين
+  for(let i=0;i<5;i++){
+    x.fillRect(w-48,h*.4+i*15,3,3);
+  }
+  
+  x.shadowBlur=0;
+}
+
+function drawGlassReflections(x,w,h,time){
+  // انعكاسات الزجاج (مهم للإحساس الزجاجي)
+  
+  // انعكاس قطري علوي
+  const reflGrad=x.createLinearGradient(0,0,w*.5,h*.5);
+  reflGrad.addColorStop(0,'rgba(255,255,255,.08)');
+  reflGrad.addColorStop(.5,'rgba(255,255,255,.02)');
+  reflGrad.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=reflGrad;
+  cardPath(x,15,15,w-30,h-30,Math.min(w,h)*.04);
+  x.fill();
+  
+  // انعكاس متحرك
+  const moveX=Math.sin(time*.5)*100;
+  const reflGrad2=x.createLinearGradient(w*.3+moveX,0,w*.7+moveX,h);
+  reflGrad2.addColorStop(0,'rgba(255,255,255,0)');
+  reflGrad2.addColorStop(.45,'rgba(255,255,255,0)');
+  reflGrad2.addColorStop(.5,'rgba(255,255,255,.05)');
+  reflGrad2.addColorStop(.55,'rgba(255,255,255,0)');
+  reflGrad2.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=reflGrad2;
+  cardPath(x,15,15,w-30,h-30,Math.min(w,h)*.04);
+  x.fill();
+  
+  // نقاط ضوئية
+  for(let i=0;i<8;i++){
+    const px=Math.sin(i+time*.3)*w*.4+w/2;
+    const py=Math.cos(i*1.3+time*.2)*h*.4+h/2;
+    const a=.1+Math.sin(time*2+i)*.05;
+    if(a>.05){
+      const g=x.createRadialGradient(px,py,0,px,py,15);
+      g.addColorStop(0,`rgba(0,240,255,${a})`);
+      g.addColorStop(1,'rgba(0,240,255,0)');
+      x.fillStyle=g;
+      x.fillRect(px-15,py-15,30,30);
+    }
+  }
+}
+
+function processImage(dataUrl){
+  const img=new Image();
+  img.crossOrigin='anonymous';
+  img.onload=function(){
+    const cv=document.createElement('canvas');
+    let w2=img.width,h2=img.height;const mx2=1024;
+    if(w2>h2){if(w2>mx2){h2=h2*mx2/w2;w2=mx2;}}else{if(h2>mx2){w2=w2*mx2/h2;h2=mx2;}}
+    cv.width=Math.floor(w2);cv.height=Math.floor(h2);
+    cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+    aw=cv.width;ah=cv.height;
+    artImage=cv;
+
+    const tex=new THREE.CanvasTexture(cv);
+    tex.minFilter=THREE.LinearFilter;tex.magFilter=THREE.LinearFilter;tex.needsUpdate=true;
+    artTex=tex;
+
+    const aspect=aw/ah;let pw2,ph2;const ts=2.5;
+    if(aspect>=1){pw2=ts;ph2=ts/aspect;}else{ph2=ts;pw2=ts*aspect;}
+
+    buildScene(tex,pw2,ph2);
+    document.getElementById('loader').classList.remove('on');
+    document.getElementById('upZone').classList.add('gone');
+    toast('✅ ARTWORK LOADED');
+  };
+  img.onerror=function(){document.getElementById('loader').classList.remove('on');toast('❌ LOAD FAILED');};
+  img.src=dataUrl;
+}
+
+let lt=performance.now(),fc=0,ft=performance.now();
+let frameUpdateCounter=0;
+
+function loop(){
+  requestAnimationFrame(loop);
+  const now=performance.now(),dt=(now-lt)/1000;lt=now;t+=dt;fc++;
+  if(now-ft>500){document.getElementById('fpsV').textContent=Math.round(fc*1000/(now-ft));fc=0;ft=now;}
+
+  smx+=(mx-smx)*.04;smy+=(my-smy)*.04;
+  
+  if(autoRotate){
+    ry+=dt*P.rot*1.2;
+  }
+
+  if(cardGroup){
+    cardGroup.position.y=.05+Math.sin(t*.4)*.02;
+    cardGroup.rotation.y=ry+manualRotation;
+    cardGroup.rotation.x=smy*.04;
+  }
+
+  if(chromeM&&chromeM.visible){
+    chromeM.material.uniforms.uTime.value=t;
+    chromeM.material.uniforms.uMs.value.set(smx,smy);
+  }
+
+  frameUpdateCounter++;
+  if(frameUpdateCounter>=2&&frameCanvas){
+    drawGlassCard(t);
+    frameUpdateCounter=0;
+  }
+
+  if(particles){
+    particles.rotation.y+=.0002;
+    const p=particles.geometry.attributes.position.array;
+    for(let i=1;i<p.length;i+=3){p[i]+=.002;if(p[i]>8)p[i]=-8;}
+    particles.geometry.attributes.position.needsUpdate=true;
+  }
+  
+  rend.render(sc,cam);
+}
+
+function setupUI(){
+  // Chrome toggle
+  document.getElementById('chrTT').addEventListener('click',()=>{
+    chrOn=!chrOn;
+    document.getElementById('chrTT').classList.toggle('on');
+    document.getElementById('chrSt').textContent=chrOn?'ACTIVE':'OFF';
+    if(chromeM)chromeM.visible=chrOn;
+  });
+  
+  const map={
+    'sm':['met','vm'],'ss':['shm','vs'],'si':['iri','vi'],'sg2':['glt','vg'],
+    'sr':['rot','vr'],'sfg':['fg','vfg']
+  };
+  Object.keys(map).forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    const [k,vid]=map[id];
+    el.addEventListener('input',e=>{
+      P[k]=e.target.value*.01;
+      document.getElementById(vid).textContent=e.target.value+'%';
+      if(chromeM){
+        const um={met:'uMet',shm:'uShm',iri:'uIri',glt:'uGlt'};
+        if(um[k]){
+          chromeM.material.uniforms[um[k]].value=P[k];
+        }
+      }
+    });
+  });
+  
+  // Thickness
+  document.getElementById('st2').addEventListener('input',e=>{
+    P.thk=e.target.value*.01;
+    document.getElementById('vt').textContent=e.target.value+'%';
+    if(artTex){
+      const asp=aw/ah;let pw3,ph3;const ts2=2.5;
+      if(asp>=1){pw3=ts2;ph3=ts2/asp;}else{ph3=ts2;pw3=ts2*asp;}
+      buildScene(artTex,pw3,ph3);
+    }
+  });
+  
+  // Glass opacity
+  document.getElementById('sgo').addEventListener('input',e=>{
+    glassOpacity=e.target.value*.01;
+    document.getElementById('vgo').textContent=e.target.value+'%';
+  });
+  
+  document.querySelectorAll('[data-rt]').forEach(b=>{b.addEventListener('click',()=>{
+    document.querySelectorAll('[data-rt]').forEach(x2=>x2.classList.remove('on'));b.classList.add('on');rar=b.dataset.rt;
+  });});
+  
+  // Side controls
+  document.getElementById('sbRotL').addEventListener('click',()=>{manualRotation-=Math.PI/4;toast('⏪ ROTATED LEFT');});
+  document.getElementById('sbRotR').addEventListener('click',()=>{manualRotation+=Math.PI/4;toast('⏩ ROTATED RIGHT');});
+  document.getElementById('sbAuto').addEventListener('click',(e)=>{
+    autoRotate=!autoRotate;
+    e.currentTarget.classList.toggle('active',autoRotate);
+    toast(autoRotate?'🔄 AUTO ON':'⏸ AUTO OFF');
+  });
+  document.getElementById('sbReset').addEventListener('click',()=>{manualRotation=0;ry=0;toast('🎯 RESET');});
+  
+  // Inputs (تحديث البطاقة عند التغيير)
+  ['inpName','inpSubtitle','inpCollection','inpCode'].forEach(id=>{
+    document.getElementById(id).addEventListener('input',()=>{
+      // البطاقة تتحدث تلقائياً في loop
+    });
+  });
+  
+  // Save buttons
+  document.getElementById('btnPNG').addEventListener('click',savePNG);
+  document.getElementById('btnVID').addEventListener('click',saveVID);
+  document.getElementById('btnGIF').addEventListener('click',saveGIF);
+  document.getElementById('btnMint').addEventListener('click',()=>{
+    if(!cardGroup){toast('⚠️ UPLOAD ARTWORK');return;}
+    toast('⛓ MINT COMING SOON');
+  });
+}
+
+function savePNG(){
+  if(!cardGroup){toast('⚠️ UPLOAD FIRST');return;}
+  showL('RENDERING...');
+  const savedRY=cardGroup.rotation.y,savedRX=cardGroup.rotation.x;
+  cardGroup.rotation.y=0;cardGroup.rotation.x=0;
+  setTimeout(()=>{
+    const asp=aw/ah;let pw4,ph4;const ts3=2.5;
+    if(asp>=1){pw4=ts3;ph4=ts3/asp;}else{ph4=ts3;pw4=ts3*asp;}
+    const fm=1.18;
+    const eW=1200;const eH=Math.floor(eW*(ph4*fm)/(pw4*fm));
+    const tR=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true});
+    tR.setClearColor(0x050510,1);tR.setSize(eW,eH);tR.setPixelRatio(1);
+    const tC=new THREE.PerspectiveCamera(45,eW/eH,.1,1000);tC.position.set(0,0,6);
+    tR.render(sc,tC);
+    const cv2=document.getElementById('expCv');cv2.width=eW;cv2.height=eH;
+    const ctx2=cv2.getContext('2d');
+    ctx2.fillStyle='#050510';ctx2.fillRect(0,0,eW,eH);
+    ctx2.drawImage(tR.domElement,0,0,eW,eH);
+    tR.dispose();tR.forceContextLoss();
+    cv2.toBlob(blob=>{
+      if(!blob){hideL();toast('❌ FAILED');return;}
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');a.download='ArtMarks-'+Date.now()+'.png';a.href=url;
+      document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+      cardGroup.rotation.y=savedRY;cardGroup.rotation.x=savedRX;
+      hideL();toast('✅ PNG SAVED!');
+    },'image/png',1);
+  },150);
+}
+
+function saveVID(){
+  if(!cardGroup){toast('⚠️ UPLOAD FIRST');return;}
+  showL('RECORDING 0%');
+  const asp=aw/ah;let pw5,ph5;const ts4=2.5;
+  if(asp>=1){pw5=ts4;ph5=ts4/asp;}else{ph5=ts4;pw5=ts4*asp;}
+  const fm=1.18;
+  const vW=800;const vH=Math.floor(vW*(ph5*fm)/(pw5*fm));
+  const tR=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true});
+  tR.setClearColor(0x050510,1);tR.setSize(vW,vH);tR.setPixelRatio(1);
+  const tC=new THREE.PerspectiveCamera(45,vW/vH,.1,1000);tC.position.set(0,0,6);
+  const recCv=document.createElement('canvas');recCv.width=vW;recCv.height=vH;
+  const recCtx=recCv.getContext('2d');
+  const dur=6000;
+  let mime='video/webm;codecs=vp9';
+  if(!MediaRecorder.isTypeSupported(mime))mime='video/webm;codecs=vp8';
+  if(!MediaRecorder.isTypeSupported(mime))mime='video/webm';
+  const stream=recCv.captureStream(30);
+  const rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:6000000});
+  const chunks=[];
+  rec.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
+  rec.onstop=()=>{
+    const blob=new Blob(chunks,{type:'video/webm'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.download='ArtMarks-'+Date.now()+'.webm';a.href=url;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+    tR.dispose();tR.forceContextLoss();hideL();toast('🎬 VIDEO SAVED!');
+  };
+  rec.start();const st2=performance.now();
+  function vFrame(){
+    const el=performance.now()-st2;const prog=Math.min(el/dur,1);
+    document.getElementById('ltxt').textContent='RECORDING '+Math.round(prog*100)+'%';
+    tR.render(sc,tC);
+    recCtx.drawImage(tR.domElement,0,0,vW,vH);
+    if(el<dur)requestAnimationFrame(vFrame);else rec.stop();
+  }
+  vFrame();
+}
+
+function saveGIF(){
+  if(!cardGroup){toast('⚠️ UPLOAD FIRST');return;}
+  if(typeof GIF==='undefined'){
+    toast('⏳ LOADING GIF...');
+    const s2=document.createElement('script');
+    s2.src='https://cdn.jsdelivr.net/gh/jnordberg/gif.js@0.2.0/dist/gif.js';
+    s2.onload=()=>setTimeout(saveGIF,500);document.head.appendChild(s2);return;
+  }
+  showL('GIF 0%');
+  const asp=aw/ah;let pw6,ph6;const ts5=2.5;
+  if(asp>=1){pw6=ts5;ph6=ts5/asp;}else{ph6=ts5;pw6=ts5*asp;}
+  const fm=1.18;
+  const gW=500;const gH=Math.floor(gW*(ph6*fm)/(pw6*fm));
+  const tR=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true});
+  tR.setClearColor(0x050510,1);tR.setSize(gW,gH);tR.setPixelRatio(1);
+  const tC=new THREE.PerspectiveCamera(45,gW/gH,.1,1000);tC.position.set(0,0,6);
+  const totalF=36;
+  const gif=new GIF({workers:2,quality:10,width:gW,height:gH,workerScript:'https://cdn.jsdelivr.net/gh/jnordberg/gif.js@0.2.0/dist/gif.worker.js',repeat:0});
+  gif.on('progress',p=>{document.getElementById('ltxt').textContent='ENCODING '+Math.round(p*100)+'%';});
+  gif.on('finished',blob=>{
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.download='ArtMarks-'+Date.now()+'.gif';a.href=url;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+    tR.dispose();tR.forceContextLoss();hideL();toast('🎞 GIF SAVED!');
+  });
+  let cap2=0;
+  function gFrame(){
+    const angle=(cap2/totalF)*Math.PI*2;
+    if(cardGroup){cardGroup.rotation.y=angle;cardGroup.rotation.x=0;}
+    if(chromeM&&chromeM.visible){chromeM.material.uniforms.uTime.value=(cap2/totalF)*4;}
+    drawGlassCard((cap2/totalF)*4);
+    tR.render(sc,tC);
+    const tc2=document.createElement('canvas');tc2.width=gW;tc2.height=gH;
+    tc2.getContext('2d').drawImage(tR.domElement,0,0);
+    gif.addFrame(tc2,{delay:60,copy:true});
+    cap2++;
+    document.getElementById('ltxt').textContent='CAPTURING '+Math.round((cap2/totalF)*100)+'%';
+    if(cap2<totalF)setTimeout(gFrame,30);
+    else{document.getElementById('ltxt').textContent='ENCODING...';gif.render();}
+  }
+  gFrame();
+}
+
+function showL(txt){document.getElementById('loader').classList.add('on');document.getElementById('ltxt').textContent=txt;}
+function hideL(){document.getElementById('loader').classList.remove('on');}
+function toast(m){const te=document.getElementById('toastEl');te.textContent=m;te.classList.add('on');setTimeout(()=>te.classList.remove('on'),3000);}
+
+const upZ=document.getElementById('upZone'),fIn=document.getElementById('fileInput');
+upZ.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();fIn.value='';fIn.click();});
+fIn.addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  if(!f.type.startsWith('image/')){toast('❌ NOT IMAGE');return;}
+  showL('LOADING...');seed=Math.random()*1000;
+  const r=new FileReader();
+  r.onload=ev=>setTimeout(()=>processImage(ev.target.result),100);
+  r.onerror=()=>{hideL();toast('❌ READ ERROR');};
+  r.readAsDataURL(f);
+});
+upZ.addEventListener('dragover',e=>{e.preventDefault();e.stopPropagation();upZ.style.background='rgba(0,240,255,.15)';});
+upZ.addEventListener('dragleave',e=>{e.preventDefault();e.stopPropagation();upZ.style.background='rgba(0,240,255,.04)';});
+upZ.addEventListener('drop',e=>{
+  e.preventDefault();e.stopPropagation();upZ.style.background='rgba(0,240,255,.04)';
+  const f=e.dataTransfer.files[0];
+  if(f&&f.type.startsWith('image/')){showL('LOADING...');seed=Math.random()*1000;const r=new FileReader();r.onload=ev=>setTimeout(()=>processImage(ev.target.result),100);r.onerror=()=>{hideL();toast('❌ READ ERROR');};r.readAsDataURL(f);}
+});
+
+init();
+</script>
+</body>
+</html>
