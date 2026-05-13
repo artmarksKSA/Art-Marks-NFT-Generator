@@ -26,177 +26,37 @@ body{background:var(--bg);font-family:'Segoe UI',sans-serif;color:#fff;overflow:
 .wallet-btn{padding:9px 18px;background:linear-gradient(135deg,rgba(255,215,0,.1),rgba(0,240,255,.1));border:1px solid rgba(255,215,0,.4);color:#ffd700;font-size:11px;letter-spacing:1.5px;cursor:pointer;border-radius:20px;font-weight:bold;transition:all .3s}
 .wallet-btn:hover{box-shadow:0 0 18px rgba(255,215,0,.3)}
 
-/* ===== الشريط الجانبي - أكبر وأوضح ===== */
-.left-panel{
-  position:fixed;
-  top:75px;left:15px;
-  z-index:100;
-  width:330px;
-  max-height:calc(100vh - 95px);
-  overflow-y:auto;
-  padding:18px;
-  background:rgba(10,10,25,.92);
-  border:1px solid rgba(0,240,255,.25);
-  border-radius:14px;
-  backdrop-filter:blur(15px);
-}
+.left-panel{position:fixed;top:75px;left:15px;z-index:100;width:330px;max-height:calc(100vh - 95px);overflow-y:auto;padding:18px;background:rgba(10,10,25,.92);border:1px solid rgba(0,240,255,.25);border-radius:14px;backdrop-filter:blur(15px)}
 .left-panel::-webkit-scrollbar{width:4px}
 .left-panel::-webkit-scrollbar-thumb{background:var(--cyan);border-radius:2px}
-
-.ptitle{
-  font-size:14px;
-  letter-spacing:3px;
-  color:var(--cyan);
-  margin-bottom:16px;
-  text-shadow:0 0 8px var(--cyan);
-  font-weight:bold;
-  text-align:center;
-}
-
-.stitle{
-  font-size:11px;
-  letter-spacing:2px;
-  color:var(--cyan);
-  margin:18px 0 10px;
-  padding-top:12px;
-  border-top:1px solid rgba(0,240,255,.15);
-  font-weight:bold;
-}
-
+.ptitle{font-size:14px;letter-spacing:3px;color:var(--cyan);margin-bottom:16px;text-shadow:0 0 8px var(--cyan);font-weight:bold;text-align:center}
+.stitle{font-size:11px;letter-spacing:2px;color:var(--cyan);margin:18px 0 10px;padding-top:12px;border-top:1px solid rgba(0,240,255,.15);font-weight:bold}
 .sg{margin-bottom:13px}
-.sl{
-  font-size:10px;
-  letter-spacing:1px;
-  color:rgba(255,255,255,.85);
-  margin-bottom:6px;
-  display:flex;
-  justify-content:space-between;
-  font-weight:500;
-}
-.sv{
-  color:var(--cyan);
-  font-weight:bold;
-  font-size:11px;
-}
-
-input[type=range]{
-  width:100%;
-  -webkit-appearance:none;
-  height:5px;
-  background:linear-gradient(90deg,var(--purple),var(--cyan),var(--pink));
-  border-radius:3px;
-  outline:none;
-}
-input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none;
-  width:16px;height:16px;
-  background:#fff;
-  border-radius:50%;
-  cursor:pointer;
-  box-shadow:0 0 8px var(--cyan);
-}
-
+.sl{font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.85);margin-bottom:6px;display:flex;justify-content:space-between;font-weight:500}
+.sv{color:var(--cyan);font-weight:bold;font-size:11px}
+input[type=range]{width:100%;-webkit-appearance:none;height:5px;background:linear-gradient(90deg,var(--purple),var(--cyan),var(--pink));border-radius:3px;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:#fff;border-radius:50%;cursor:pointer;box-shadow:0 0 8px var(--cyan)}
 .br{display:flex;gap:5px;flex-wrap:wrap}
-.mb{
-  padding:8px 12px;
-  background:rgba(0,240,255,.05);
-  border:1px solid rgba(0,240,255,.3);
-  color:#fff;
-  font-size:10px;
-  letter-spacing:1px;
-  cursor:pointer;
-  border-radius:6px;
-  transition:all .3s;
-  font-weight:600;
-}
+.mb{padding:8px 12px;background:rgba(0,240,255,.05);border:1px solid rgba(0,240,255,.3);color:#fff;font-size:10px;letter-spacing:1px;cursor:pointer;border-radius:6px;transition:all .3s;font-weight:600}
 .mb:hover{background:rgba(0,240,255,.15)}
-.mb.on{
-  background:rgba(0,240,255,.25);
-  border-color:var(--cyan);
-  box-shadow:0 0 10px var(--cyan);
-}
+.mb.on{background:rgba(0,240,255,.25);border-color:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+.inf{width:100%;padding:10px 12px;background:rgba(0,240,255,.05);border:1px solid rgba(0,240,255,.25);color:#fff;font-size:12px;border-radius:6px;outline:none;margin-bottom:8px;transition:all .3s}
+.inf:focus{border-color:var(--cyan);box-shadow:0 0 10px rgba(0,240,255,.3);background:rgba(0,240,255,.08)}
+.field-label{font-size:10px;letter-spacing:1.5px;color:rgba(0,240,255,.8);margin-bottom:5px;margin-top:5px;font-weight:bold}
 
-.inf{
-  width:100%;
-  padding:10px 12px;
-  background:rgba(0,240,255,.05);
-  border:1px solid rgba(0,240,255,.25);
-  color:#fff;
-  font-size:12px;
-  border-radius:6px;
-  outline:none;
-  margin-bottom:8px;
-  transition:all .3s;
-}
-.inf:focus{
-  border-color:var(--cyan);
-  box-shadow:0 0 10px rgba(0,240,255,.3);
-  background:rgba(0,240,255,.08);
-}
+.token-row{display:flex;gap:8px}
+.token-row .inf{margin-bottom:0}
 
-/* تسميات الحقول */
-.field-label{
-  font-size:10px;
-  letter-spacing:1.5px;
-  color:rgba(0,240,255,.8);
-  margin-bottom:5px;
-  margin-top:5px;
-  font-weight:bold;
-}
-
-.tt{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:11px 14px;
-  background:linear-gradient(90deg,rgba(192,192,192,.1),rgba(0,240,255,.1));
-  border:1px solid rgba(192,192,192,.35);
-  border-radius:8px;
-  margin-bottom:10px;
-  cursor:pointer;
-  transition:all .3s;
-}
-.tt.on{
-  background:linear-gradient(90deg,rgba(192,192,192,.25),rgba(0,240,255,.25));
-  border-color:#fff;
-  box-shadow:0 0 12px rgba(255,255,255,.2);
-}
+.tt{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:linear-gradient(90deg,rgba(192,192,192,.1),rgba(0,240,255,.1));border:1px solid rgba(192,192,192,.35);border-radius:8px;margin-bottom:10px;cursor:pointer;transition:all .3s}
+.tt.on{background:linear-gradient(90deg,rgba(192,192,192,.25),rgba(0,240,255,.25));border-color:#fff;box-shadow:0 0 12px rgba(255,255,255,.2)}
 .tn{font-size:12px;font-weight:bold}
 .ts2{font-size:9px;color:var(--cyan);margin-top:3px;letter-spacing:1px}
-.tsw{
-  width:36px;
-  height:18px;
-  background:rgba(0,240,255,.2);
-  border-radius:9px;
-  position:relative;
-  transition:all .3s;
-}
-.tsw::after{
-  content:'';
-  position:absolute;
-  width:14px;
-  height:14px;
-  background:#fff;
-  border-radius:50%;
-  top:2px;left:2px;
-  transition:all .3s;
-}
+.tsw{width:36px;height:18px;background:rgba(0,240,255,.2);border-radius:9px;position:relative;transition:all .3s}
+.tsw::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:2px;left:2px;transition:all .3s}
 .tt.on .tsw{background:linear-gradient(90deg,#c0c0c0,var(--cyan))}
 .tt.on .tsw::after{left:20px}
 
-.ebtn{
-  width:100%;
-  margin-top:8px;
-  padding:13px;
-  border:none;
-  color:#fff;
-  font-size:11px;
-  letter-spacing:2px;
-  cursor:pointer;
-  border-radius:7px;
-  font-weight:bold;
-  transition:all .3s;
-}
+.ebtn{width:100%;margin-top:8px;padding:13px;border:none;color:#fff;font-size:11px;letter-spacing:2px;cursor:pointer;border-radius:7px;font-weight:bold;transition:all .3s}
 .ebtn:hover{transform:translateY(-2px)}
 .e1{background:linear-gradient(90deg,var(--purple),var(--cyan));box-shadow:0 0 15px rgba(0,240,255,.3)}
 .e2{background:linear-gradient(90deg,#ff00ea,#b829ff);box-shadow:0 0 15px rgba(255,0,234,.3)}
@@ -262,17 +122,25 @@ canvas#expCv{display:none}
   <div class="field-label">SUBTITLE / PROFILE</div>
   <input type="text" class="inf" id="inpSubtitle" value="PROFILE #004" placeholder="Subtitle">
   
-  <div class="field-label">COLLECTION</div>
+  <div class="field-label">📁 COLLECTION NAME</div>
   <input type="text" class="inf" id="inpCollection" value="PREDS" placeholder="Collection Name">
   
-  <div class="field-label">CODE / SERIAL</div>
+  <div class="field-label">🔤 CODE / SERIAL</div>
   <input type="text" class="inf" id="inpCode" value="F120M" placeholder="Code">
-  
-  <div class="field-label">🔢 TOKEN ID</div>
-  <input type="text" class="inf" id="inpTokenId" value="#00472" placeholder="Token ID">
   
   <div class="field-label">👤 ARTIST</div>
   <input type="text" class="inf" id="inpArtist" value="@ArtMarksKSA" placeholder="@artist_name">
+
+  <div class="stitle">🔢 TOKEN & EDITION</div>
+  
+  <div class="field-label">CURRENT TOKEN # / TOTAL COLLECTION</div>
+  <div class="token-row">
+    <input type="number" class="inf" id="inpTokenNum" value="47" placeholder="Token #" min="1">
+    <input type="number" class="inf" id="inpTotalSupply" value="500" placeholder="Total" min="1">
+  </div>
+  
+  <div class="field-label" style="color:#ffd700">✨ EDITION (Always 1/1 UNIQUE)</div>
+  <input type="text" class="inf" id="inpEdition" value="1 of 1" disabled style="opacity:.7;cursor:not-allowed">
 
   <div class="tt on" id="chrTT">
     <div><div class="tn">⬢ Chrome Effect</div><div class="ts2" id="chrSt">ACTIVE</div></div>
@@ -289,8 +157,8 @@ canvas#expCv{display:none}
   <div class="sg"><div class="sl"><span>🔄 ROTATION</span><span class="sv" id="vr">40%</span></div><input type="range" id="sr" min="0" max="200" value="40"></div>
   <div class="sg"><div class="sl"><span>📏 THICKNESS</span><span class="sv" id="vt">25%</span></div><input type="range" id="st2" min="10" max="100" value="25"></div>
   <div class="sg"><div class="sl"><span>💡 FRAME GLOW</span><span class="sv" id="vfg">100%</span></div><input type="range" id="sfg" min="0" max="200" value="100"></div>
-  <div class="sg"><div class="sl"><span>🪟 GLASS OPACITY</span><span class="sv" id="vgo">15%</span></div><input type="range" id="sgo" min="5" max="50" value="15"></div>
-  <div class="sg"><div class="sl"><span>✨ GLASS SHINE</span><span class="sv" id="vgs">80%</span></div><input type="range" id="sgs" min="0" max="150" value="80"></div>
+  <div class="sg"><div class="sl"><span>🪟 GLASS CLARITY</span><span class="sv" id="vgo">10%</span></div><input type="range" id="sgo" min="3" max="40" value="10"></div>
+  <div class="sg"><div class="sl"><span>✨ GLASS SHINE</span><span class="sv" id="vgs">120%</span></div><input type="range" id="sgs" min="0" max="200" value="120"></div>
 
   <div class="stitle">💎 RARITY</div>
   <div class="br">
@@ -337,8 +205,8 @@ let artTex=null,aw=0,ah=0,artImage=null;
 let hlM=0,rar='LEGENDARY';
 let autoRotate=true;
 let manualRotation=0;
-let glassOpacity=0.15;
-let glassShine=0.8;
+let glassOpacity=0.10;
+let glassShine=1.2;
 let cardW=0,cardH=0;
 
 const P={met:1,shm:.7,iri:.85,glt:.6,rot:.4,thk:.25,fg:1};
@@ -508,7 +376,9 @@ function drawGlassCard(time){
   drawTopSection(x,w,h,time);
   drawBottomNameTag(x,w,h,time);
   drawSideDetails(x,w,h,time);
-  drawRealisticGlassShine(x,w,h,cornerCut,time);
+  
+  // ✨ البريق الزجاجي القوي والواقعي - محسّن جداً
+  drawUltraGlassShine(x,w,h,cornerCut,time);
   
   if(frameTexture)frameTexture.needsUpdate=true;
 }
@@ -527,10 +397,13 @@ function cardPath(ctx,xx,yy,w,h,cut){
 }
 
 function drawGlassLayer(x,w,h,cut,time){
+  // طبقة زجاجية أنقى وأكثر شفافية (لا تخفي الصورة)
   const glassGrad=x.createLinearGradient(0,0,w,h);
-  glassGrad.addColorStop(0,`rgba(100,180,220,${glassOpacity*.8})`);
-  glassGrad.addColorStop(.5,`rgba(40,80,120,${glassOpacity*.4})`);
-  glassGrad.addColorStop(1,`rgba(100,180,220,${glassOpacity*.8})`);
+  glassGrad.addColorStop(0,`rgba(120,200,240,${glassOpacity*.6})`);
+  glassGrad.addColorStop(.3,`rgba(60,120,180,${glassOpacity*.3})`);
+  glassGrad.addColorStop(.5,`rgba(20,40,80,${glassOpacity*.2})`);
+  glassGrad.addColorStop(.7,`rgba(60,120,180,${glassOpacity*.3})`);
+  glassGrad.addColorStop(1,`rgba(120,200,240,${glassOpacity*.6})`);
   
   x.fillStyle=glassGrad;
   cardPath(x,5,5,w-10,h-10,cut);
@@ -607,9 +480,10 @@ function drawCornerOrnament(x,cx,cy,size,corner,pulse,time){
 function drawTopSection(x,w,h,time){
   const collection=document.getElementById('inpCollection').value;
   const code=document.getElementById('inpCode').value;
-  const tokenId=document.getElementById('inpTokenId').value;
+  const tokenNum=document.getElementById('inpTokenNum').value;
+  const totalSupply=document.getElementById('inpTotalSupply').value;
   
-  // COLLECTION (يسار علوي)
+  // COLLECTION
   x.font='bold 14px Segoe UI';
   x.fillStyle='rgba(255,255,255,.95)';
   x.textAlign='left';
@@ -619,30 +493,71 @@ function drawTopSection(x,w,h,time){
   x.fillText('COLLECTION: '+collection,40,38);
   x.shadowBlur=0;
   
-  // ====== ✨ TOKEN ID + BLOCKCHAIN (شارة جديدة احترافية) ======
-  drawTokenIdBadge(x,40,62,tokenId,time);
+  // ====== ✨ شارة POLYGON ثلاثية الأبعاد البارزة ✨ ======
+  drawPolygon3DBadge(x,40,62,tokenNum,totalSupply,time);
   
   // لوحة بيانات صغيرة
-  drawDataPanel(x,40,108,120,80,time);
+  drawDataPanel(x,40,138,120,80,time);
   
   // كود QR في الأعلى يمين
   drawTopRightCode(x,w,code,time);
+  
+  // ====== شارة 1/1 UNIQUE البارزة في أعلى اليمين ======
+  drawUniqueBadge(x,w,time);
 }
 
-function drawTokenIdBadge(x,px,py,tokenId,time){
-  // ====== شارة Token ID + Polygon ======
-  const badgeW=200;
-  const badgeH=38;
+// ============ شارة POLYGON ثلاثية الأبعاد البارزة ============
+function drawPolygon3DBadge(x,px,py,tokenNum,totalSupply,time){
+  const badgeW=240;
+  const badgeH=64;
   const pulse=.85+Math.sin(time*2)*.15;
   
-  // خلفية الشارة بتدرج
-  const bg=x.createLinearGradient(px,py,px+badgeW,py);
-  bg.addColorStop(0,'rgba(130,69,201,.85)');  // Polygon Purple
-  bg.addColorStop(.5,'rgba(80,40,160,.75)');
-  bg.addColorStop(1,'rgba(40,20,80,.65)');
-  x.fillStyle=bg;
+  // ====== الظل السفلي (لإحساس البروز) ======
+  x.save();
+  x.shadowColor='rgba(0,0,0,.7)';
+  x.shadowBlur=15;
+  x.shadowOffsetY=6;
+  x.shadowOffsetX=2;
+  x.fillStyle='rgba(0,0,0,.4)';
   
-  // رسم شكل الشارة (مع زاوية مقطوعة)
+  x.beginPath();
+  x.moveTo(px+5,py+5);
+  x.lineTo(px+badgeW-15,py+5);
+  x.lineTo(px+badgeW+5,py+15);
+  x.lineTo(px+badgeW+5,py+badgeH+5);
+  x.lineTo(px+15,py+badgeH+5);
+  x.lineTo(px+5,py+badgeH-5);
+  x.closePath();
+  x.fill();
+  x.restore();
+  
+  // ====== التوهج البنفسجي الخارجي القوي ======
+  for(let i=0;i<3;i++){
+    x.shadowColor=`rgba(184,41,255,${pulse*(.8-i*.2)})`;
+    x.shadowBlur=(20-i*5)*P.fg;
+    x.strokeStyle=`rgba(184,41,255,${pulse*.7})`;
+    x.lineWidth=2-i*.5;
+    x.beginPath();
+    x.moveTo(px,py);
+    x.lineTo(px+badgeW-10,py);
+    x.lineTo(px+badgeW,py+10);
+    x.lineTo(px+badgeW,py+badgeH);
+    x.lineTo(px+10,py+badgeH);
+    x.lineTo(px,py+badgeH-10);
+    x.closePath();
+    x.stroke();
+  }
+  x.shadowBlur=0;
+  
+  // ====== الخلفية المعدنية البارزة (3D) ======
+  // الطبقة السفلية (ظلال)
+  const bgDark=x.createLinearGradient(px,py,px,py+badgeH);
+  bgDark.addColorStop(0,'#3d1f6b');
+  bgDark.addColorStop(.3,'#2a1545');
+  bgDark.addColorStop(.5,'#1a0a30');
+  bgDark.addColorStop(.7,'#2a1545');
+  bgDark.addColorStop(1,'#3d1f6b');
+  x.fillStyle=bgDark;
   x.beginPath();
   x.moveTo(px,py);
   x.lineTo(px+badgeW-10,py);
@@ -653,103 +568,266 @@ function drawTokenIdBadge(x,px,py,tokenId,time){
   x.closePath();
   x.fill();
   
-  // إطار الشارة
-  x.shadowColor=`rgba(184,41,255,${pulse})`;
-  x.shadowBlur=10;
-  x.strokeStyle=`rgba(184,41,255,${pulse})`;
-  x.lineWidth=1.5;
+  // الطبقة الزجاجية الفاخرة فوقها (تأثير 3D)
+  const bgGlass=x.createLinearGradient(px,py,px,py+badgeH);
+  bgGlass.addColorStop(0,'rgba(180,100,255,.7)');
+  bgGlass.addColorStop(.4,'rgba(130,69,201,.5)');
+  bgGlass.addColorStop(.5,'rgba(80,40,140,.3)');
+  bgGlass.addColorStop(1,'rgba(40,20,80,.6)');
+  x.fillStyle=bgGlass;
+  x.beginPath();
+  x.moveTo(px,py);
+  x.lineTo(px+badgeW-10,py);
+  x.lineTo(px+badgeW,py+10);
+  x.lineTo(px+badgeW,py+badgeH);
+  x.lineTo(px+10,py+badgeH);
+  x.lineTo(px,py+badgeH-10);
+  x.closePath();
+  x.fill();
+  
+  // ====== الإضاءة العلوية (لإحساس البروز) ======
+  const topLight=x.createLinearGradient(0,py,0,py+badgeH/2);
+  topLight.addColorStop(0,'rgba(255,255,255,.4)');
+  topLight.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=topLight;
+  x.beginPath();
+  x.moveTo(px,py);
+  x.lineTo(px+badgeW-10,py);
+  x.lineTo(px+badgeW,py+10);
+  x.lineTo(px+badgeW,py+badgeH/2);
+  x.lineTo(px,py+badgeH/2);
+  x.closePath();
+  x.fill();
+  
+  // ====== الإطار الداخلي المضيء ======
+  x.strokeStyle=`rgba(255,255,255,${pulse*.6})`;
+  x.lineWidth=1;
+  x.beginPath();
+  x.moveTo(px+3,py+3);
+  x.lineTo(px+badgeW-12,py+3);
+  x.lineTo(px+badgeW-3,py+12);
+  x.lineTo(px+badgeW-3,py+badgeH-3);
+  x.lineTo(px+12,py+badgeH-3);
+  x.lineTo(px+3,py+badgeH-12);
+  x.closePath();
   x.stroke();
-  x.shadowBlur=0;
   
-  // ===== أيقونة Polygon (مثلث) =====
-  const iconX=px+12;
-  const iconY=py+badgeH/2;
+  // ===== أيقونة Polygon 3D البارزة (سداسية) =====
+  const iconCX=px+30;
+  const iconCY=py+badgeH/2;
+  const iconSize=20;
   
-  // المثلث الخارجي
-  x.shadowColor='rgba(184,41,255,.8)';
+  // الظل السفلي للأيقونة
+  x.save();
+  x.shadowColor='rgba(0,0,0,.5)';
   x.shadowBlur=8;
-  x.fillStyle='#8247E5';
+  x.shadowOffsetY=3;
+  
+  // قاعدة الأيقونة (داكنة)
+  x.fillStyle='#5a2ba8';
+  drawHexagon(x,iconCX,iconCY+2,iconSize);
+  x.fill();
+  x.restore();
+  
+  // الأيقونة الرئيسية (لامعة)
+  const iconGrad=x.createRadialGradient(iconCX-3,iconCY-3,0,iconCX,iconCY,iconSize);
+  iconGrad.addColorStop(0,'#c98ff5');
+  iconGrad.addColorStop(.4,'#8247E5');
+  iconGrad.addColorStop(1,'#5a2ba8');
+  x.fillStyle=iconGrad;
+  drawHexagon(x,iconCX,iconCY,iconSize);
+  x.fill();
+  
+  // إطار الأيقونة
+  x.strokeStyle='rgba(255,255,255,.6)';
+  x.lineWidth=1.5;
+  drawHexagon(x,iconCX,iconCY,iconSize);
+  x.stroke();
+  
+  // اللمعة العلوية على الأيقونة
+  const iconHighlight=x.createLinearGradient(iconCX,iconCY-iconSize,iconCX,iconCY);
+  iconHighlight.addColorStop(0,'rgba(255,255,255,.7)');
+  iconHighlight.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=iconHighlight;
   x.beginPath();
-  x.moveTo(iconX,iconY-8);
-  x.lineTo(iconX+9,iconY-3);
-  x.lineTo(iconX+9,iconY+3);
-  x.lineTo(iconX,iconY+8);
-  x.lineTo(iconX-9,iconY+3);
-  x.lineTo(iconX-9,iconY-3);
+  x.moveTo(iconCX,iconCY-iconSize);
+  x.lineTo(iconCX+iconSize*.85,iconCY-iconSize*.5);
+  x.lineTo(iconCX+iconSize*.85,iconCY);
+  x.lineTo(iconCX-iconSize*.85,iconCY);
+  x.lineTo(iconCX-iconSize*.85,iconCY-iconSize*.5);
   x.closePath();
   x.fill();
   
-  // المثلث الداخلي (أبيض شفاف)
-  x.fillStyle='rgba(255,255,255,.4)';
+  // نقطة لمعة بيضاء صغيرة
+  x.fillStyle='rgba(255,255,255,.9)';
+  x.shadowColor='rgba(255,255,255,.8)';
+  x.shadowBlur=6;
   x.beginPath();
-  x.moveTo(iconX,iconY-5);
-  x.lineTo(iconX+5,iconY-2);
-  x.lineTo(iconX+5,iconY+2);
-  x.lineTo(iconX,iconY+5);
-  x.lineTo(iconX-5,iconY+2);
-  x.lineTo(iconX-5,iconY-2);
-  x.closePath();
+  x.arc(iconCX-5,iconCY-5,2,0,Math.PI*2);
   x.fill();
-  
   x.shadowBlur=0;
   
   // ===== نص "POLYGON" =====
-  x.font='bold 9px Segoe UI';
-  x.fillStyle='rgba(255,255,255,.95)';
+  x.font='bold 11px Segoe UI';
+  x.fillStyle='rgba(255,255,255,1)';
   x.textAlign='left';
   x.textBaseline='middle';
-  x.shadowColor='rgba(0,0,0,.5)';
-  x.shadowBlur=3;
-  x.fillText('POLYGON',iconX+15,iconY-7);
+  x.shadowColor='rgba(184,41,255,.8)';
+  x.shadowBlur=6;
+  x.fillText('POLYGON',iconCX+24,iconCY-12);
   
-  // ===== Token ID =====
+  // ===== شبكة "MAINNET" صغيرة =====
+  x.font='8px Segoe UI';
+  x.fillStyle='rgba(180,150,230,.9)';
+  x.shadowBlur=3;
+  x.fillText('MAINNET',iconCX+24,iconCY+1);
+  x.shadowBlur=0;
+  
+  // ===== Token Number / Total =====
   x.font='bold 13px monospace';
   x.fillStyle='#fff';
-  x.shadowColor='rgba(0,240,255,.7)';
-  x.shadowBlur=5;
-  x.fillText(tokenId,iconX+15,iconY+6);
+  x.shadowColor='rgba(0,240,255,.9)';
+  x.shadowBlur=8;
+  x.textAlign='right';
+  x.fillText('#'+tokenNum.toString().padStart(3,'0'),px+badgeW-15,iconCY-8);
+  
+  x.font='10px Segoe UI';
+  x.fillStyle='rgba(0,240,255,.95)';
+  x.shadowBlur=4;
+  x.fillText('OF '+totalSupply,px+badgeW-15,iconCY+8);
   x.shadowBlur=0;
   
-  // ===== خط فاصل عمودي صغير =====
-  x.strokeStyle='rgba(255,255,255,.3)';
-  x.lineWidth=.8;
-  x.beginPath();
-  x.moveTo(iconX+72,py+8);
-  x.lineTo(iconX+72,py+badgeH-8);
-  x.stroke();
+  // ===== شريط تقدم بصري =====
+  const progressW=badgeW-30;
+  const progressY=py+badgeH-8;
+  const progressVal=Math.min(parseInt(tokenNum)/parseInt(totalSupply),1);
   
-  // ===== أيقونة CHAIN صغيرة على اليمين =====
-  const linkX=px+badgeW-20;
-  const linkY=py+badgeH/2;
+  // خلفية الشريط
+  x.fillStyle='rgba(0,0,0,.4)';
+  x.fillRect(px+15,progressY,progressW,3);
   
-  x.strokeStyle='rgba(0,240,255,.8)';
-  x.lineWidth=1.5;
-  x.shadowColor='rgba(0,240,255,.6)';
-  x.shadowBlur=6;
-  
-  // رسم رمز السلسلة
-  x.beginPath();
-  x.arc(linkX-5,linkY,4,0,Math.PI*2);
-  x.stroke();
-  x.beginPath();
-  x.arc(linkX+5,linkY,4,0,Math.PI*2);
-  x.stroke();
-  x.beginPath();
-  x.moveTo(linkX-2,linkY);
-  x.lineTo(linkX+2,linkY);
-  x.stroke();
-  
+  // التقدم
+  const progGrad=x.createLinearGradient(px+15,0,px+15+progressW*progressVal,0);
+  progGrad.addColorStop(0,'#00f0ff');
+  progGrad.addColorStop(1,'#b829ff');
+  x.fillStyle=progGrad;
+  x.shadowColor='rgba(0,240,255,.8)';
+  x.shadowBlur=4;
+  x.fillRect(px+15,progressY,progressW*progressVal,3);
   x.shadowBlur=0;
   
-  // ===== نقطة ضوء صغيرة (مؤشر Live) =====
+  // ===== نقطة Live خضراء نابضة =====
   const dotPulse=.5+Math.sin(time*4)*.5;
   x.fillStyle=`rgba(0,255,136,${dotPulse})`;
-  x.shadowColor='rgba(0,255,136,.8)';
-  x.shadowBlur=8;
+  x.shadowColor='rgba(0,255,136,1)';
+  x.shadowBlur=10;
   x.beginPath();
-  x.arc(iconX+90,py+8,2.5,0,Math.PI*2);
+  x.arc(iconCX+93,iconCY-12,3,0,Math.PI*2);
   x.fill();
   x.shadowBlur=0;
+}
+
+function drawHexagon(x,cx,cy,size){
+  x.beginPath();
+  for(let i=0;i<6;i++){
+    const angle=(Math.PI/3)*i-Math.PI/2;
+    const px=cx+Math.cos(angle)*size*.85;
+    const py=cy+Math.sin(angle)*size*.85;
+    if(i===0)x.moveTo(px,py);
+    else x.lineTo(px,py);
+  }
+  x.closePath();
+}
+
+// ============ شارة UNIQUE 1/1 ============
+function drawUniqueBadge(x,w,time){
+  const px=w-160;
+  const py=140;
+  const bw=120;
+  const bh=42;
+  const pulse=.85+Math.sin(time*2.5)*.15;
+  
+  // ظل
+  x.save();
+  x.shadowColor='rgba(255,215,0,.5)';
+  x.shadowBlur=15;
+  x.shadowOffsetY=4;
+  
+  // خلفية ذهبية
+  const goldGrad=x.createLinearGradient(px,py,px,py+bh);
+  goldGrad.addColorStop(0,'#ffd700');
+  goldGrad.addColorStop(.5,'#daa520');
+  goldGrad.addColorStop(1,'#b8860b');
+  x.fillStyle=goldGrad;
+  
+  // شكل الشارة (مثل النجمة المسطحة)
+  x.beginPath();
+  x.moveTo(px+10,py);
+  x.lineTo(px+bw-10,py);
+  x.lineTo(px+bw,py+bh/2);
+  x.lineTo(px+bw-10,py+bh);
+  x.lineTo(px+10,py+bh);
+  x.lineTo(px,py+bh/2);
+  x.closePath();
+  x.fill();
+  x.restore();
+  
+  // إضاءة علوية
+  const topShine=x.createLinearGradient(0,py,0,py+bh/2);
+  topShine.addColorStop(0,'rgba(255,255,255,.5)');
+  topShine.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=topShine;
+  x.beginPath();
+  x.moveTo(px+10,py);
+  x.lineTo(px+bw-10,py);
+  x.lineTo(px+bw,py+bh/2);
+  x.lineTo(px,py+bh/2);
+  x.closePath();
+  x.fill();
+  
+  // إطار
+  x.strokeStyle=`rgba(255,255,200,${pulse})`;
+  x.lineWidth=1.5;
+  x.shadowColor='rgba(255,215,0,.8)';
+  x.shadowBlur=8;
+  x.beginPath();
+  x.moveTo(px+10,py);
+  x.lineTo(px+bw-10,py);
+  x.lineTo(px+bw,py+bh/2);
+  x.lineTo(px+bw-10,py+bh);
+  x.lineTo(px+10,py+bh);
+  x.lineTo(px,py+bh/2);
+  x.closePath();
+  x.stroke();
+  x.shadowBlur=0;
+  
+  // أيقونة نجمة
+  x.fillStyle='#fff';
+  x.shadowColor='rgba(255,255,255,.9)';
+  x.shadowBlur=6;
+  drawStar(x,px+22,py+bh/2,8,4);
+  x.fill();
+  x.shadowBlur=0;
+  
+  // النص
+  x.font='bold 13px Segoe UI';
+  x.fillStyle='#1a1500';
+  x.textAlign='center';
+  x.textBaseline='middle';
+  x.fillText('1/1 UNIQUE',px+bw/2+10,py+bh/2);
+}
+
+function drawStar(x,cx,cy,outerR,innerR){
+  x.beginPath();
+  for(let i=0;i<10;i++){
+    const angle=(Math.PI/5)*i-Math.PI/2;
+    const r=i%2===0?outerR:innerR;
+    const px=cx+Math.cos(angle)*r;
+    const py=cy+Math.sin(angle)*r;
+    if(i===0)x.moveTo(px,py);
+    else x.lineTo(px,py);
+  }
+  x.closePath();
 }
 
 function drawDataPanel(x,px,py,pw,ph,time){
@@ -901,49 +979,56 @@ function drawSideDetails(x,w,h,time){
   x.shadowBlur=0;
 }
 
-function drawRealisticGlassShine(x,w,h,cut,time){
+// ============ ✨✨✨ البريق الزجاجي الواقعي القوي جداً ✨✨✨ ============
+function drawUltraGlassShine(x,w,h,cut,time){
   x.save();
   cardPath(x,5,5,w-10,h-10,cut);
   x.clip();
   
-  const topLight=x.createLinearGradient(0,0,0,h*.5);
-  topLight.addColorStop(0,`rgba(255,255,255,${.18*glassShine})`);
-  topLight.addColorStop(.3,`rgba(255,255,255,${.06*glassShine})`);
+  // === 1. إضاءة علوية قوية (مثل الزجاج الحقيقي) ===
+  const topLight=x.createLinearGradient(0,0,0,h*.45);
+  topLight.addColorStop(0,`rgba(255,255,255,${.32*glassShine})`);
+  topLight.addColorStop(.2,`rgba(255,255,255,${.18*glassShine})`);
+  topLight.addColorStop(.5,`rgba(255,255,255,${.08*glassShine})`);
   topLight.addColorStop(1,'rgba(255,255,255,0)');
   x.fillStyle=topLight;
-  x.fillRect(0,0,w,h*.5);
+  x.fillRect(0,0,w,h*.45);
   
-  const shinePos=(time*.15)%2-.5;
+  // === 2. البريق القطري الكبير المتحرك (الأقوى) ===
+  const shinePos=(time*.18)%2.5-.7;
   const shineX=shinePos*w;
   
   x.save();
   x.translate(shineX,0);
-  x.rotate(-Math.PI/8);
+  x.rotate(-Math.PI/9);
   
   const shineGrad=x.createLinearGradient(-w*.3,0,w*.3,0);
   shineGrad.addColorStop(0,'rgba(255,255,255,0)');
-  shineGrad.addColorStop(.4,'rgba(255,255,255,0)');
-  shineGrad.addColorStop(.48,`rgba(255,255,255,${.15*glassShine})`);
-  shineGrad.addColorStop(.5,`rgba(255,255,255,${.4*glassShine})`);
-  shineGrad.addColorStop(.52,`rgba(255,255,255,${.15*glassShine})`);
-  shineGrad.addColorStop(.6,'rgba(255,255,255,0)');
+  shineGrad.addColorStop(.3,'rgba(255,255,255,0)');
+  shineGrad.addColorStop(.42,`rgba(255,255,255,${.15*glassShine})`);
+  shineGrad.addColorStop(.48,`rgba(255,255,255,${.4*glassShine})`);
+  shineGrad.addColorStop(.5,`rgba(255,255,255,${.7*glassShine})`);
+  shineGrad.addColorStop(.52,`rgba(255,255,255,${.4*glassShine})`);
+  shineGrad.addColorStop(.58,`rgba(255,255,255,${.15*glassShine})`);
+  shineGrad.addColorStop(.7,'rgba(255,255,255,0)');
   shineGrad.addColorStop(1,'rgba(255,255,255,0)');
   x.fillStyle=shineGrad;
   x.fillRect(-w,-h,w*3,h*3);
   
   x.restore();
   
-  const shinePos2=(time*.12+.6)%2-.5;
+  // === 3. بريق قطري ثانٍ ===
+  const shinePos2=(time*.13+.8)%2.5-.5;
   const shineX2=(1-shinePos2)*w;
   
   x.save();
   x.translate(shineX2,0);
-  x.rotate(Math.PI/10);
+  x.rotate(Math.PI/11);
   
   const shineGrad2=x.createLinearGradient(-w*.2,0,w*.2,0);
   shineGrad2.addColorStop(0,'rgba(255,255,255,0)');
   shineGrad2.addColorStop(.45,'rgba(255,255,255,0)');
-  shineGrad2.addColorStop(.5,`rgba(180,220,255,${.25*glassShine})`);
+  shineGrad2.addColorStop(.5,`rgba(200,230,255,${.45*glassShine})`);
   shineGrad2.addColorStop(.55,'rgba(255,255,255,0)');
   shineGrad2.addColorStop(1,'rgba(255,255,255,0)');
   x.fillStyle=shineGrad2;
@@ -951,55 +1036,106 @@ function drawRealisticGlassShine(x,w,h,cut,time){
   
   x.restore();
   
-  const cornerShine=x.createRadialGradient(w*.2,h*.15,0,w*.2,h*.15,w*.4);
-  cornerShine.addColorStop(0,`rgba(255,255,255,${.25*glassShine})`);
-  cornerShine.addColorStop(.3,`rgba(255,255,255,${.1*glassShine})`);
+  // === 4. لمعة قوية في الزاوية اليسرى العلوية (مثل الزجاج الحقيقي) ===
+  const cornerShine=x.createRadialGradient(w*.18,h*.15,0,w*.18,h*.15,w*.45);
+  cornerShine.addColorStop(0,`rgba(255,255,255,${.45*glassShine})`);
+  cornerShine.addColorStop(.2,`rgba(255,255,255,${.25*glassShine})`);
+  cornerShine.addColorStop(.5,`rgba(255,255,255,${.08*glassShine})`);
   cornerShine.addColorStop(1,'rgba(255,255,255,0)');
   x.fillStyle=cornerShine;
-  x.fillRect(0,0,w*.6,h*.5);
+  x.fillRect(0,0,w*.7,h*.55);
   
-  const cornerShine2=x.createRadialGradient(w*.85,h*.2,0,w*.85,h*.2,w*.3);
-  cornerShine2.addColorStop(0,`rgba(200,230,255,${.2*glassShine})`);
-  cornerShine2.addColorStop(1,'rgba(200,230,255,0)');
+  // === 5. لمعة في الزاوية اليمنى العلوية ===
+  const cornerShine2=x.createRadialGradient(w*.85,h*.2,0,w*.85,h*.2,w*.35);
+  cornerShine2.addColorStop(0,`rgba(180,220,255,${.35*glassShine})`);
+  cornerShine2.addColorStop(.4,`rgba(180,220,255,${.12*glassShine})`);
+  cornerShine2.addColorStop(1,'rgba(180,220,255,0)');
   x.fillStyle=cornerShine2;
-  x.fillRect(w*.6,0,w*.4,h*.4);
+  x.fillRect(w*.55,0,w*.45,h*.4);
   
-  const bottomLight=x.createLinearGradient(0,h*.7,0,h);
-  bottomLight.addColorStop(0,'rgba(0,240,255,0)');
-  bottomLight.addColorStop(1,`rgba(0,240,255,${.08*glassShine})`);
-  x.fillStyle=bottomLight;
-  x.fillRect(0,h*.7,w,h*.3);
+  // === 6. ✨ لمعة "Hero" في الجزء الأيسر (مثل الزجاج الفاخر) ===
+  const heroShine=x.createLinearGradient(w*.15,h*.3,w*.45,h*.65);
+  heroShine.addColorStop(0,'rgba(255,255,255,0)');
+  heroShine.addColorStop(.3,`rgba(255,255,255,${.15*glassShine})`);
+  heroShine.addColorStop(.5,`rgba(255,255,255,${.25*glassShine})`);
+  heroShine.addColorStop(.7,`rgba(255,255,255,${.15*glassShine})`);
+  heroShine.addColorStop(1,'rgba(255,255,255,0)');
   
-  const edgeShinePos=(time*.3)%1;
+  x.save();
+  x.fillStyle=heroShine;
+  x.beginPath();
+  x.moveTo(w*.1,h*.3);
+  x.quadraticCurveTo(w*.15,h*.5,w*.2,h*.7);
+  x.lineTo(w*.4,h*.8);
+  x.quadraticCurveTo(w*.45,h*.6,w*.5,h*.4);
+  x.closePath();
+  x.fill();
+  x.restore();
+  
+  // === 7. خط بريق متحرك على الحافة العلوية (سريع) ===
+  const edgeShinePos=(time*.4)%1;
   const esX=edgeShinePos*w;
-  const edgeGrad=x.createLinearGradient(esX-50,0,esX+50,0);
+  const edgeGrad=x.createLinearGradient(esX-60,0,esX+60,0);
   edgeGrad.addColorStop(0,'rgba(255,255,255,0)');
-  edgeGrad.addColorStop(.5,`rgba(255,255,255,${.6*glassShine})`);
+  edgeGrad.addColorStop(.5,`rgba(255,255,255,${.85*glassShine})`);
   edgeGrad.addColorStop(1,'rgba(255,255,255,0)');
   x.fillStyle=edgeGrad;
-  x.fillRect(esX-50,5,100,2);
+  x.fillRect(esX-60,3,120,3);
   
-  for(let i=0;i<15;i++){
-    const sx=Math.sin(i*1.7+time*.2)*w*.4+w/2;
-    const sy=Math.cos(i*2.3+time*.15)*h*.4+h/2;
+  // === 8. خط بريق على الحافة السفلية (عكسي) ===
+  const edgeShinePos2=(time*.35+.5)%1;
+  const esX2=(1-edgeShinePos2)*w;
+  const edgeGrad2=x.createLinearGradient(esX2-50,0,esX2+50,0);
+  edgeGrad2.addColorStop(0,'rgba(0,240,255,0)');
+  edgeGrad2.addColorStop(.5,`rgba(0,240,255,${.7*glassShine})`);
+  edgeGrad2.addColorStop(1,'rgba(0,240,255,0)');
+  x.fillStyle=edgeGrad2;
+  x.fillRect(esX2-50,h-6,100,3);
+  
+  // === 9. نقاط ضوئية صغيرة (مثل غبار على الزجاج) ===
+  for(let i=0;i<25;i++){
+    const sx=Math.sin(i*1.7+time*.2)*w*.42+w/2;
+    const sy=Math.cos(i*2.3+time*.15)*h*.42+h/2;
     const sa=Math.sin(time*1.5+i)*.5+.5;
     if(sa>.4){
-      const dotR=2+Math.sin(i)*1;
-      const g=x.createRadialGradient(sx,sy,0,sx,sy,dotR*4);
-      g.addColorStop(0,`rgba(255,255,255,${sa*.5*glassShine})`);
+      const dotR=2+Math.sin(i)*1.5;
+      const g=x.createRadialGradient(sx,sy,0,sx,sy,dotR*5);
+      g.addColorStop(0,`rgba(255,255,255,${sa*.7*glassShine})`);
+      g.addColorStop(.5,`rgba(255,255,255,${sa*.2*glassShine})`);
       g.addColorStop(1,'rgba(255,255,255,0)');
       x.fillStyle=g;
-      x.fillRect(sx-dotR*4,sy-dotR*4,dotR*8,dotR*8);
+      x.fillRect(sx-dotR*5,sy-dotR*5,dotR*10,dotR*10);
     }
   }
   
+  // === 10. تأثير "Frosted Glass" خفيف على الحواف ===
   const edgeFrost=x.createLinearGradient(0,0,0,h);
-  edgeFrost.addColorStop(0,`rgba(150,200,230,${.05*glassShine})`);
-  edgeFrost.addColorStop(.1,'rgba(150,200,230,0)');
-  edgeFrost.addColorStop(.9,'rgba(150,200,230,0)');
-  edgeFrost.addColorStop(1,`rgba(150,200,230,${.05*glassShine})`);
+  edgeFrost.addColorStop(0,`rgba(150,200,230,${.08*glassShine})`);
+  edgeFrost.addColorStop(.08,'rgba(150,200,230,0)');
+  edgeFrost.addColorStop(.92,'rgba(150,200,230,0)');
+  edgeFrost.addColorStop(1,`rgba(150,200,230,${.08*glassShine})`);
   x.fillStyle=edgeFrost;
   x.fillRect(0,0,w,h);
+  
+  // === 11. ✨ لمعة "Specular Highlight" قوية (مثل العدسة) ===
+  const specX=w*.3+Math.sin(time*.5)*w*.1;
+  const specY=h*.25+Math.cos(time*.4)*h*.05;
+  const specularGrad=x.createRadialGradient(specX,specY,0,specX,specY,w*.15);
+  specularGrad.addColorStop(0,`rgba(255,255,255,${.6*glassShine})`);
+  specularGrad.addColorStop(.1,`rgba(255,255,255,${.3*glassShine})`);
+  specularGrad.addColorStop(.4,'rgba(255,255,255,0)');
+  x.fillStyle=specularGrad;
+  x.fillRect(specX-w*.15,specY-w*.15,w*.3,w*.3);
+  
+  // === 12. لمعة عمودية متحركة (Rim Light) ===
+  const rimPos=(time*.25)%1;
+  const rimX=rimPos*w;
+  const rimGrad=x.createLinearGradient(rimX-30,0,rimX+30,0);
+  rimGrad.addColorStop(0,'rgba(255,255,255,0)');
+  rimGrad.addColorStop(.5,`rgba(255,255,255,${.18*glassShine})`);
+  rimGrad.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=rimGrad;
+  x.fillRect(rimX-30,0,60,h);
   
   x.restore();
 }
