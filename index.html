@@ -156,7 +156,9 @@ canvas#expCv{display:none}
   <div class="sg"><div class="sl"><span>💡 FRAME GLOW</span><span class="sv" id="vfg">100%</span></div><input type="range" id="sfg" min="0" max="200" value="100"></div>
   <div class="sg"><div class="sl"><span>💎 CRYSTAL CLARITY</span><span class="sv" id="vgo">5%</span></div><input type="range" id="sgo" min="0" max="30" value="5"></div>
   <div class="sg"><div class="sl"><span>✨ DIAMOND SHINE</span><span class="sv" id="vgs">130%</span></div><input type="range" id="sgs" min="0" max="200" value="130"></div>
-  <div class="sg"><div class="sl"><span>📋 INFO BAR HEIGHT</span><span class="sv" id="vibh">22%</span></div><input type="range" id="sibh" min="15" max="35" value="22"></div>
+  
+  <!-- تم تعديل السلايدر هنا -->
+  <div class="sg"><div class="sl"><span>📋 INFO BAR HEIGHT</span><span class="sv" id="vibh">15%</span></div><input type="range" id="sibh" min="10" max="30" value="15"></div>
 
   <div class="stitle">💎 RARITY</div>
   <div class="br">
@@ -206,7 +208,9 @@ let manualRotation=0;
 let glassOpacity=0.05;
 let glassShine=1.3;
 let cardW=0,cardH=0;
-let infoBarHeight=0.22; // 22% من ارتفاع البطاقة
+
+// تم تعديل الارتفاع الافتراضي هنا
+let infoBarHeight=0.15; // 15% من ارتفاع البطاقة
 
 const P={met:1,shm:.7,iri:.85,glt:.6,rot:.4,thk:.25,fg:1};
 
@@ -373,7 +377,6 @@ function drawGlassCard(time){
   drawCrystalGlassLayer(x,w,h,cornerCut,time);
   drawMetallicFrame(x,w,h,cornerCut,time);
   
-  // ============ ✨ الشريط الزجاجي الأسود السفلي ✨ ============
   drawBlackGlassInfoBar(x,w,h,time);
   
   drawDiamondCrystalShine(x,w,h,cornerCut,time);
@@ -474,7 +477,6 @@ function drawCornerOrnament(x,cx,cy,size,corner,pulse,time){
   x.restore();
 }
 
-// ============ ✨✨✨ الشريط الزجاجي الأسود السفلي ✨✨✨ ============
 function drawBlackGlassInfoBar(x,w,h,time){
   const collection=document.getElementById('inpCollection').value;
   const code=document.getElementById('inpCode').value;
@@ -484,7 +486,6 @@ function drawBlackGlassInfoBar(x,w,h,time){
   const subtitle=document.getElementById('inpSubtitle').value;
   const artist=document.getElementById('inpArtist').value;
   
-  // ===== أبعاد الشريط =====
   const barH=h*infoBarHeight;
   const barY=h-barH-15;
   const barX=15;
@@ -493,20 +494,16 @@ function drawBlackGlassInfoBar(x,w,h,time){
   
   const pulse=.85+Math.sin(time*1.5)*.15;
   
-  // ===== الظل القوي تحت الشريط =====
   x.save();
   x.shadowColor='rgba(0,0,0,.9)';
   x.shadowBlur=25;
   x.shadowOffsetY=8;
   
-  // ===== الخلفية الزجاجية السوداء =====
-  // طبقة 1: السوداء الداكنة الأساسية
   x.fillStyle='rgba(0,0,0,.85)';
   cardPath(x,barX,barY,barW,barH,cornerCut);
   x.fill();
   x.restore();
   
-  // طبقة 2: تدرج زجاجي
   const glassGrad=x.createLinearGradient(barX,barY,barX,barY+barH);
   glassGrad.addColorStop(0,'rgba(20,30,50,.7)');
   glassGrad.addColorStop(.3,'rgba(10,15,30,.85)');
@@ -516,7 +513,6 @@ function drawBlackGlassInfoBar(x,w,h,time){
   cardPath(x,barX,barY,barW,barH,cornerCut);
   x.fill();
   
-  // طبقة 3: blur effect (محاكاة)
   const blurGrad=x.createLinearGradient(barX,barY,barX,barY+barH);
   blurGrad.addColorStop(0,'rgba(40,60,90,.15)');
   blurGrad.addColorStop(.5,'rgba(20,40,70,.05)');
@@ -525,7 +521,6 @@ function drawBlackGlassInfoBar(x,w,h,time){
   cardPath(x,barX,barY,barW,barH,cornerCut);
   x.fill();
   
-  // ===== الإضاءة العلوية على الزجاج =====
   const topShine=x.createLinearGradient(0,barY,0,barY+barH*.4);
   topShine.addColorStop(0,'rgba(255,255,255,.18)');
   topShine.addColorStop(.5,'rgba(255,255,255,.05)');
@@ -538,7 +533,6 @@ function drawBlackGlassInfoBar(x,w,h,time){
   x.fillRect(barX,barY,barW,barH*.4);
   x.restore();
   
-  // ===== الإطار العلوي السيان (المضيء) =====
   x.shadowColor=`rgba(0,240,255,${pulse})`;
   x.shadowBlur=15*P.fg;
   x.strokeStyle=`rgba(0,240,255,${pulse*.95})`;
@@ -546,7 +540,6 @@ function drawBlackGlassInfoBar(x,w,h,time){
   cardPath(x,barX,barY,barW,barH,cornerCut);
   x.stroke();
   
-  // ===== خط داخلي رفيع أبيض =====
   x.shadowBlur=5;
   x.strokeStyle='rgba(255,255,255,.5)';
   x.lineWidth=.8;
@@ -554,7 +547,6 @@ function drawBlackGlassInfoBar(x,w,h,time){
   x.stroke();
   x.shadowBlur=0;
   
-  // ===== خط فاصل علوي مضيء =====
   const topLineGrad=x.createLinearGradient(barX+barW*.1,0,barX+barW*.9,0);
   topLineGrad.addColorStop(0,'transparent');
   topLineGrad.addColorStop(.5,`rgba(0,240,255,${pulse})`);
@@ -569,45 +561,34 @@ function drawBlackGlassInfoBar(x,w,h,time){
   x.stroke();
   x.shadowBlur=0;
   
-  // ============ المحتوى الداخلي ============
   drawInfoBarContent(x,barX,barY,barW,barH,time,{
     name,subtitle,collection,code,tokenNum,totalSupply,artist
   });
   
-  // ===== لمعات زجاجية على الشريط =====
   drawGlassReflectionsOnBar(x,barX,barY,barW,barH,cornerCut,time);
 }
 
 function drawInfoBarContent(x,bx,by,bw,bh,time,d){
-  // ===== التخطيط الداخلي =====
-  // 3 أقسام أفقية
-  const padding=18;
+  const padding=12;
   const sectionW=(bw-padding*2)/3;
   
-  // ============ القسم الأيسر: الاسم والعنوان ============
   drawNameSection(x,bx+padding,by+padding,sectionW,bh-padding*2,d.name,d.subtitle,time);
-  
-  // ============ القسم الأوسط: Polygon + Token + Progress ============
   drawCenterSection(x,bx+padding+sectionW,by+padding,sectionW,bh-padding*2,d,time);
-  
-  // ============ القسم الأيمن: Collection + Code + Verified ============
   drawRightSection(x,bx+padding+sectionW*2,by+padding,sectionW,bh-padding*2,d,time);
 }
 
-// ===== القسم الأيسر: الاسم =====
 function drawNameSection(x,sx,sy,sw,sh,name,subtitle,time){
-  // الاسم الكبير
-  x.font='bold 32px Segoe UI';
+  // تم تصغير الخطوط لتناسب الارتفاع الجديد
+  x.font='bold 22px Segoe UI';
   x.fillStyle='#fff';
   x.textAlign='left';
   x.textBaseline='top';
   x.shadowColor='rgba(0,240,255,.6)';
-  x.shadowBlur=10;
-  x.fillText(name,sx,sy+5);
+  x.shadowBlur=8;
+  x.fillText(name,sx,sy+2);
   x.shadowBlur=0;
   
-  // خط فاصل أنيق
-  const lineGrad=x.createLinearGradient(sx,0,sx+sw*.5,0);
+  const lineGrad=x.createLinearGradient(sx,0,sx+sw*.4,0);
   lineGrad.addColorStop(0,'rgba(0,240,255,.8)');
   lineGrad.addColorStop(1,'transparent');
   x.strokeStyle=lineGrad;
@@ -615,92 +596,81 @@ function drawNameSection(x,sx,sy,sw,sh,name,subtitle,time){
   x.shadowColor='rgba(0,240,255,.5)';
   x.shadowBlur=4;
   x.beginPath();
-  x.moveTo(sx,sy+45);
-  x.lineTo(sx+sw*.5,sy+45);
+  x.moveTo(sx,sy+28);
+  x.lineTo(sx+sw*.4,sy+28);
   x.stroke();
   x.shadowBlur=0;
   
-  // العنوان الفرعي
-  x.font='600 14px Segoe UI';
+  x.font='600 11px Segoe UI';
   x.fillStyle='rgba(0,240,255,.95)';
   x.shadowColor='rgba(0,240,255,.5)';
   x.shadowBlur=4;
-  x.fillText(subtitle,sx,sy+55);
+  x.fillText(subtitle,sx,sy+34);
   x.shadowBlur=0;
   
-  // علامة الفنان (في الأسفل)
-  x.font='bold 12px Segoe UI';
+  x.font='bold 10px Segoe UI';
   const artist=document.getElementById('inpArtist').value;
   
-  // أيقونة الفنان
   x.fillStyle='rgba(0,240,255,.7)';
   x.shadowColor='rgba(0,240,255,.5)';
   x.shadowBlur=4;
-  x.fillText('👤',sx,sy+sh-22);
+  x.fillText('👤',sx,sy+sh-10);
   
   x.fillStyle='rgba(255,255,255,.9)';
   x.shadowColor='rgba(0,240,255,.4)';
   x.shadowBlur=3;
-  x.fillText(artist,sx+22,sy+sh-22);
+  x.fillText(artist,sx+18,sy+sh-10);
   x.shadowBlur=0;
 }
 
-// ===== القسم الأوسط: Polygon + Token =====
 function drawCenterSection(x,sx,sy,sw,sh,d,time){
-  // ===== شعار Polygon (يسار القسم) =====
-  drawPolygonLogo(x,sx+22,sy+22,18,time);
+  drawPolygonLogo(x,sx+18,sy+14,14,time);
   
-  // نص POLYGON
-  x.font='bold 11px Segoe UI';
+  x.font='bold 9px Segoe UI';
   x.fillStyle='#fff';
   x.textAlign='left';
   x.textBaseline='middle';
   x.shadowColor='rgba(184,41,255,.8)';
   x.shadowBlur=5;
-  x.fillText('POLYGON',sx+45,sy+15);
+  x.fillText('POLYGON',sx+36,sy+10);
   
-  x.font='8px Segoe UI';
+  x.font='7px Segoe UI';
   x.fillStyle='rgba(180,150,230,.9)';
   x.shadowBlur=3;
-  x.fillText('● MAINNET',sx+45,sy+30);
+  x.fillText('● MAINNET',sx+36,sy+20);
   x.shadowBlur=0;
   
-  // ===== Token ID (يمين القسم) =====
-  x.font='bold 11px Segoe UI';
+  x.font='bold 9px Segoe UI';
   x.fillStyle='rgba(255,215,0,.9)';
   x.textAlign='right';
   x.textBaseline='middle';
   x.shadowColor='rgba(255,215,0,.5)';
   x.shadowBlur=4;
-  x.fillText('TOKEN',sx+sw-5,sy+12);
+  x.fillText('TOKEN',sx+sw-5,sy+8);
   
-  x.font='bold 18px monospace';
+  x.font='bold 14px monospace';
   x.fillStyle='#fff';
   x.shadowColor='rgba(0,240,255,1)';
   x.shadowBlur=8;
-  x.fillText('#'+d.tokenNum.toString().padStart(3,'0'),sx+sw-5,sy+30);
+  x.fillText('#'+d.tokenNum.toString().padStart(3,'0'),sx+sw-5,sy+22);
   x.shadowBlur=0;
   
-  // ===== شريط التقدم (في المنتصف) =====
-  const barY=sy+50;
-  const barH=18;
+  const barY=sy+35;
+  const barH=14;
   const barX=sx+5;
   const barW=sw-10;
   
-  // العنوان فوق الشريط
-  x.font='bold 9px Segoe UI';
+  x.font='bold 8px Segoe UI';
   x.fillStyle='rgba(255,215,0,1)';
   x.textAlign='center';
   x.shadowColor='rgba(255,215,0,.5)';
   x.shadowBlur=3;
-  x.fillText(`⭐ ${d.tokenNum} / ${d.totalSupply} • UNIQUE 1/1 ⭐`,sx+sw/2,sy+45);
+  x.fillText(`⭐ ${d.tokenNum}/${d.totalSupply} • 1/1 ⭐`,sx+sw/2,sy+32);
   x.shadowBlur=0;
   
-  // خلفية الشريط
   x.fillStyle='rgba(0,0,0,.6)';
   x.fillRect(barX,barY,barW,barH);
   
-  // إطار
   const pulse=.85+Math.sin(time*2)*.15;
   x.strokeStyle=`rgba(0,240,255,${pulse})`;
   x.lineWidth=1;
@@ -709,7 +679,6 @@ function drawCenterSection(x,sx,sy,sw,sh,d,time){
   x.strokeRect(barX,barY,barW,barH);
   x.shadowBlur=0;
   
-  // التعبئة
   const progress=Math.min(parseInt(d.tokenNum)/parseInt(d.totalSupply),1);
   const fillW=(barW-4)*progress;
   
@@ -724,7 +693,6 @@ function drawCenterSection(x,sx,sy,sw,sh,d,time){
   x.fillRect(barX+2,barY+2,fillW,barH-4);
   x.shadowBlur=0;
   
-  // نمط متحرك
   x.save();
   x.beginPath();
   x.rect(barX+2,barY+2,fillW,barH-4);
@@ -741,8 +709,7 @@ function drawCenterSection(x,sx,sy,sw,sh,d,time){
   }
   x.restore();
   
-  // النسبة المئوية
-  x.font='bold 11px Segoe UI';
+  x.font='bold 9px Segoe UI';
   x.fillStyle='#fff';
   x.textAlign='center';
   x.textBaseline='middle';
@@ -752,10 +719,8 @@ function drawCenterSection(x,sx,sy,sw,sh,d,time){
   x.shadowBlur=0;
 }
 
-// ===== القسم الأيمن: Collection + Code + Verified =====
 function drawRightSection(x,sx,sy,sw,sh,d,time){
-  // ===== Collection (أعلى) =====
-  x.font='bold 9px Segoe UI';
+  x.font='bold 8px Segoe UI';
   x.fillStyle='rgba(0,240,255,.7)';
   x.textAlign='right';
   x.textBaseline='top';
@@ -763,68 +728,62 @@ function drawRightSection(x,sx,sy,sw,sh,d,time){
   x.shadowBlur=3;
   x.fillText('COLLECTION',sx+sw,sy);
   
-  x.font='bold 14px Segoe UI';
+  x.font='bold 11px Segoe UI';
   x.fillStyle='#fff';
   x.shadowColor='rgba(0,240,255,.7)';
   x.shadowBlur=5;
-  x.fillText(d.collection,sx+sw,sy+12);
+  x.fillText(d.collection,sx+sw,sy+10);
   x.shadowBlur=0;
   
-  // ===== Code (وسط) =====
-  x.font='bold 9px Segoe UI';
+  x.font='bold 8px Segoe UI';
   x.fillStyle='rgba(255,215,0,.7)';
   x.shadowColor='rgba(255,215,0,.4)';
   x.shadowBlur=3;
-  x.fillText('CODE',sx+sw,sy+34);
+  x.fillText('CODE',sx+sw,sy+24);
   
-  x.font='bold 13px monospace';
+  x.font='bold 10px monospace';
   x.fillStyle='rgba(255,215,0,1)';
   x.shadowColor='rgba(255,215,0,.7)';
   x.shadowBlur=5;
-  x.fillText(d.code,sx+sw,sy+46);
+  x.fillText(d.code,sx+sw,sy+34);
   x.shadowBlur=0;
   
-  // ===== Verified Badge (أسفل) =====
   const verifyText='✓ VERIFIED';
-  x.font='bold 11px Segoe UI';
-  const vw=x.measureText(verifyText).width+20;
+  x.font='bold 9px Segoe UI';
+  const vw=x.measureText(verifyText).width+16;
   const vx=sx+sw-vw;
-  const vy=sy+sh-22;
+  const vy=sy+sh-18;
   
-  // ظل
   x.save();
   x.shadowColor='rgba(0,255,136,.6)';
   x.shadowBlur=10;
   x.shadowOffsetY=2;
   
-  const vGrad=x.createLinearGradient(vx,vy,vx,vy+22);
+  const vGrad=x.createLinearGradient(vx,vy,vx,vy+18);
   vGrad.addColorStop(0,'rgba(0,200,100,.95)');
   vGrad.addColorStop(.5,'rgba(0,150,80,.95)');
   vGrad.addColorStop(1,'rgba(0,100,60,.95)');
   x.fillStyle=vGrad;
-  x.fillRect(vx,vy,vw,22);
+  x.fillRect(vx,vy,vw,18);
   x.restore();
   
-  // إطار
   const pulse=.85+Math.sin(time*3)*.15;
   x.strokeStyle=`rgba(0,255,136,${pulse})`;
   x.lineWidth=1.5;
   x.shadowColor='rgba(0,255,136,.6)';
   x.shadowBlur=6;
-  x.strokeRect(vx,vy,vw,22);
+  x.strokeRect(vx,vy,vw,18);
   x.shadowBlur=0;
   
-  // النص
   x.fillStyle='#fff';
   x.textAlign='center';
   x.textBaseline='middle';
   x.shadowColor='rgba(0,0,0,.5)';
   x.shadowBlur=3;
-  x.fillText(verifyText,vx+vw/2,vy+11);
+  x.fillText(verifyText,vx+vw/2,vy+9);
   x.shadowBlur=0;
 }
 
-// ===== شعار Polygon =====
 function drawPolygonLogo(x,cx,cy,size,time){
   x.save();
   x.shadowColor='rgba(0,0,0,.5)';
@@ -924,13 +883,11 @@ function drawPolygonLogo(x,cx,cy,size,time){
   x.shadowBlur=0;
 }
 
-// ===== لمعات زجاجية على الشريط =====
 function drawGlassReflectionsOnBar(x,bx,by,bw,bh,cut,time){
   x.save();
   cardPath(x,bx,by,bw,bh,cut);
   x.clip();
   
-  // بريق متحرك على الشريط
   const shinePos=(time*.3)%2-.5;
   const shineX=bx+shinePos*bw;
   
@@ -941,7 +898,6 @@ function drawGlassReflectionsOnBar(x,bx,by,bw,bh,cut,time){
   x.fillStyle=shineGrad;
   x.fillRect(shineX-30,by,60,bh);
   
-  // نقاط ضوئية صغيرة
   for(let i=0;i<8;i++){
     const sx2=bx+(Math.sin(i+time*.3)*.5+.5)*bw;
     const sy2=by+(Math.cos(i*1.3+time*.2)*.5+.5)*bh;
@@ -963,7 +919,6 @@ function drawDiamondCrystalShine(x,w,h,cut,time){
   cardPath(x,5,5,w-10,h-10,cut);
   x.clip();
   
-  // مهم: تجنب الشريط السفلي
   const barH=h*infoBarHeight;
   const safeH=h-barH-15;
   
@@ -1012,7 +967,6 @@ function drawDiamondCrystalShine(x,w,h,cut,time){
   x.fillStyle=cornerShine2;
   x.fillRect(w*.55,0,w*.45,h*.4);
   
-  // ألماسات Sparkle (فوق الشريط فقط)
   for(let i=0;i<6;i++){
     const sparkleAngle=time*.5+i*Math.PI/3;
     const sparkleX=w*.3+Math.cos(sparkleAngle)*w*.2;
@@ -1046,7 +1000,6 @@ function drawDiamondCrystalShine(x,w,h,cut,time){
     }
   }
   
-  // خط بريق على الحافة
   const edgeShinePos=(time*.4)%1;
   const esX=edgeShinePos*w;
   const edgeGrad=x.createLinearGradient(esX-60,0,esX+60,0);
@@ -1082,291 +1035,4 @@ function processImage(dataUrl){
       pw2=3.5;
       ph2=3.5/aspect;
     }else{
-      ph2=3.5;
-      pw2=3.5*aspect;
-    }
-    
-    const maxDim=4;
-    if(pw2>maxDim){pw2=maxDim;ph2=maxDim/aspect;}
-    if(ph2>maxDim){ph2=maxDim;pw2=maxDim*aspect;}
-
-    buildScene(tex,pw2,ph2);
-    document.getElementById('loader').classList.remove('on');
-    document.getElementById('upZone').classList.add('gone');
-    toast('✅ ARTWORK LOADED');
-  };
-  img.onerror=function(){document.getElementById('loader').classList.remove('on');toast('❌ LOAD FAILED');};
-  img.src=dataUrl;
-}
-
-let lt=performance.now(),fc=0,ft=performance.now();
-let frameUpdateCounter=0;
-
-function loop(){
-  requestAnimationFrame(loop);
-  const now=performance.now(),dt=(now-lt)/1000;lt=now;t+=dt;fc++;
-  if(now-ft>500){document.getElementById('fpsV').textContent=Math.round(fc*1000/(now-ft));fc=0;ft=now;}
-
-  smx+=(mx-smx)*.04;smy+=(my-smy)*.04;
-  
-  if(autoRotate){
-    ry+=dt*P.rot*1.2;
-  }
-
-  if(cardGroup){
-    cardGroup.position.y=.05+Math.sin(t*.4)*.02;
-    cardGroup.rotation.y=ry+manualRotation;
-    cardGroup.rotation.x=smy*.04;
-  }
-
-  if(chromeFront&&chromeFront.visible){
-    chromeFront.material.uniforms.uTime.value=t;
-    chromeFront.material.uniforms.uMs.value.set(smx,smy);
-  }
-  if(chromeBack&&chromeBack.visible){
-    chromeBack.material.uniforms.uTime.value=t;
-    chromeBack.material.uniforms.uMs.value.set(smx,smy);
-  }
-
-  frameUpdateCounter++;
-  if(frameUpdateCounter>=2&&frameCanvas){
-    drawGlassCard(t);
-    frameUpdateCounter=0;
-  }
-
-  if(particles){
-    particles.rotation.y+=.0002;
-    const p=particles.geometry.attributes.position.array;
-    for(let i=1;i<p.length;i+=3){p[i]+=.002;if(p[i]>8)p[i]=-8;}
-    particles.geometry.attributes.position.needsUpdate=true;
-  }
-  
-  rend.render(sc,cam);
-}
-
-function setupUI(){
-  document.getElementById('chrTT').addEventListener('click',()=>{
-    chrOn=!chrOn;
-    document.getElementById('chrTT').classList.toggle('on');
-    document.getElementById('chrSt').textContent=chrOn?'ACTIVE':'OFF';
-    if(chromeFront)chromeFront.visible=chrOn;
-    if(chromeBack)chromeBack.visible=chrOn;
-  });
-  
-  const map={
-    'sm':['met','vm'],'ss':['shm','vs'],'si':['iri','vi'],'sg2':['glt','vg'],
-    'sr':['rot','vr'],'sfg':['fg','vfg']
-  };
-  Object.keys(map).forEach(id=>{
-    const el=document.getElementById(id);if(!el)return;
-    const [k,vid]=map[id];
-    el.addEventListener('input',e=>{
-      P[k]=e.target.value*.01;
-      document.getElementById(vid).textContent=e.target.value+'%';
-      const um={met:'uMet',shm:'uShm',iri:'uIri',glt:'uGlt'};
-      if(um[k]){
-        if(chromeFront)chromeFront.material.uniforms[um[k]].value=P[k];
-        if(chromeBack)chromeBack.material.uniforms[um[k]].value=P[k];
-      }
-    });
-  });
-  
-  document.getElementById('st2').addEventListener('input',e=>{
-    P.thk=e.target.value*.01;
-    document.getElementById('vt').textContent=e.target.value+'%';
-    if(artTex){
-      const aspect=aw/ah;let pw2,ph2;
-      if(aspect>=1){pw2=3.5;ph2=3.5/aspect;}else{ph2=3.5;pw2=3.5*aspect;}
-      const maxDim=4;
-      if(pw2>maxDim){pw2=maxDim;ph2=maxDim/aspect;}
-      if(ph2>maxDim){ph2=maxDim;pw2=maxDim*aspect;}
-      buildScene(artTex,pw2,ph2);
-    }
-  });
-  
-  document.getElementById('sgo').addEventListener('input',e=>{
-    glassOpacity=e.target.value*.01;
-    document.getElementById('vgo').textContent=e.target.value+'%';
-  });
-  
-  document.getElementById('sgs').addEventListener('input',e=>{
-    glassShine=e.target.value*.01;
-    document.getElementById('vgs').textContent=e.target.value+'%';
-  });
-  
-  // ✨ سلايدر ارتفاع الشريط
-  document.getElementById('sibh').addEventListener('input',e=>{
-    infoBarHeight=e.target.value*.01;
-    document.getElementById('vibh').textContent=e.target.value+'%';
-  });
-  
-  document.querySelectorAll('[data-rt]').forEach(b=>{b.addEventListener('click',()=>{
-    document.querySelectorAll('[data-rt]').forEach(x2=>x2.classList.remove('on'));b.classList.add('on');rar=b.dataset.rt;
-  });});
-  
-  document.getElementById('sbRotL').addEventListener('click',()=>{manualRotation-=Math.PI/4;toast('⏪ ROTATED LEFT');});
-  document.getElementById('sbRotR').addEventListener('click',()=>{manualRotation+=Math.PI/4;toast('⏩ ROTATED RIGHT');});
-  document.getElementById('sbAuto').addEventListener('click',(e)=>{
-    autoRotate=!autoRotate;
-    e.currentTarget.classList.toggle('active',autoRotate);
-    toast(autoRotate?'🔄 AUTO ON':'⏸ AUTO OFF');
-  });
-  document.getElementById('sbReset').addEventListener('click',()=>{manualRotation=0;ry=0;toast('🎯 RESET');});
-  
-  document.getElementById('btnPNG').addEventListener('click',savePNG);
-  document.getElementById('btnVID').addEventListener('click',saveVID);
-  document.getElementById('btnGIF').addEventListener('click',saveGIF);
-  document.getElementById('btnMint').addEventListener('click',()=>{
-    if(!cardGroup){toast('⚠️ UPLOAD ARTWORK');return;}
-    toast('⛓ MINT COMING SOON');
-  });
-}
-
-function savePNG(){
-  if(!cardGroup){toast('⚠️ UPLOAD FIRST');return;}
-  showL('RENDERING...');
-  const savedRY=cardGroup.rotation.y,savedRX=cardGroup.rotation.x;
-  cardGroup.rotation.y=0;cardGroup.rotation.x=0;
-  setTimeout(()=>{
-    const aspect=aw/ah;let pw4,ph4;
-    if(aspect>=1){pw4=3.5;ph4=3.5/aspect;}else{ph4=3.5;pw4=3.5*aspect;}
-    const maxDim=4;
-    if(pw4>maxDim){pw4=maxDim;ph4=maxDim/aspect;}
-    if(ph4>maxDim){ph4=maxDim;pw4=maxDim*aspect;}
-    
-    const eW=1200;const eH=Math.floor(eW*(ph4)/(pw4));
-    const tR=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true});
-    tR.setClearColor(0x050510,1);tR.setSize(eW,eH);tR.setPixelRatio(1);
-    const tC=new THREE.PerspectiveCamera(45,eW/eH,.1,1000);tC.position.set(0,0,6);
-    tR.render(sc,tC);
-    const cv2=document.getElementById('expCv');cv2.width=eW;cv2.height=eH;
-    const ctx2=cv2.getContext('2d');
-    ctx2.fillStyle='#050510';ctx2.fillRect(0,0,eW,eH);
-    ctx2.drawImage(tR.domElement,0,0,eW,eH);
-    tR.dispose();tR.forceContextLoss();
-    cv2.toBlob(blob=>{
-      if(!blob){hideL();toast('❌ FAILED');return;}
-      const url=URL.createObjectURL(blob);
-      const a=document.createElement('a');a.download='ArtMarks-'+Date.now()+'.png';a.href=url;
-      document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
-      cardGroup.rotation.y=savedRY;cardGroup.rotation.x=savedRX;
-      hideL();toast('✅ PNG SAVED!');
-    },'image/png',1);
-  },150);
-}
-
-function saveVID(){
-  if(!cardGroup){toast('⚠️ UPLOAD FIRST');return;}
-  showL('RECORDING 0%');
-  const aspect=aw/ah;let pw5,ph5;
-  if(aspect>=1){pw5=3.5;ph5=3.5/aspect;}else{ph5=3.5;pw5=3.5*aspect;}
-  const maxDim=4;
-  if(pw5>maxDim){pw5=maxDim;ph5=maxDim/aspect;}
-  if(ph5>maxDim){ph5=maxDim;pw5=maxDim*aspect;}
-  
-  const vW=800;const vH=Math.floor(vW*(ph5)/(pw5));
-  const tR=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true});
-  tR.setClearColor(0x050510,1);tR.setSize(vW,vH);tR.setPixelRatio(1);
-  const tC=new THREE.PerspectiveCamera(45,vW/vH,.1,1000);tC.position.set(0,0,6);
-  const recCv=document.createElement('canvas');recCv.width=vW;recCv.height=vH;
-  const recCtx=recCv.getContext('2d');
-  const dur=6000;
-  let mime='video/webm;codecs=vp9';
-  if(!MediaRecorder.isTypeSupported(mime))mime='video/webm;codecs=vp8';
-  if(!MediaRecorder.isTypeSupported(mime))mime='video/webm';
-  const stream=recCv.captureStream(30);
-  const rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:6000000});
-  const chunks=[];
-  rec.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
-  rec.onstop=()=>{
-    const blob=new Blob(chunks,{type:'video/webm'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');a.download='ArtMarks-'+Date.now()+'.webm';a.href=url;
-    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
-    tR.dispose();tR.forceContextLoss();hideL();toast('🎬 VIDEO SAVED!');
-  };
-  rec.start();const st2=performance.now();
-  function vFrame(){
-    const el=performance.now()-st2;const prog=Math.min(el/dur,1);
-    document.getElementById('ltxt').textContent='RECORDING '+Math.round(prog*100)+'%';
-    tR.render(sc,tC);
-    recCtx.drawImage(tR.domElement,0,0,vW,vH);
-    if(el<dur)requestAnimationFrame(vFrame);else rec.stop();
-  }
-  vFrame();
-}
-
-function saveGIF(){
-  if(!cardGroup){toast('⚠️ UPLOAD FIRST');return;}
-  if(typeof GIF==='undefined'){
-    toast('⏳ LOADING GIF...');
-    const s2=document.createElement('script');
-    s2.src='https://cdn.jsdelivr.net/gh/jnordberg/gif.js@0.2.0/dist/gif.js';
-    s2.onload=()=>setTimeout(saveGIF,500);document.head.appendChild(s2);return;
-  }
-  showL('GIF 0%');
-  const aspect=aw/ah;let pw6,ph6;
-  if(aspect>=1){pw6=3.5;ph6=3.5/aspect;}else{ph6=3.5;pw6=3.5*aspect;}
-  const maxDim=4;
-  if(pw6>maxDim){pw6=maxDim;ph6=maxDim/aspect;}
-  if(ph6>maxDim){ph6=maxDim;pw6=maxDim*aspect;}
-  
-  const gW=500;const gH=Math.floor(gW*(ph6)/(pw6));
-  const tR=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true});
-  tR.setClearColor(0x050510,1);tR.setSize(gW,gH);tR.setPixelRatio(1);
-  const tC=new THREE.PerspectiveCamera(45,gW/gH,.1,1000);tC.position.set(0,0,6);
-  const totalF=36;
-  const gif=new GIF({workers:2,quality:10,width:gW,height:gH,workerScript:'https://cdn.jsdelivr.net/gh/jnordberg/gif.js@0.2.0/dist/gif.worker.js',repeat:0});
-  gif.on('progress',p=>{document.getElementById('ltxt').textContent='ENCODING '+Math.round(p*100)+'%';});
-  gif.on('finished',blob=>{
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');a.download='ArtMarks-'+Date.now()+'.gif';a.href=url;
-    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
-    tR.dispose();tR.forceContextLoss();hideL();toast('🎞 GIF SAVED!');
-  });
-  let cap2=0;
-  function gFrame(){
-    const angle=(cap2/totalF)*Math.PI*2;
-    if(cardGroup){cardGroup.rotation.y=angle;cardGroup.rotation.x=0;}
-    if(chromeFront&&chromeFront.visible){chromeFront.material.uniforms.uTime.value=(cap2/totalF)*4;}
-    if(chromeBack&&chromeBack.visible){chromeBack.material.uniforms.uTime.value=(cap2/totalF)*4;}
-    drawGlassCard((cap2/totalF)*4);
-    tR.render(sc,tC);
-    const tc2=document.createElement('canvas');tc2.width=gW;tc2.height=gH;
-    tc2.getContext('2d').drawImage(tR.domElement,0,0);
-    gif.addFrame(tc2,{delay:60,copy:true});
-    cap2++;
-    document.getElementById('ltxt').textContent='CAPTURING '+Math.round((cap2/totalF)*100)+'%';
-    if(cap2<totalF)setTimeout(gFrame,30);
-    else{document.getElementById('ltxt').textContent='ENCODING...';gif.render();}
-  }
-  gFrame();
-}
-
-function showL(txt){document.getElementById('loader').classList.add('on');document.getElementById('ltxt').textContent=txt;}
-function hideL(){document.getElementById('loader').classList.remove('on');}
-function toast(m){const te=document.getElementById('toastEl');te.textContent=m;te.classList.add('on');setTimeout(()=>te.classList.remove('on'),3000);}
-
-const upZ=document.getElementById('upZone'),fIn=document.getElementById('fileInput');
-upZ.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();fIn.value='';fIn.click();});
-fIn.addEventListener('change',e=>{
-  const f=e.target.files[0];if(!f)return;
-  if(!f.type.startsWith('image/')){toast('❌ NOT IMAGE');return;}
-  showL('LOADING...');seed=Math.random()*1000;
-  const r=new FileReader();
-  r.onload=ev=>setTimeout(()=>processImage(ev.target.result),100);
-  r.onerror=()=>{hideL();toast('❌ READ ERROR');};
-  r.readAsDataURL(f);
-});
-upZ.addEventListener('dragover',e=>{e.preventDefault();e.stopPropagation();upZ.style.background='rgba(0,240,255,.15)';});
-upZ.addEventListener('dragleave',e=>{e.preventDefault();e.stopPropagation();upZ.style.background='rgba(0,240,255,.04)';});
-upZ.addEventListener('drop',e=>{
-  e.preventDefault();e.stopPropagation();upZ.style.background='rgba(0,240,255,.04)';
-  const f=e.dataTransfer.files[0];
-  if(f&&f.type.startsWith('image/')){showL('LOADING...');seed=Math.random()*1000;const r=new FileReader();r.onload=ev=>setTimeout(()=>processImage(ev.target.result),100);r.onerror=()=>{hideL();toast('❌ READ ERROR');};r.readAsDataURL(f);}
-});
-
-init();
-</script>
-</body>
-</html>
+      ph2
