@@ -25,7 +25,6 @@ body{background:var(--bg);font-family:'Segoe UI',sans-serif;color:#fff;overflow:
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .wallet-btn{padding:8px 16px;background:linear-gradient(135deg,rgba(255,215,0,.1),rgba(0,240,255,.1));border:1px solid rgba(255,215,0,.4);color:#ffd700;font-size:9px;letter-spacing:1.5px;cursor:pointer;border-radius:20px;font-weight:bold;transition:all .3s}
 .wallet-btn:hover{box-shadow:0 0 18px rgba(255,215,0,.3)}
-.wallet-btn.on{border-color:#0f8;color:#0f8}
 
 .left-panel{position:fixed;top:65px;left:12px;z-index:100;width:280px;max-height:calc(100vh - 80px);overflow-y:auto;padding:14px;background:rgba(10,10,25,.9);border:1px solid rgba(0,240,255,.2);border-radius:12px;backdrop-filter:blur(12px)}
 .left-panel::-webkit-scrollbar{width:3px}
@@ -131,6 +130,7 @@ canvas#expCv{display:none}
   <div class="sg"><div class="sl"><span>🎴 THICKNESS</span><span class="sv" id="vt">25%</span></div><input type="range" id="st2" min="10" max="100" value="25"></div>
   <div class="sg"><div class="sl"><span>💡 FRAME GLOW</span><span class="sv" id="vfg">100%</span></div><input type="range" id="sfg" min="0" max="200" value="100"></div>
   <div class="sg"><div class="sl"><span>🪟 GLASS OPACITY</span><span class="sv" id="vgo">15%</span></div><input type="range" id="sgo" min="5" max="50" value="15"></div>
+  <div class="sg"><div class="sl"><span>✨ GLASS SHINE</span><span class="sv" id="vgs">80%</span></div><input type="range" id="sgs" min="0" max="150" value="80"></div>
 
   <div class="stitle">RARITY</div>
   <div class="br">
@@ -167,9 +167,9 @@ canvas#expCv{display:none}
 <script>
 let sc,cam,rend,particles;
 let cardGroup;
-let chromeM,chromeBackM;
-let frameCanvas,frameCtx,frameTexture,frameMesh,frameBackMesh;
-let glassFrontMesh,glassBackMesh;
+let chromeFront,chromeBack;
+let frameCanvas,frameCtx,frameTexture,glassFrontMesh,glassBackMesh;
+let imageFrontMesh,imageBackMesh;
 let mx=0,my=0,smx=0,smy=0,t=0,ry=0;
 let chrOn=true,seed=Math.random()*1000;
 let artTex=null,aw=0,ah=0,artImage=null;
@@ -177,6 +177,8 @@ let hlM=0,rar='LEGENDARY';
 let autoRotate=true;
 let manualRotation=0;
 let glassOpacity=0.15;
+let glassShine=0.8;
+let cardW=0,cardH=0;
 
 const P={met:1,shm:.7,iri:.85,glt:.6,rot:.4,thk:.25,fg:1};
 
@@ -238,36 +240,56 @@ function buildScene(tex,pw,ph){
   }
 
   cardGroup=new THREE.Group();
+  cardW=pw;
+  cardH=ph;
   const depth=.04+P.thk*.18;
 
-  // ====== الطبقة 1: الصورة في الخلف ======
-  // الوجه الأمامي للصورة
-  const front=new THREE.Mesh(new THREE.PlaneGeometry(pw*.92,ph*.78),new THREE.MeshBasicMaterial({map:tex,side:THREE.FrontSide}));
-  front.position.z=-.005;
-  front.position.y=ph*.04;
-  cardGroup.add(front);
-
-  // Chrome على الصورة
+  // ====== الصورة تملأ البطاقة كاملة (الواجهة الأمامية) ======
+  // الصورة بنفس حجم البطاقة بالضبط
+  const imgGeo=new THREE.PlaneGeometry(pw,ph);
+  
+  // الصورة الأمامية
+  const imgMatFront=new THREE.MeshBasicMaterial({map:tex,side:THREE.FrontSide});
+  imageFrontMesh=new THREE.Mesh(imgGeo,imgMatFront);
+  imageFrontMesh.position.z=-.005;
+  cardGroup.add(imageFrontMesh);
+  
+  // Chrome على الواجهة الأمامية
   const cMat=new THREE.ShaderMaterial({
     uniforms:{uT:{value:tex},uTime:{value:0},uMet:{value:P.met},uShm:{value:P.shm},uIri:{value:P.iri},uGlt:{value:P.glt},uMs:{value:new THREE.Vector2()},uSd:{value:seed},uHL:{value:hlM}},
     vertexShader:VS,fragmentShader:FS,transparent:true,side:THREE.FrontSide
   });
-  chromeM=new THREE.Mesh(new THREE.PlaneGeometry(pw*.92,ph*.78),cMat);
-  chromeM.position.z=0;
-  chromeM.position.y=ph*.04;
-  chromeM.visible=chrOn;
-  cardGroup.add(chromeM);
+  chromeFront=new THREE.Mesh(imgGeo.clone(),cMat);
+  chromeFront.position.z=0;
+  chromeFront.visible=chrOn;
+  cardGroup.add(chromeFront);
 
-  // ====== الطبقة 2: البطاقة الزجاجية الكاملة ======
-  // إنشاء تكستشر البطاقة
+  // ====== الصورة على الواجهة الخلفية (لتظهر عند الدوران) ======
+  const imgMatBack=new THREE.MeshBasicMaterial({map:tex,side:THREE.FrontSide});
+  imageBackMesh=new THREE.Mesh(imgGeo.clone(),imgMatBack);
+  imageBackMesh.position.z=-depth+.005;
+  imageBackMesh.rotation.y=Math.PI;
+  cardGroup.add(imageBackMesh);
+  
+  // Chrome على الواجهة الخلفية
+  const cMat2=new THREE.ShaderMaterial({
+    uniforms:{uT:{value:tex},uTime:{value:0},uMet:{value:P.met},uShm:{value:P.shm},uIri:{value:P.iri},uGlt:{value:P.glt},uMs:{value:new THREE.Vector2()},uSd:{value:seed},uHL:{value:hlM}},
+    vertexShader:VS,fragmentShader:FS,transparent:true,side:THREE.FrontSide
+  });
+  chromeBack=new THREE.Mesh(imgGeo.clone(),cMat2);
+  chromeBack.position.z=-depth;
+  chromeBack.rotation.y=Math.PI;
+  chromeBack.visible=chrOn;
+  cardGroup.add(chromeBack);
+
+  // ====== البطاقة الزجاجية (إطار + زجاج) ======
   const fScale=900;
-  const fm=1.18;
-  const cardW=Math.floor(fScale*fm);
-  const cardH=Math.floor(fScale*(ph/pw)*fm);
+  const fcW=Math.floor(fScale);
+  const fcH=Math.floor(fScale*(ph/pw));
   
   frameCanvas=document.createElement('canvas');
-  frameCanvas.width=cardW;
-  frameCanvas.height=cardH;
+  frameCanvas.width=fcW;
+  frameCanvas.height=fcH;
   frameCtx=frameCanvas.getContext('2d');
   
   drawGlassCard(0);
@@ -275,86 +297,84 @@ function buildScene(tex,pw,ph){
   frameTexture=new THREE.CanvasTexture(frameCanvas);
   frameTexture.needsUpdate=true;
 
-  // الوجه الأمامي للبطاقة الزجاجية
+  // الزجاج الأمامي (نفس حجم الصورة بالضبط)
   glassFrontMesh=new THREE.Mesh(
-    new THREE.PlaneGeometry(pw*fm,ph*fm),
+    new THREE.PlaneGeometry(pw,ph),
     new THREE.MeshBasicMaterial({map:frameTexture,transparent:true,side:THREE.FrontSide,depthWrite:false})
   );
-  glassFrontMesh.position.z=depth/2;
+  glassFrontMesh.position.z=.005;
   cardGroup.add(glassFrontMesh);
 
-  // الوجه الخلفي للبطاقة الزجاجية
+  // الزجاج الخلفي
   glassBackMesh=new THREE.Mesh(
-    new THREE.PlaneGeometry(pw*fm,ph*fm),
+    new THREE.PlaneGeometry(pw,ph),
     new THREE.MeshBasicMaterial({map:frameTexture,transparent:true,side:THREE.FrontSide,depthWrite:false})
   );
-  glassBackMesh.position.z=-depth/2;
+  glassBackMesh.position.z=-depth-.005;
   glassBackMesh.rotation.y=Math.PI;
   cardGroup.add(glassBackMesh);
 
-  // ====== الطبقة 3: الحواف الزجاجية الجانبية ======
-  // حواف معدنية شفافة
+  // ====== الحواف الزجاجية الجانبية (سمك البطاقة) ======
   const edgeColor=new THREE.Color(0x1a4a6a);
-  const edgeMat=new THREE.MeshBasicMaterial({color:edgeColor,transparent:true,opacity:.7,side:THREE.DoubleSide});
+  const edgeMat=new THREE.MeshBasicMaterial({color:edgeColor,transparent:true,opacity:.6,side:THREE.DoubleSide});
   
   // علوي
-  const topE=new THREE.Mesh(new THREE.PlaneGeometry(pw*fm,depth),edgeMat);
-  topE.position.y=ph*fm/2;topE.rotation.x=Math.PI/2;cardGroup.add(topE);
+  const topE=new THREE.Mesh(new THREE.PlaneGeometry(pw,depth),edgeMat);
+  topE.position.set(0,ph/2,-depth/2);topE.rotation.x=Math.PI/2;cardGroup.add(topE);
   // سفلي
-  const botE=new THREE.Mesh(new THREE.PlaneGeometry(pw*fm,depth),edgeMat);
-  botE.position.y=-ph*fm/2;botE.rotation.x=-Math.PI/2;cardGroup.add(botE);
+  const botE=new THREE.Mesh(new THREE.PlaneGeometry(pw,depth),edgeMat);
+  botE.position.set(0,-ph/2,-depth/2);botE.rotation.x=-Math.PI/2;cardGroup.add(botE);
   // يساري
-  const lftE=new THREE.Mesh(new THREE.PlaneGeometry(depth,ph*fm),edgeMat);
-  lftE.position.x=-pw*fm/2;lftE.rotation.y=Math.PI/2;cardGroup.add(lftE);
+  const lftE=new THREE.Mesh(new THREE.PlaneGeometry(depth,ph),edgeMat);
+  lftE.position.set(-pw/2,0,-depth/2);lftE.rotation.y=Math.PI/2;cardGroup.add(lftE);
   // يميني
-  const rgtE=new THREE.Mesh(new THREE.PlaneGeometry(depth,ph*fm),edgeMat);
-  rgtE.position.x=pw*fm/2;rgtE.rotation.y=-Math.PI/2;cardGroup.add(rgtE);
+  const rgtE=new THREE.Mesh(new THREE.PlaneGeometry(depth,ph),edgeMat);
+  rgtE.position.set(pw/2,0,-depth/2);rgtE.rotation.y=-Math.PI/2;cardGroup.add(rgtE);
 
   // خطوط توهج على الحواف
-  const glowMat=new THREE.MeshBasicMaterial({color:0x00f0ff,transparent:true,opacity:.6,side:THREE.DoubleSide,blending:THREE.AdditiveBlending});
+  const glowMat=new THREE.MeshBasicMaterial({color:0x00f0ff,transparent:true,opacity:.7,side:THREE.DoubleSide,blending:THREE.AdditiveBlending});
   
-  cardGroup.add(makeEdgeGlow(pw*fm,.005,0,ph*fm/2,depth/2+.001,glowMat));
-  cardGroup.add(makeEdgeGlow(pw*fm,.005,0,-ph*fm/2,depth/2+.001,glowMat));
-  cardGroup.add(makeEdgeGlow(.005,ph*fm,-pw*fm/2,0,depth/2+.001,glowMat));
-  cardGroup.add(makeEdgeGlow(.005,ph*fm,pw*fm/2,0,depth/2+.001,glowMat));
+  cardGroup.add(makeGlow(pw,.006,0,ph/2,.006,glowMat));
+  cardGroup.add(makeGlow(pw,.006,0,-ph/2,.006,glowMat));
+  cardGroup.add(makeGlow(.006,ph,-pw/2,0,.006,glowMat));
+  cardGroup.add(makeGlow(.006,ph,pw/2,0,.006,glowMat));
 
   cardGroup.position.y=.05;
   sc.add(cardGroup);
 }
 
-function makeEdgeGlow(w,h,x,y,z,mat){
+function makeGlow(w,h,x,y,z,mat){
   const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),mat);
   m.position.set(x,y,z);
   return m;
 }
 
-// ============ رسم البطاقة الزجاجية مثل الصورة المرجعية ============
+// ============ رسم البطاقة الزجاجية ============
 function drawGlassCard(time){
   if(!frameCtx)return;
   const w=frameCanvas.width,h=frameCanvas.height;
   const x=frameCtx;
   x.clearRect(0,0,w,h);
   
-  // ====== المسار المتعرج للبطاقة (مع الزوايا المقطوعة) ======
-  const cornerCut=Math.min(w,h)*.04;
+  const cornerCut=Math.min(w,h)*.045;
   
-  // ====== الطبقة 1: الزجاج الشفاف الأزرق ======
-  drawGlassBackground(x,w,h,cornerCut,time);
+  // 1. الزجاج الشفاف (طبقة شفافة فوق الصورة)
+  drawGlassLayer(x,w,h,cornerCut,time);
   
-  // ====== الطبقة 2: الإطار المعدني الفاخر ======
+  // 2. الإطار المعدني
   drawMetallicFrame(x,w,h,cornerCut,time);
   
-  // ====== الطبقة 3: الزخارف العلوية - COLLECTION ======
+  // 3. التفاصيل العلوية
   drawTopSection(x,w,h,time);
   
-  // ====== الطبقة 4: الزخارف السفلية - الاسم ======
+  // 4. اسم البطاقة في الأسفل
   drawBottomNameTag(x,w,h,time);
   
-  // ====== الطبقة 5: التفاصيل الجانبية ======
+  // 5. التفاصيل الجانبية
   drawSideDetails(x,w,h,time);
   
-  // ====== الطبقة 6: انعكاسات الزجاج ======
-  drawGlassReflections(x,w,h,time);
+  // 6. ✨ البريق الزجاجي القوي والواقعي ✨
+  drawRealisticGlassShine(x,w,h,cornerCut,time);
   
   if(frameTexture)frameTexture.needsUpdate=true;
 }
@@ -372,103 +392,65 @@ function cardPath(ctx,xx,yy,w,h,cut){
   ctx.closePath();
 }
 
-function drawGlassBackground(x,w,h,cut,time){
-  // الزجاج الشفاف بلون أزرق فاتح
+function drawGlassLayer(x,w,h,cut,time){
+  // طبقة الزجاج الشفافة الخفيفة جداً (تترك الصورة واضحة)
   const glassGrad=x.createLinearGradient(0,0,w,h);
-  glassGrad.addColorStop(0,`rgba(80,150,200,${glassOpacity*1.2})`);
-  glassGrad.addColorStop(.3,`rgba(40,90,140,${glassOpacity})`);
-  glassGrad.addColorStop(.5,`rgba(20,60,100,${glassOpacity*.8})`);
-  glassGrad.addColorStop(.7,`rgba(40,90,140,${glassOpacity})`);
-  glassGrad.addColorStop(1,`rgba(80,150,200,${glassOpacity*1.2})`);
+  glassGrad.addColorStop(0,`rgba(100,180,220,${glassOpacity*.8})`);
+  glassGrad.addColorStop(.5,`rgba(40,80,120,${glassOpacity*.4})`);
+  glassGrad.addColorStop(1,`rgba(100,180,220,${glassOpacity*.8})`);
   
   x.fillStyle=glassGrad;
-  cardPath(x,15,15,w-30,h-30,cut);
-  x.fill();
-  
-  // طبقة Frosted (ضباب زجاجي)
-  x.fillStyle=`rgba(150,200,230,${glassOpacity*.3})`;
-  cardPath(x,15,15,w-30,h-30,cut);
+  cardPath(x,5,5,w-10,h-10,cut);
   x.fill();
 }
 
 function drawMetallicFrame(x,w,h,cut,time){
   const pulse=.85+Math.sin(time*1.5)*.15;
   
-  // ====== الإطار الخارجي - خط معدني فاخر ======
-  // ظل خارجي
-  x.shadowColor=`rgba(0,240,255,${pulse*.5})`;
+  // الإطار الخارجي السيان
+  x.shadowColor=`rgba(0,240,255,${pulse*.6})`;
   x.shadowBlur=20*P.fg;
-  
-  // الخط الخارجي - معدني سيان
-  x.strokeStyle=`rgba(0,240,255,${pulse*.85})`;
+  x.strokeStyle=`rgba(0,240,255,${pulse*.9})`;
   x.lineWidth=2.5;
-  cardPath(x,15,15,w-30,h-30,cut);
+  cardPath(x,5,5,w-10,h-10,cut);
   x.stroke();
   
   // خط داخلي رفيع أبيض
   x.shadowBlur=8*P.fg;
   x.strokeStyle='rgba(220,250,255,.7)';
   x.lineWidth=.8;
-  cardPath(x,18,18,w-36,h-36,cut-2);
+  cardPath(x,9,9,w-18,h-18,cut-2);
   x.stroke();
   
   x.shadowBlur=0;
   
-  // ====== الإطار الثاني المعدني الفاخر ======
-  // تدرج معدني للإطار الداخلي
-  const fGrad=x.createLinearGradient(0,0,0,h);
-  fGrad.addColorStop(0,'rgba(140,170,200,.6)');
-  fGrad.addColorStop(.3,'rgba(80,110,150,.5)');
-  fGrad.addColorStop(.5,'rgba(50,80,120,.4)');
-  fGrad.addColorStop(.7,'rgba(80,110,150,.5)');
-  fGrad.addColorStop(1,'rgba(140,170,200,.6)');
-  x.strokeStyle=fGrad;
-  x.lineWidth=8;
-  cardPath(x,28,28,w-56,h-56,cut-4);
-  x.stroke();
-  
-  // خط لامع داخل الإطار المعدني
-  x.strokeStyle='rgba(255,255,255,.4)';
-  x.lineWidth=1;
-  cardPath(x,26,26,w-52,h-52,cut-3);
-  x.stroke();
-  
-  // ====== زوايا تقنية مزخرفة ======
+  // زوايا تقنية
   drawCornerDecorations(x,w,h,cut,time);
-  
-  // ====== خطوط زخرفية على الجوانب ======
-  drawSideLines(x,w,h,cut,time);
 }
 
 function drawCornerDecorations(x,w,h,cut,time){
   const pulse=.7+Math.sin(time*2)*.3;
   
-  // زوايا متعددة الطبقات (مثل الصورة)
-  // TL
-  drawCornerOrnament(x,40,40,30,'tl',pulse,time);
-  // TR
-  drawCornerOrnament(x,w-40,40,30,'tr',pulse,time);
-  // BL
-  drawCornerOrnament(x,40,h-40,30,'bl',pulse,time);
-  // BR
-  drawCornerOrnament(x,w-40,h-40,30,'br',pulse,time);
+  drawCornerOrnament(x,25,25,28,'tl',pulse,time);
+  drawCornerOrnament(x,w-25,25,28,'tr',pulse,time);
+  drawCornerOrnament(x,25,h-25,28,'bl',pulse,time);
+  drawCornerOrnament(x,w-25,h-25,28,'br',pulse,time);
 }
 
 function drawCornerOrnament(x,cx,cy,size,corner,pulse,time){
   x.save();
   x.translate(cx,cy);
   
-  // تدوير حسب الزاوية
   if(corner==='tr')x.rotate(Math.PI/2);
   else if(corner==='br')x.rotate(Math.PI);
   else if(corner==='bl')x.rotate(-Math.PI/2);
   
   x.shadowColor=`rgba(0,240,255,${pulse})`;
   x.shadowBlur=10*P.fg;
-  x.strokeStyle=`rgba(0,240,255,${pulse*.9})`;
+  x.strokeStyle=`rgba(0,240,255,${pulse*.95})`;
   x.lineWidth=2;
   
-  // قوس الزاوية الرئيسي
+  // قوس الزاوية
   x.beginPath();
   x.moveTo(0,size);
   x.lineTo(0,8);
@@ -476,8 +458,8 @@ function drawCornerOrnament(x,cx,cy,size,corner,pulse,time){
   x.lineTo(size,0);
   x.stroke();
   
-  // خط داخلي ثاني
-  x.strokeStyle='rgba(255,255,255,.5)';
+  // خط داخلي
+  x.strokeStyle='rgba(255,255,255,.6)';
   x.lineWidth=1;
   x.beginPath();
   x.moveTo(5,size-2);
@@ -495,68 +477,42 @@ function drawCornerOrnament(x,cx,cy,size,corner,pulse,time){
   x.restore();
 }
 
-function drawSideLines(x,w,h,cut,time){
-  // خطوط زخرفية على الجوانب الأربعة (مثل الصورة)
-  const lineLen=80;
-  const lineY=30;
-  const pulse=.6+Math.sin(time*2)*.3;
-  
-  // علوي - يسار ويمين
-  x.shadowColor=`rgba(0,240,255,${pulse*.5})`;
-  x.shadowBlur=4;
-  x.strokeStyle=`rgba(0,240,255,${pulse*.6})`;
-  x.lineWidth=1;
-  x.beginPath();
-  x.moveTo(80,lineY);x.lineTo(80+lineLen,lineY);
-  x.stroke();
-  x.beginPath();
-  x.moveTo(w-80-lineLen,lineY);x.lineTo(w-80,lineY);
-  x.stroke();
-  
-  // سفلي
-  x.beginPath();
-  x.moveTo(80,h-lineY);x.lineTo(80+lineLen,h-lineY);
-  x.stroke();
-  x.beginPath();
-  x.moveTo(w-80-lineLen,h-lineY);x.lineTo(w-80,h-lineY);
-  x.stroke();
-  
-  x.shadowBlur=0;
-}
-
 function drawTopSection(x,w,h,time){
-  // ====== Collection: PREDS (في الأعلى يسار) ======
   const collection=document.getElementById('inpCollection').value;
   const code=document.getElementById('inpCode').value;
   
-  x.font='600 16px Segoe UI';
+  // COLLECTION
+  x.font='bold 14px Segoe UI';
   x.fillStyle='rgba(255,255,255,.95)';
   x.textAlign='left';
   x.textBaseline='top';
-  x.shadowColor='rgba(0,0,0,.5)';
-  x.shadowBlur=4;
-  x.fillText('COLLECTION: '+collection,55,55);
+  x.shadowColor='rgba(0,0,0,.6)';
+  x.shadowBlur=5;
+  x.fillText('COLLECTION: '+collection,40,38);
   x.shadowBlur=0;
   
-  // ====== لوحة بيانات صغيرة تحت Collection (مثل الصورة) ======
-  drawDataPanel(x,55,90,140,90,time);
+  // لوحة بيانات صغيرة
+  drawDataPanel(x,40,68,120,80,time);
   
-  // ====== كود QR/F120M في الأعلى يمين ======
+  // كود QR في الأعلى يمين
   drawTopRightCode(x,w,code,time);
 }
 
 function drawDataPanel(x,px,py,pw,ph,time){
   // إطار اللوحة
-  x.shadowColor='rgba(0,240,255,.3)';
+  x.shadowColor='rgba(0,240,255,.4)';
   x.shadowBlur=6;
-  x.strokeStyle='rgba(0,240,255,.5)';
+  x.strokeStyle='rgba(0,240,255,.6)';
   x.lineWidth=1;
   x.strokeRect(px,py,pw,ph);
   x.shadowBlur=0;
   
-  // أسطر بيانات
+  // خلفية شفافة
+  x.fillStyle='rgba(0,30,60,.3)';
+  x.fillRect(px,py,pw,ph);
+  
   x.font='6px monospace';
-  x.fillStyle='rgba(255,255,255,.5)';
+  x.fillStyle='rgba(255,255,255,.7)';
   x.textAlign='left';
   
   const lines=['STATS:','WS75% K-D:5.5%','TT.RUNS:7','RPRS:12','TR.TIME:25min','PRS:55%','RR.RUS:23.45'];
@@ -564,20 +520,12 @@ function drawDataPanel(x,px,py,pw,ph,time){
     x.fillText(line,px+5,py+10+i*8);
   });
   
-  // قسم سفلي
-  x.fillStyle='rgba(0,240,255,.4)';
-  x.fillRect(px+5,py+ph-30,pw-10,1);
-  x.font='5px monospace';
-  x.fillText('SPEED',px+5,py+ph-22);
-  x.fillText('TAK.DOWN',px+5,py+ph-15);
-  x.fillText('JUMP',px+5,py+ph-8);
-  
   // رسم بياني صغير
-  x.strokeStyle='rgba(0,240,255,.5)';
+  x.strokeStyle='rgba(0,240,255,.7)';
   x.lineWidth=.8;
   x.beginPath();
   for(let i=0;i<8;i++){
-    const xx=px+50+i*8;
+    const xx=px+50+i*7;
     const yy=py+ph-15-Math.sin(i+time)*8-5;
     if(i===0)x.moveTo(xx,yy);else x.lineTo(xx,yy);
   }
@@ -585,29 +533,34 @@ function drawDataPanel(x,px,py,pw,ph,time){
 }
 
 function drawTopRightCode(x,w,code,time){
-  const cx=w-100;
-  const cy=80;
+  const cx=w-90;
+  const cy=68;
   const cs=50;
   
+  // خلفية شفافة للكود
+  x.fillStyle='rgba(0,30,60,.3)';
+  x.fillRect(cx,cy,cs,cs);
+  
   // إطار الكود
-  x.strokeStyle='rgba(0,240,255,.6)';
+  x.strokeStyle='rgba(0,240,255,.7)';
   x.lineWidth=1.5;
-  x.shadowColor='rgba(0,240,255,.5)';
+  x.shadowColor='rgba(0,240,255,.6)';
   x.shadowBlur=8;
   x.strokeRect(cx,cy,cs,cs);
   
-  // QR-like pattern داخلي
+  // QR-like pattern
   x.shadowBlur=0;
-  x.fillStyle='rgba(255,255,255,.6)';
+  x.fillStyle='rgba(255,255,255,.7)';
   for(let i=0;i<6;i++){
     for(let j=0;j<6;j++){
-      if(Math.random()>.5){
+      const r=Math.sin(i*7.3+j*3.1+seed)*.5+.5;
+      if(r>.5){
         x.fillRect(cx+5+i*7,cy+5+j*7,5,5);
       }
     }
   }
   
-  // النص أسفل الكود
+  // النص
   x.font='bold 11px Segoe UI';
   x.fillStyle='#fff';
   x.textAlign='center';
@@ -615,29 +568,19 @@ function drawTopRightCode(x,w,code,time){
   x.shadowBlur=4;
   x.fillText(code,cx+cs/2,cy+cs+15);
   x.shadowBlur=0;
-  
-  // نصوص صغيرة تحت الكود
-  x.font='7px monospace';
-  x.fillStyle='rgba(255,255,255,.5)';
-  x.textAlign='right';
-  x.fillText('LEOPARDOS',cx+cs,cy+cs+30);
-  x.fillText('PROFILE.305',cx+cs,cy+cs+40);
 }
 
 function drawBottomNameTag(x,w,h,time){
-  // ====== لوحة الاسم السفلية (مثل الصورة) ======
   const name=document.getElementById('inpName').value;
   const subtitle=document.getElementById('inpSubtitle').value;
   
-  // أبعاد اللوحة
   const pw=Math.min(w*.55,400);
   const ph=80;
   const px=w/2-pw/2;
-  const py=h-ph-50;
+  const py=h-ph-40;
   
-  // ===== خلفية اللوحة المعدنية =====
   // ظل
-  x.shadowColor='rgba(0,0,0,.6)';
+  x.shadowColor='rgba(0,0,0,.7)';
   x.shadowBlur=15;
   x.shadowOffsetY=5;
   
@@ -648,7 +591,6 @@ function drawBottomNameTag(x,w,h,time){
   tagGrad.addColorStop(1,'rgba(20,40,60,.95)');
   x.fillStyle=tagGrad;
   
-  // شكل اللوحة مع زوايا مقطوعة
   const tagCut=10;
   cardPath(x,px,py,pw,ph,tagCut);
   x.fill();
@@ -656,7 +598,6 @@ function drawBottomNameTag(x,w,h,time){
   x.shadowBlur=0;
   x.shadowOffsetY=0;
   
-  // ===== إطار اللوحة =====
   const pulse=.85+Math.sin(time*2)*.15;
   x.shadowColor=`rgba(0,240,255,${pulse})`;
   x.shadowBlur=12*P.fg;
@@ -665,7 +606,6 @@ function drawBottomNameTag(x,w,h,time){
   cardPath(x,px,py,pw,ph,tagCut);
   x.stroke();
   
-  // خط أبيض داخلي
   x.shadowBlur=4;
   x.strokeStyle='rgba(255,255,255,.5)';
   x.lineWidth=.8;
@@ -674,7 +614,7 @@ function drawBottomNameTag(x,w,h,time){
   
   x.shadowBlur=0;
   
-  // ===== الاسم الكبير =====
+  // الاسم
   x.font='bold 32px Segoe UI';
   x.fillStyle='#fff';
   x.textAlign='center';
@@ -684,7 +624,7 @@ function drawBottomNameTag(x,w,h,time){
   x.fillText(name,px+pw/2,py+30);
   x.shadowBlur=0;
   
-  // ===== خط فاصل =====
+  // خط فاصل
   const lineGrad=x.createLinearGradient(px+pw*.2,0,px+pw*.8,0);
   lineGrad.addColorStop(0,'transparent');
   lineGrad.addColorStop(.5,'rgba(0,240,255,.6)');
@@ -696,93 +636,141 @@ function drawBottomNameTag(x,w,h,time){
   x.lineTo(px+pw*.8,py+50);
   x.stroke();
   
-  // ===== العنوان الفرعي =====
+  // العنوان الفرعي
   x.font='600 16px Segoe UI';
-  x.fillStyle='rgba(0,240,255,.9)';
+  x.fillStyle='rgba(0,240,255,.95)';
   x.shadowColor='rgba(0,240,255,.5)';
   x.shadowBlur=4;
   x.fillText(subtitle,px+pw/2,py+65);
   x.shadowBlur=0;
-  
-  // ===== زاويتان معدنيتان على جانبي اللوحة =====
-  drawTagSideDecorations(x,px,py,pw,ph,time);
-}
-
-function drawTagSideDecorations(x,px,py,pw,ph,time){
-  const pulse=.7+Math.sin(time*3)*.3;
-  
-  // يسار اللوحة
-  x.shadowColor=`rgba(0,240,255,${pulse})`;
-  x.shadowBlur=8;
-  x.fillStyle=`rgba(0,240,255,${pulse})`;
-  
-  // مربع صغير يسار
-  x.fillRect(px-15,py+ph/2-3,8,6);
-  
-  // مربع صغير يمين
-  x.fillRect(px+pw+7,py+ph/2-3,8,6);
-  
-  x.shadowBlur=0;
 }
 
 function drawSideDetails(x,w,h,time){
-  // تفاصيل صغيرة على الجوانب (مثل الصورة)
   const pulse=.6+Math.sin(time*2)*.3;
+  x.fillStyle=`rgba(0,240,255,${pulse*.6})`;
+  x.shadowColor='rgba(0,240,255,.5)';
+  x.shadowBlur=4;
   
-  // نقاط زخرفية
-  x.fillStyle=`rgba(0,240,255,${pulse*.5})`;
-  x.shadowColor='rgba(0,240,255,.4)';
-  x.shadowBlur=3;
-  
-  // خط عمودي يسار
   for(let i=0;i<5;i++){
-    x.fillRect(45,h*.4+i*15,3,3);
-  }
-  // خط عمودي يمين
-  for(let i=0;i<5;i++){
-    x.fillRect(w-48,h*.4+i*15,3,3);
+    x.fillRect(35,h*.4+i*15,4,4);
+    x.fillRect(w-39,h*.4+i*15,4,4);
   }
   
   x.shadowBlur=0;
 }
 
-function drawGlassReflections(x,w,h,time){
-  // انعكاسات الزجاج (مهم للإحساس الزجاجي)
+// ====== ✨ البريق الزجاجي الواقعي القوي ✨ ======
+function drawRealisticGlassShine(x,w,h,cut,time){
+  // قص المنطقة لشكل البطاقة
+  x.save();
+  cardPath(x,5,5,w-10,h-10,cut);
+  x.clip();
   
-  // انعكاس قطري علوي
-  const reflGrad=x.createLinearGradient(0,0,w*.5,h*.5);
-  reflGrad.addColorStop(0,'rgba(255,255,255,.08)');
-  reflGrad.addColorStop(.5,'rgba(255,255,255,.02)');
-  reflGrad.addColorStop(1,'rgba(255,255,255,0)');
-  x.fillStyle=reflGrad;
-  cardPath(x,15,15,w-30,h-30,Math.min(w,h)*.04);
-  x.fill();
+  // === 1. الإضاءة العامة (top highlight) ===
+  const topLight=x.createLinearGradient(0,0,0,h*.5);
+  topLight.addColorStop(0,`rgba(255,255,255,${.18*glassShine})`);
+  topLight.addColorStop(.3,`rgba(255,255,255,${.06*glassShine})`);
+  topLight.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=topLight;
+  x.fillRect(0,0,w,h*.5);
   
-  // انعكاس متحرك
-  const moveX=Math.sin(time*.5)*100;
-  const reflGrad2=x.createLinearGradient(w*.3+moveX,0,w*.7+moveX,h);
-  reflGrad2.addColorStop(0,'rgba(255,255,255,0)');
-  reflGrad2.addColorStop(.45,'rgba(255,255,255,0)');
-  reflGrad2.addColorStop(.5,'rgba(255,255,255,.05)');
-  reflGrad2.addColorStop(.55,'rgba(255,255,255,0)');
-  reflGrad2.addColorStop(1,'rgba(255,255,255,0)');
-  x.fillStyle=reflGrad2;
-  cardPath(x,15,15,w-30,h-30,Math.min(w,h)*.04);
-  x.fill();
+  // === 2. البريق القطري الكبير المتحرك ===
+  const shinePos=(time*.15)%2-.5;
+  const shineX=shinePos*w;
   
-  // نقاط ضوئية
-  for(let i=0;i<8;i++){
-    const px=Math.sin(i+time*.3)*w*.4+w/2;
-    const py=Math.cos(i*1.3+time*.2)*h*.4+h/2;
-    const a=.1+Math.sin(time*2+i)*.05;
-    if(a>.05){
-      const g=x.createRadialGradient(px,py,0,px,py,15);
-      g.addColorStop(0,`rgba(0,240,255,${a})`);
-      g.addColorStop(1,'rgba(0,240,255,0)');
+  x.save();
+  x.translate(shineX,0);
+  x.rotate(-Math.PI/8);
+  
+  const shineGrad=x.createLinearGradient(-w*.3,0,w*.3,0);
+  shineGrad.addColorStop(0,'rgba(255,255,255,0)');
+  shineGrad.addColorStop(.4,'rgba(255,255,255,0)');
+  shineGrad.addColorStop(.48,`rgba(255,255,255,${.15*glassShine})`);
+  shineGrad.addColorStop(.5,`rgba(255,255,255,${.4*glassShine})`);
+  shineGrad.addColorStop(.52,`rgba(255,255,255,${.15*glassShine})`);
+  shineGrad.addColorStop(.6,'rgba(255,255,255,0)');
+  shineGrad.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=shineGrad;
+  x.fillRect(-w,-h,w*3,h*3);
+  
+  x.restore();
+  
+  // === 3. بريق قطري ثانٍ معاكس ===
+  const shinePos2=(time*.12+.6)%2-.5;
+  const shineX2=(1-shinePos2)*w;
+  
+  x.save();
+  x.translate(shineX2,0);
+  x.rotate(Math.PI/10);
+  
+  const shineGrad2=x.createLinearGradient(-w*.2,0,w*.2,0);
+  shineGrad2.addColorStop(0,'rgba(255,255,255,0)');
+  shineGrad2.addColorStop(.45,'rgba(255,255,255,0)');
+  shineGrad2.addColorStop(.5,`rgba(180,220,255,${.25*glassShine})`);
+  shineGrad2.addColorStop(.55,'rgba(255,255,255,0)');
+  shineGrad2.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=shineGrad2;
+  x.fillRect(-w,-h,w*3,h*3);
+  
+  x.restore();
+  
+  // === 4. لمعة قوية في الزاوية العلوية اليسرى (مثل الزجاج الحقيقي) ===
+  const cornerShine=x.createRadialGradient(w*.2,h*.15,0,w*.2,h*.15,w*.4);
+  cornerShine.addColorStop(0,`rgba(255,255,255,${.25*glassShine})`);
+  cornerShine.addColorStop(.3,`rgba(255,255,255,${.1*glassShine})`);
+  cornerShine.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=cornerShine;
+  x.fillRect(0,0,w*.6,h*.5);
+  
+  // === 5. لمعة في الزاوية العلوية اليمنى ===
+  const cornerShine2=x.createRadialGradient(w*.85,h*.2,0,w*.85,h*.2,w*.3);
+  cornerShine2.addColorStop(0,`rgba(200,230,255,${.2*glassShine})`);
+  cornerShine2.addColorStop(1,'rgba(200,230,255,0)');
+  x.fillStyle=cornerShine2;
+  x.fillRect(w*.6,0,w*.4,h*.4);
+  
+  // === 6. إضاءة سفلية خفيفة ===
+  const bottomLight=x.createLinearGradient(0,h*.7,0,h);
+  bottomLight.addColorStop(0,'rgba(0,240,255,0)');
+  bottomLight.addColorStop(1,`rgba(0,240,255,${.08*glassShine})`);
+  x.fillStyle=bottomLight;
+  x.fillRect(0,h*.7,w,h*.3);
+  
+  // === 7. خط بريق رفيع متحرك على الحافة العلوية ===
+  const edgeShinePos=(time*.3)%1;
+  const esX=edgeShinePos*w;
+  const edgeGrad=x.createLinearGradient(esX-50,0,esX+50,0);
+  edgeGrad.addColorStop(0,'rgba(255,255,255,0)');
+  edgeGrad.addColorStop(.5,`rgba(255,255,255,${.6*glassShine})`);
+  edgeGrad.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=edgeGrad;
+  x.fillRect(esX-50,5,100,2);
+  
+  // === 8. نقاط ضوئية صغيرة (مثل غبار على الزجاج) ===
+  for(let i=0;i<15;i++){
+    const sx=Math.sin(i*1.7+time*.2)*w*.4+w/2;
+    const sy=Math.cos(i*2.3+time*.15)*h*.4+h/2;
+    const sa=Math.sin(time*1.5+i)*.5+.5;
+    if(sa>.4){
+      const dotR=2+Math.sin(i)*1;
+      const g=x.createRadialGradient(sx,sy,0,sx,sy,dotR*4);
+      g.addColorStop(0,`rgba(255,255,255,${sa*.5*glassShine})`);
+      g.addColorStop(1,'rgba(255,255,255,0)');
       x.fillStyle=g;
-      x.fillRect(px-15,py-15,30,30);
+      x.fillRect(sx-dotR*4,sy-dotR*4,dotR*8,dotR*8);
     }
   }
+  
+  // === 9. تأثير "Frosted Glass" خفيف جداً على الحواف ===
+  const edgeFrost=x.createLinearGradient(0,0,0,h);
+  edgeFrost.addColorStop(0,`rgba(150,200,230,${.05*glassShine})`);
+  edgeFrost.addColorStop(.1,'rgba(150,200,230,0)');
+  edgeFrost.addColorStop(.9,'rgba(150,200,230,0)');
+  edgeFrost.addColorStop(1,`rgba(150,200,230,${.05*glassShine})`);
+  x.fillStyle=edgeFrost;
+  x.fillRect(0,0,w,h);
+  
+  x.restore();
 }
 
 function processImage(dataUrl){
@@ -801,8 +789,25 @@ function processImage(dataUrl){
     tex.minFilter=THREE.LinearFilter;tex.magFilter=THREE.LinearFilter;tex.needsUpdate=true;
     artTex=tex;
 
-    const aspect=aw/ah;let pw2,ph2;const ts=2.5;
-    if(aspect>=1){pw2=ts;ph2=ts/aspect;}else{ph2=ts;pw2=ts*aspect;}
+    // ====== التكيف مع الصور الطولية والعرضية ======
+    const aspect=aw/ah;
+    let pw2,ph2;
+    
+    // حساب أبعاد البطاقة بناءً على نسبة الصورة
+    if(aspect>=1){
+      // صورة عرضية أو مربعة
+      pw2=3.5;
+      ph2=3.5/aspect;
+    }else{
+      // صورة طولية
+      ph2=3.5;
+      pw2=3.5*aspect;
+    }
+    
+    // التأكد من أن البطاقة لا تكون كبيرة جداً
+    const maxDim=4;
+    if(pw2>maxDim){pw2=maxDim;ph2=maxDim/aspect;}
+    if(ph2>maxDim){ph2=maxDim;pw2=maxDim*aspect;}
 
     buildScene(tex,pw2,ph2);
     document.getElementById('loader').classList.remove('on');
@@ -833,9 +838,13 @@ function loop(){
     cardGroup.rotation.x=smy*.04;
   }
 
-  if(chromeM&&chromeM.visible){
-    chromeM.material.uniforms.uTime.value=t;
-    chromeM.material.uniforms.uMs.value.set(smx,smy);
+  if(chromeFront&&chromeFront.visible){
+    chromeFront.material.uniforms.uTime.value=t;
+    chromeFront.material.uniforms.uMs.value.set(smx,smy);
+  }
+  if(chromeBack&&chromeBack.visible){
+    chromeBack.material.uniforms.uTime.value=t;
+    chromeBack.material.uniforms.uMs.value.set(smx,smy);
   }
 
   frameUpdateCounter++;
@@ -855,12 +864,12 @@ function loop(){
 }
 
 function setupUI(){
-  // Chrome toggle
   document.getElementById('chrTT').addEventListener('click',()=>{
     chrOn=!chrOn;
     document.getElementById('chrTT').classList.toggle('on');
     document.getElementById('chrSt').textContent=chrOn?'ACTIVE':'OFF';
-    if(chromeM)chromeM.visible=chrOn;
+    if(chromeFront)chromeFront.visible=chrOn;
+    if(chromeBack)chromeBack.visible=chrOn;
   });
   
   const map={
@@ -873,11 +882,10 @@ function setupUI(){
     el.addEventListener('input',e=>{
       P[k]=e.target.value*.01;
       document.getElementById(vid).textContent=e.target.value+'%';
-      if(chromeM){
-        const um={met:'uMet',shm:'uShm',iri:'uIri',glt:'uGlt'};
-        if(um[k]){
-          chromeM.material.uniforms[um[k]].value=P[k];
-        }
+      const um={met:'uMet',shm:'uShm',iri:'uIri',glt:'uGlt'};
+      if(um[k]){
+        if(chromeFront)chromeFront.material.uniforms[um[k]].value=P[k];
+        if(chromeBack)chromeBack.material.uniforms[um[k]].value=P[k];
       }
     });
   });
@@ -887,9 +895,12 @@ function setupUI(){
     P.thk=e.target.value*.01;
     document.getElementById('vt').textContent=e.target.value+'%';
     if(artTex){
-      const asp=aw/ah;let pw3,ph3;const ts2=2.5;
-      if(asp>=1){pw3=ts2;ph3=ts2/asp;}else{ph3=ts2;pw3=ts2*asp;}
-      buildScene(artTex,pw3,ph3);
+      const aspect=aw/ah;let pw2,ph2;
+      if(aspect>=1){pw2=3.5;ph2=3.5/aspect;}else{ph2=3.5;pw2=3.5*aspect;}
+      const maxDim=4;
+      if(pw2>maxDim){pw2=maxDim;ph2=maxDim/aspect;}
+      if(ph2>maxDim){ph2=maxDim;pw2=maxDim*aspect;}
+      buildScene(artTex,pw2,ph2);
     }
   });
   
@@ -899,11 +910,16 @@ function setupUI(){
     document.getElementById('vgo').textContent=e.target.value+'%';
   });
   
+  // Glass shine
+  document.getElementById('sgs').addEventListener('input',e=>{
+    glassShine=e.target.value*.01;
+    document.getElementById('vgs').textContent=e.target.value+'%';
+  });
+  
   document.querySelectorAll('[data-rt]').forEach(b=>{b.addEventListener('click',()=>{
     document.querySelectorAll('[data-rt]').forEach(x2=>x2.classList.remove('on'));b.classList.add('on');rar=b.dataset.rt;
   });});
   
-  // Side controls
   document.getElementById('sbRotL').addEventListener('click',()=>{manualRotation-=Math.PI/4;toast('⏪ ROTATED LEFT');});
   document.getElementById('sbRotR').addEventListener('click',()=>{manualRotation+=Math.PI/4;toast('⏩ ROTATED RIGHT');});
   document.getElementById('sbAuto').addEventListener('click',(e)=>{
@@ -913,14 +929,6 @@ function setupUI(){
   });
   document.getElementById('sbReset').addEventListener('click',()=>{manualRotation=0;ry=0;toast('🎯 RESET');});
   
-  // Inputs (تحديث البطاقة عند التغيير)
-  ['inpName','inpSubtitle','inpCollection','inpCode'].forEach(id=>{
-    document.getElementById(id).addEventListener('input',()=>{
-      // البطاقة تتحدث تلقائياً في loop
-    });
-  });
-  
-  // Save buttons
   document.getElementById('btnPNG').addEventListener('click',savePNG);
   document.getElementById('btnVID').addEventListener('click',saveVID);
   document.getElementById('btnGIF').addEventListener('click',saveGIF);
@@ -936,10 +944,13 @@ function savePNG(){
   const savedRY=cardGroup.rotation.y,savedRX=cardGroup.rotation.x;
   cardGroup.rotation.y=0;cardGroup.rotation.x=0;
   setTimeout(()=>{
-    const asp=aw/ah;let pw4,ph4;const ts3=2.5;
-    if(asp>=1){pw4=ts3;ph4=ts3/asp;}else{ph4=ts3;pw4=ts3*asp;}
-    const fm=1.18;
-    const eW=1200;const eH=Math.floor(eW*(ph4*fm)/(pw4*fm));
+    const aspect=aw/ah;let pw4,ph4;
+    if(aspect>=1){pw4=3.5;ph4=3.5/aspect;}else{ph4=3.5;pw4=3.5*aspect;}
+    const maxDim=4;
+    if(pw4>maxDim){pw4=maxDim;ph4=maxDim/aspect;}
+    if(ph4>maxDim){ph4=maxDim;pw4=maxDim*aspect;}
+    
+    const eW=1200;const eH=Math.floor(eW*(ph4)/(pw4));
     const tR=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true});
     tR.setClearColor(0x050510,1);tR.setSize(eW,eH);tR.setPixelRatio(1);
     const tC=new THREE.PerspectiveCamera(45,eW/eH,.1,1000);tC.position.set(0,0,6);
@@ -963,10 +974,13 @@ function savePNG(){
 function saveVID(){
   if(!cardGroup){toast('⚠️ UPLOAD FIRST');return;}
   showL('RECORDING 0%');
-  const asp=aw/ah;let pw5,ph5;const ts4=2.5;
-  if(asp>=1){pw5=ts4;ph5=ts4/asp;}else{ph5=ts4;pw5=ts4*asp;}
-  const fm=1.18;
-  const vW=800;const vH=Math.floor(vW*(ph5*fm)/(pw5*fm));
+  const aspect=aw/ah;let pw5,ph5;
+  if(aspect>=1){pw5=3.5;ph5=3.5/aspect;}else{ph5=3.5;pw5=3.5*aspect;}
+  const maxDim=4;
+  if(pw5>maxDim){pw5=maxDim;ph5=maxDim/aspect;}
+  if(ph5>maxDim){ph5=maxDim;pw5=maxDim*aspect;}
+  
+  const vW=800;const vH=Math.floor(vW*(ph5)/(pw5));
   const tR=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true});
   tR.setClearColor(0x050510,1);tR.setSize(vW,vH);tR.setPixelRatio(1);
   const tC=new THREE.PerspectiveCamera(45,vW/vH,.1,1000);tC.position.set(0,0,6);
@@ -1007,10 +1021,13 @@ function saveGIF(){
     s2.onload=()=>setTimeout(saveGIF,500);document.head.appendChild(s2);return;
   }
   showL('GIF 0%');
-  const asp=aw/ah;let pw6,ph6;const ts5=2.5;
-  if(asp>=1){pw6=ts5;ph6=ts5/asp;}else{ph6=ts5;pw6=ts5*asp;}
-  const fm=1.18;
-  const gW=500;const gH=Math.floor(gW*(ph6*fm)/(pw6*fm));
+  const aspect=aw/ah;let pw6,ph6;
+  if(aspect>=1){pw6=3.5;ph6=3.5/aspect;}else{ph6=3.5;pw6=3.5*aspect;}
+  const maxDim=4;
+  if(pw6>maxDim){pw6=maxDim;ph6=maxDim/aspect;}
+  if(ph6>maxDim){ph6=maxDim;pw6=maxDim*aspect;}
+  
+  const gW=500;const gH=Math.floor(gW*(ph6)/(pw6));
   const tR=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true});
   tR.setClearColor(0x050510,1);tR.setSize(gW,gH);tR.setPixelRatio(1);
   const tC=new THREE.PerspectiveCamera(45,gW/gH,.1,1000);tC.position.set(0,0,6);
@@ -1027,7 +1044,8 @@ function saveGIF(){
   function gFrame(){
     const angle=(cap2/totalF)*Math.PI*2;
     if(cardGroup){cardGroup.rotation.y=angle;cardGroup.rotation.x=0;}
-    if(chromeM&&chromeM.visible){chromeM.material.uniforms.uTime.value=(cap2/totalF)*4;}
+    if(chromeFront&&chromeFront.visible){chromeFront.material.uniforms.uTime.value=(cap2/totalF)*4;}
+    if(chromeBack&&chromeBack.visible){chromeBack.material.uniforms.uTime.value=(cap2/totalF)*4;}
     drawGlassCard((cap2/totalF)*4);
     tR.render(sc,tC);
     const tc2=document.createElement('canvas');tc2.width=gW;tc2.height=gH;
